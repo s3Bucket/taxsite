@@ -149,3 +149,92 @@ ul.linklist li a:hover{
 }
 
 hr{border:none;border-top:1px solid var(--border); margin:16px 0;}
+
+/* --- UI polish / feedback components --- */
+.headerbar{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background: rgba(241,244,249,.8);
+  color: var(--muted);
+  font-size:12px;
+}
+.statusline{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.alert{
+  border:1px solid var(--border);
+  background: rgba(241,244,249,.9);
+  border-radius: var(--radius);
+  padding: 12px 12px;
+  color: var(--text);
+}
+.alert.error{border-color: rgba(220,38,38,.35); background: rgba(254,242,242,.9);}
+.alert.success{border-color: rgba(22,163,74,.35); background: rgba(240,253,244,.9);}
+.alert .title{font-weight:700; margin-bottom:6px;}
+.alert ul{margin:8px 0 0 18px; color: var(--muted);}
+
+button[disabled], a.btn[disabled]{
+  opacity:.65;
+  cursor:not-allowed;
+  filter: grayscale(.1);
+}
+
+.spinner{
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.55);
+  border-top-color: rgba(255,255,255,.95);
+  border-radius:50%;
+  display:inline-block;
+  animation: spin .9s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.field-error{
+  border-color: rgba(220,38,38,.55) !important;
+  box-shadow: 0 0 0 4px rgba(220,38,38,.10) !important;
+}
+.help{
+  font-size:12px;
+  color: var(--muted);
+  margin-top:6px;
+}
+
+fieldset{position:relative;}
+fieldset[data-collapsible="1"] > legend{
+  cursor:pointer;
+  user-select:none;
+}
+fieldset.collapsed{
+  padding-bottom: 10px;
+}
+fieldset.collapsed .fieldset-body{
+  display:none;
+}
+legend .chev{
+  display:inline-block;
+  width:10px;height:10px;
+  border-right:2px solid rgba(29,78,216,.7);
+  border-bottom:2px solid rgba(29,78,216,.7);
+  transform: rotate(45deg);
+  margin-right:8px;
+  transition: transform .15s ease;
+}
+fieldset.collapsed legend .chev{
+  transform: rotate(-45deg);
+}
