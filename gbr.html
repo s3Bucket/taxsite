@@ -1,0 +1,208 @@
+<!doctype html><html lang='de'><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width, initial-scale=1'/><title>GbR – Stammdaten</title><style>
+:root{--bg:#0b1020;--card:#121a33;--text:#e8ecff;--muted:#aab3d6;--accent:#7aa2ff;--border:#253055;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:linear-gradient(180deg,var(--bg),#070a14); color:var(--text);}
+header{padding:24px 16px; max-width:1100px; margin:0 auto;}
+h1{margin:0 0 6px;font-size:28px;}
+p{margin:6px 0;color:var(--muted);line-height:1.4;}
+main{max-width:1100px;margin:0 auto;padding:0 16px 32px;}
+.card{background:rgba(18,26,51,.92); border:1px solid var(--border); border-radius:16px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.25);}
+.grid{display:grid; gap:12px;}
+@media(min-width:900px){.grid.cols-2{grid-template-columns:1fr 1fr;}}
+fieldset{border:1px solid var(--border); border-radius:14px; padding:14px; margin:14px 0;}
+legend{padding:0 10px; color:var(--accent); font-weight:600;}
+label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
+input,select,textarea{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:#0b1227; color:var(--text);}
+input[type="file"]{padding:8px 10px;}
+.row{display:grid; gap:10px;}
+@media(min-width:900px){.row.cols-2{grid-template-columns:1fr 1fr;}.row.cols-3{grid-template-columns:1fr 1fr 1fr;}}
+.actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+button,a.btn{appearance:none;border:1px solid var(--border); background:linear-gradient(180deg,#1a2750,#0d1633); color:var(--text); padding:10px 14px;border-radius:12px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px;}
+button.primary{border-color:rgba(122,162,255,.6); box-shadow:0 0 0 3px rgba(122,162,255,.12) inset;}
+.small{font-size:12px;color:var(--muted);}
+.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:12px; padding:2px 6px; border:1px solid var(--border); border-radius:8px; color:var(--muted);}
+ul.linklist{list-style:none; padding:0; margin:0; display:grid; gap:10px;}
+ul.linklist li a{display:block; padding:12px 14px; border-radius:14px; border:1px solid var(--border); background:rgba(18,26,51,.65); text-decoration:none; color:var(--text);}
+ul.linklist li a:hover{border-color:rgba(122,162,255,.6);}
+hr{border:none;border-top:1px solid var(--border); margin:16px 0;}
+</style></head><body>
+<header>
+<h1>GbR – Stammdaten</h1>
+<p>Formular basiert auf der Excel-Vorlage. Speichern/Export passiert lokal im Browser (kein Backend).</p>
+<div class='actions'><a class='btn' href='index.html'>← Zur Übersicht</a><span class='small'>Tipp: <span class='kbd'>Speichern</span> legt einen Entwurf in localStorage ab.</span></div>
+</header><main><div class='card'>
+<form id='mainForm' autocomplete='on'>
+<fieldset><legend>Angaben</legend>
+<div style='margin:10px 0'>
+<label for='anrede'>Anrede</label>
+<input id='anrede' type='text' name='anrede' placeholder='Anrede'/>
+</div>
+<div style='margin:10px 0'>
+<label for='unternehmensname'>Unternehmensname</label>
+<input id='unternehmensname' type='text' name='unternehmensname' placeholder='Unternehmensname'/>
+</div>
+<div style='margin:10px 0'>
+<label for='unternehmensform'>Unternehmensform</label>
+<input id='unternehmensform' type='text' name='unternehmensform' placeholder='Unternehmensform'/>
+</div>
+<div style='margin:10px 0'>
+<label for='strae-und-hausnummer'>Straße und Hausnummer</label>
+<input id='strae-und-hausnummer' type='text' name='strae-und-hausnummer' placeholder='Straße und Hausnummer'/>
+</div>
+<div style='margin:10px 0'>
+<label for='plz'>PLZ</label>
+<input id='plz' type='text' name='plz' placeholder='PLZ'/>
+</div>
+<div style='margin:10px 0'>
+<label for='ort'>Ort</label>
+<input id='ort' type='text' name='ort' placeholder='Ort'/>
+</div>
+<div style='margin:10px 0'>
+<label for='telefon'>Telefon</label>
+<input id='telefon' type='tel' name='telefon' placeholder='Telefon'/>
+</div>
+<div style='margin:10px 0'>
+<label for='mobil'>Mobil</label>
+<input id='mobil' type='tel' name='mobil' placeholder='Mobil'/>
+</div>
+<div style='margin:10px 0'>
+<label for='e-mail'>E-Mail</label>
+<input id='e-mail' type='email' name='e-mail' placeholder='E-Mail'/>
+</div>
+<div style='margin:10px 0'>
+<label for='bankverbindung'>Bankverbindung</label>
+<input id='bankverbindung' type='text' name='bankverbindung' placeholder='Bankverbindung'/>
+</div>
+<div style='margin:10px 0'>
+<label for='steuernummer'>Steuernummer</label>
+<input id='steuernummer' type='text' name='steuernummer' placeholder='Steuernummer'/>
+</div>
+<div style='margin:10px 0'>
+<label for='unternehmensgegenstand'>Unternehmensgegenstand</label>
+<textarea id='unternehmensgegenstand' name='unternehmensgegenstand' rows='3' placeholder='Unternehmensgegenstand'></textarea>
+</div>
+<div style='margin:10px 0'>
+<label for='grundungsdatum'>Gründungsdatum</label>
+<input id='grundungsdatum' type='date' name='grundungsdatum' placeholder='Gründungsdatum'/>
+</div>
+<div style='margin:10px 0'>
+<label for='ust-idnr'>USt-IdNr.</label>
+<input id='ust-idnr' type='text' name='ust-idnr' placeholder='USt-IdNr.'/>
+</div>
+<div style='margin:10px 0'>
+<label for='bundesland'>Bundesland</label>
+<input id='bundesland' type='text' name='bundesland' placeholder='Bundesland'/>
+</div>
+<div style='margin:10px 0'>
+<label for='gesellschafter'>Gesellschafter</label>
+<input id='gesellschafter' type='text' name='gesellschafter' placeholder='Gesellschafter'/>
+</div>
+</fieldset>
+<fieldset><legend>Buchhaltung</legend>
+<div style='margin:10px 0'>
+<label for='ist-sollversteuerung'>Ist- / Sollversteuerung</label>
+<input id='ist-sollversteuerung' type='text' name='ist-sollversteuerung' placeholder='Ist- / Sollversteuerung'/>
+</div>
+<div style='margin:10px 0'>
+<label for='voranmeldungszeitraum'>Voranmeldungszeitraum</label>
+<input id='voranmeldungszeitraum' type='text' name='voranmeldungszeitraum' placeholder='Voranmeldungszeitraum'/>
+</div>
+<div style='margin:10px 0'>
+<label for='bilanz-oder-gewinnermittler'>Bilanz oder Gewinnermittler</label>
+<input id='bilanz-oder-gewinnermittler' type='text' name='bilanz-oder-gewinnermittler' placeholder='Bilanz oder Gewinnermittler'/>
+</div>
+</fieldset>
+<fieldset><legend>Dokumente</legend>
+<hr/>
+<p class='small'>Dokumente: bitte als Dateien auswählen (die Dateien selbst werden nicht im Entwurf gespeichert – nur die Dateinamen).</p>
+<div style='margin:10px 0'>
+<label>Personalausweis der Gesellschafter</label>
+<input type='file' name='doc__personalausweis-der-gesellschafter' multiple />
+</div>
+<div style='margin:10px 0'>
+<label>Gewerbeanmeldung</label>
+<input type='file' name='doc__gewerbeanmeldung' multiple />
+</div>
+</fieldset>
+<div class='actions'><button class='primary' type='button' id='saveBtn'>Speichern</button><button type='button' id='loadBtn'>Laden</button><button type='button' id='exportBtn'>JSON exportieren</button><button type='reset'>Zurücksetzen</button></div>
+</form></div></main>
+<script>
+function formToJSON(form){
+  const data = {};
+  const fd = new FormData(form);
+  for (const [k,v] of fd.entries()){
+    if (v instanceof File){
+      // store filenames only; actual files can't be persisted safely in localStorage
+      if (!v || !v.name) continue;
+      if (!data[k]) data[k]=[];
+      data[k].push(v.name);
+    } else {
+      if (data[k] !== undefined){
+        if (!Array.isArray(data[k])) data[k]=[data[k]];
+        data[k].push(v);
+      } else {
+        data[k]=v;
+      }
+    }
+  }
+  return data;
+}
+
+function saveDraft(form, key){
+  const data = formToJSON(form);
+  localStorage.setItem(key, JSON.stringify(data));
+  toast("Entwurf gespeichert (localStorage).");
+}
+
+function loadDraft(form, key){
+  const raw = localStorage.getItem(key);
+  if (!raw){ toast("Kein Entwurf gefunden."); return; }
+  const data = JSON.parse(raw);
+  for (const [k,v] of Object.entries(data)){
+    const el = form.elements[k];
+    if (!el) continue;
+    if (el instanceof RadioNodeList){
+      // not used here
+    } else if (el.type === "file"){
+      // cannot restore files
+    } else {
+      el.value = Array.isArray(v) ? v[0] : v;
+    }
+  }
+  toast("Entwurf geladen.");
+}
+
+function downloadJSON(form, filename){
+  const data = formToJSON(form);
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function toast(msg){
+  const t = document.createElement("div");
+  t.textContent = msg;
+  t.style.position="fixed";
+  t.style.left="50%";
+  t.style.bottom="18px";
+  t.style.transform="translateX(-50%)";
+  t.style.background="rgba(18,26,51,.98)";
+  t.style.border="1px solid rgba(122,162,255,.35)";
+  t.style.padding="10px 12px";
+  t.style.borderRadius="12px";
+  t.style.color="#e8ecff";
+  t.style.boxShadow="0 10px 30px rgba(0,0,0,.35)";
+  t.style.zIndex="9999";
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 1800);
+}
+
+const form=document.getElementById('mainForm');
+document.getElementById('saveBtn').addEventListener('click',()=>saveDraft(form,'draft:gbr'));
+document.getElementById('loadBtn').addEventListener('click',()=>loadDraft(form,'draft:gbr'));
+document.getElementById('exportBtn').addEventListener('click',()=>downloadJSON(form,'gbr.json'));
+</script>
+</body></html>

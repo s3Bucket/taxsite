@@ -1,0 +1,388 @@
+<!doctype html><html lang='de'><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width, initial-scale=1'/><title>natürliche Person – Stammdaten</title><style>
+:root{--bg:#0b1020;--card:#121a33;--text:#e8ecff;--muted:#aab3d6;--accent:#7aa2ff;--border:#253055;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:linear-gradient(180deg,var(--bg),#070a14); color:var(--text);}
+header{padding:24px 16px; max-width:1100px; margin:0 auto;}
+h1{margin:0 0 6px;font-size:28px;}
+p{margin:6px 0;color:var(--muted);line-height:1.4;}
+main{max-width:1100px;margin:0 auto;padding:0 16px 32px;}
+.card{background:rgba(18,26,51,.92); border:1px solid var(--border); border-radius:16px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.25);}
+.grid{display:grid; gap:12px;}
+@media(min-width:900px){.grid.cols-2{grid-template-columns:1fr 1fr;}}
+fieldset{border:1px solid var(--border); border-radius:14px; padding:14px; margin:14px 0;}
+legend{padding:0 10px; color:var(--accent); font-weight:600;}
+label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
+input,select,textarea{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:#0b1227; color:var(--text);}
+input[type="file"]{padding:8px 10px;}
+.row{display:grid; gap:10px;}
+@media(min-width:900px){.row.cols-2{grid-template-columns:1fr 1fr;}.row.cols-3{grid-template-columns:1fr 1fr 1fr;}}
+.actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+button,a.btn{appearance:none;border:1px solid var(--border); background:linear-gradient(180deg,#1a2750,#0d1633); color:var(--text); padding:10px 14px;border-radius:12px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px;}
+button.primary{border-color:rgba(122,162,255,.6); box-shadow:0 0 0 3px rgba(122,162,255,.12) inset;}
+.small{font-size:12px;color:var(--muted);}
+.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:12px; padding:2px 6px; border:1px solid var(--border); border-radius:8px; color:var(--muted);}
+ul.linklist{list-style:none; padding:0; margin:0; display:grid; gap:10px;}
+ul.linklist li a{display:block; padding:12px 14px; border-radius:14px; border:1px solid var(--border); background:rgba(18,26,51,.65); text-decoration:none; color:var(--text);}
+ul.linklist li a:hover{border-color:rgba(122,162,255,.6);}
+hr{border:none;border-top:1px solid var(--border); margin:16px 0;}
+</style></head><body>
+<header>
+<h1>natürliche Person – Stammdaten</h1>
+<p>Formular basiert auf der Excel-Vorlage. Speichern/Export passiert lokal im Browser (kein Backend).</p>
+<div class='actions'><a class='btn' href='index.html'>← Zur Übersicht</a><span class='small'>Tipp: <span class='kbd'>Speichern</span> legt einen Entwurf in localStorage ab.</span></div>
+</header><main><div class='card'>
+<form id='mainForm' autocomplete='on'>
+<fieldset><legend>Angaben</legend>
+<div class='row cols-2'>
+<div>
+<label>Anrede (Ehepartner 1)</label>
+<input type='text' name='anrede__1' placeholder='Anrede'/>
+</div>
+<div>
+<label>Anrede (Ehepartner 2)</label>
+<input type='text' name='anrede__2' placeholder='Anrede'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Titel/Akad. Grad (Ehepartner 1)</label>
+<input type='text' name='titel-akad-grad__1' placeholder='Titel/Akad. Grad'/>
+</div>
+<div>
+<label>Titel/Akad. Grad (Ehepartner 2)</label>
+<input type='text' name='titel-akad-grad__2' placeholder='Titel/Akad. Grad'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Vorname (Ehepartner 1)</label>
+<input type='text' name='vorname__1' placeholder='Vorname'/>
+</div>
+<div>
+<label>Vorname (Ehepartner 2)</label>
+<input type='text' name='vorname__2' placeholder='Vorname'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Nachname (Ehepartner 1)</label>
+<input type='text' name='nachname__1' placeholder='Nachname'/>
+</div>
+<div>
+<label>Nachname (Ehepartner 2)</label>
+<input type='text' name='nachname__2' placeholder='Nachname'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Straße und Hausnummer (Ehepartner 1)</label>
+<input type='text' name='strae-und-hausnummer__1' placeholder='Straße und Hausnummer'/>
+</div>
+<div>
+<label>Straße und Hausnummer (Ehepartner 2)</label>
+<input type='text' name='strae-und-hausnummer__2' placeholder='Straße und Hausnummer'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>PLZ (Ehepartner 1)</label>
+<input type='text' name='plz__1' placeholder='PLZ'/>
+</div>
+<div>
+<label>PLZ (Ehepartner 2)</label>
+<input type='text' name='plz__2' placeholder='PLZ'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Ort (Ehepartner 1)</label>
+<input type='text' name='ort__1' placeholder='Ort'/>
+</div>
+<div>
+<label>Ort (Ehepartner 2)</label>
+<input type='text' name='ort__2' placeholder='Ort'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Telefon (Ehepartner 1)</label>
+<input type='tel' name='telefon__1' placeholder='Telefon'/>
+</div>
+<div>
+<label>Telefon (Ehepartner 2)</label>
+<input type='tel' name='telefon__2' placeholder='Telefon'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Mobil (Ehepartner 1)</label>
+<input type='tel' name='mobil__1' placeholder='Mobil'/>
+</div>
+<div>
+<label>Mobil (Ehepartner 2)</label>
+<input type='tel' name='mobil__2' placeholder='Mobil'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>E-Mail (Ehepartner 1)</label>
+<input type='email' name='e-mail__1' placeholder='E-Mail'/>
+</div>
+<div>
+<label>E-Mail (Ehepartner 2)</label>
+<input type='email' name='e-mail__2' placeholder='E-Mail'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Bankverbindung (Ehepartner 1)</label>
+<input type='text' name='bankverbindung__1' placeholder='Bankverbindung'/>
+</div>
+<div>
+<label>Bankverbindung (Ehepartner 2)</label>
+<input type='text' name='bankverbindung__2' placeholder='Bankverbindung'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Steuernummer (Ehepartner 1)</label>
+<input type='text' name='steuernummer__1' placeholder='Steuernummer'/>
+</div>
+<div>
+<label>Steuernummer (Ehepartner 2)</label>
+<input type='text' name='steuernummer__2' placeholder='Steuernummer'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Geburtsdatum (Ehepartner 1)</label>
+<input type='date' name='geburtsdatum__1' placeholder='Geburtsdatum'/>
+</div>
+<div>
+<label>Geburtsdatum (Ehepartner 2)</label>
+<input type='date' name='geburtsdatum__2' placeholder='Geburtsdatum'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Familienstand (Ehepartner 1)</label>
+<input type='text' name='familienstand__1' placeholder='Familienstand'/>
+</div>
+<div>
+<label>Familienstand (Ehepartner 2)</label>
+<input type='text' name='familienstand__2' placeholder='Familienstand'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Staatsangehörigkeit (Ehepartner 1)</label>
+<input type='text' name='staatsangehorigkeit__1' placeholder='Staatsangehörigkeit'/>
+</div>
+<div>
+<label>Staatsangehörigkeit (Ehepartner 2)</label>
+<input type='text' name='staatsangehorigkeit__2' placeholder='Staatsangehörigkeit'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Religionszugehörigkeit (Ehepartner 1)</label>
+<input type='text' name='religionszugehorigkeit__1' placeholder='Religionszugehörigkeit'/>
+</div>
+<div>
+<label>Religionszugehörigkeit (Ehepartner 2)</label>
+<input type='text' name='religionszugehorigkeit__2' placeholder='Religionszugehörigkeit'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Geschlecht (Ehepartner 1)</label>
+<input type='text' name='geschlecht__1' placeholder='Geschlecht'/>
+</div>
+<div>
+<label>Geschlecht (Ehepartner 2)</label>
+<input type='text' name='geschlecht__2' placeholder='Geschlecht'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Beruf (Ehepartner 1)</label>
+<input type='text' name='beruf__1' placeholder='Beruf'/>
+</div>
+<div>
+<label>Beruf (Ehepartner 2)</label>
+<input type='text' name='beruf__2' placeholder='Beruf'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Bundesland (Ehepartner 1)</label>
+<input type='text' name='bundesland__1' placeholder='Bundesland'/>
+</div>
+<div>
+<label>Bundesland (Ehepartner 2)</label>
+<input type='text' name='bundesland__2' placeholder='Bundesland'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Identifikationsnummer (Ehepartner 1)</label>
+<input type='text' name='identifikationsnummer__1' placeholder='Identifikationsnummer'/>
+</div>
+<div>
+<label>Identifikationsnummer (Ehepartner 2)</label>
+<input type='text' name='identifikationsnummer__2' placeholder='Identifikationsnummer'/>
+</div>
+</div>
+</fieldset>
+<fieldset><legend>Kind</legend>
+<div class='row cols-2'>
+<div>
+<label>Name (Ehepartner 1)</label>
+<input type='text' name='name__1' placeholder='Name'/>
+</div>
+<div>
+<label>Name (Ehepartner 2)</label>
+<input type='text' name='name__2' placeholder='Name'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Geburtsdatum (Ehepartner 1)</label>
+<input type='date' name='geburtsdatum__1' placeholder='Geburtsdatum'/>
+</div>
+<div>
+<label>Geburtsdatum (Ehepartner 2)</label>
+<input type='date' name='geburtsdatum__2' placeholder='Geburtsdatum'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Wohnort (Ehepartner 1)</label>
+<input type='text' name='wohnort__1' placeholder='Wohnort'/>
+</div>
+<div>
+<label>Wohnort (Ehepartner 2)</label>
+<input type='text' name='wohnort__2' placeholder='Wohnort'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>leiblicher Vater (Ehepartner 1)</label>
+<input type='text' name='leiblicher-vater__1' placeholder='leiblicher Vater'/>
+</div>
+<div>
+<label>leiblicher Vater (Ehepartner 2)</label>
+<input type='text' name='leiblicher-vater__2' placeholder='leiblicher Vater'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>leibliche Mutter (Ehepartner 1)</label>
+<input type='text' name='leibliche-mutter__1' placeholder='leibliche Mutter'/>
+</div>
+<div>
+<label>leibliche Mutter (Ehepartner 2)</label>
+<input type='text' name='leibliche-mutter__2' placeholder='leibliche Mutter'/>
+</div>
+</div>
+<div class='row cols-2'>
+<div>
+<label>Identifikationsnummer (Ehepartner 1)</label>
+<input type='text' name='identifikationsnummer__1' placeholder='Identifikationsnummer'/>
+</div>
+<div>
+<label>Identifikationsnummer (Ehepartner 2)</label>
+<input type='text' name='identifikationsnummer__2' placeholder='Identifikationsnummer'/>
+</div>
+</div>
+</fieldset>
+<fieldset><legend>Dokumente</legend>
+<hr/>
+<p class='small'>Dokumente: bitte als Dateien auswählen (die Dateien selbst werden nicht im Entwurf gespeichert – nur die Dateinamen).</p>
+<div style='margin:10px 0'>
+<label>Personalausweise</label>
+<input type='file' name='doc__personalausweise' multiple />
+</div>
+</fieldset>
+<div class='actions'><button class='primary' type='button' id='saveBtn'>Speichern</button><button type='button' id='loadBtn'>Laden</button><button type='button' id='exportBtn'>JSON exportieren</button><button type='reset'>Zurücksetzen</button></div>
+</form></div></main>
+<script>
+function formToJSON(form){
+  const data = {};
+  const fd = new FormData(form);
+  for (const [k,v] of fd.entries()){
+    if (v instanceof File){
+      // store filenames only; actual files can't be persisted safely in localStorage
+      if (!v || !v.name) continue;
+      if (!data[k]) data[k]=[];
+      data[k].push(v.name);
+    } else {
+      if (data[k] !== undefined){
+        if (!Array.isArray(data[k])) data[k]=[data[k]];
+        data[k].push(v);
+      } else {
+        data[k]=v;
+      }
+    }
+  }
+  return data;
+}
+
+function saveDraft(form, key){
+  const data = formToJSON(form);
+  localStorage.setItem(key, JSON.stringify(data));
+  toast("Entwurf gespeichert (localStorage).");
+}
+
+function loadDraft(form, key){
+  const raw = localStorage.getItem(key);
+  if (!raw){ toast("Kein Entwurf gefunden."); return; }
+  const data = JSON.parse(raw);
+  for (const [k,v] of Object.entries(data)){
+    const el = form.elements[k];
+    if (!el) continue;
+    if (el instanceof RadioNodeList){
+      // not used here
+    } else if (el.type === "file"){
+      // cannot restore files
+    } else {
+      el.value = Array.isArray(v) ? v[0] : v;
+    }
+  }
+  toast("Entwurf geladen.");
+}
+
+function downloadJSON(form, filename){
+  const data = formToJSON(form);
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function toast(msg){
+  const t = document.createElement("div");
+  t.textContent = msg;
+  t.style.position="fixed";
+  t.style.left="50%";
+  t.style.bottom="18px";
+  t.style.transform="translateX(-50%)";
+  t.style.background="rgba(18,26,51,.98)";
+  t.style.border="1px solid rgba(122,162,255,.35)";
+  t.style.padding="10px 12px";
+  t.style.borderRadius="12px";
+  t.style.color="#e8ecff";
+  t.style.boxShadow="0 10px 30px rgba(0,0,0,.35)";
+  t.style.zIndex="9999";
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 1800);
+}
+
+const form=document.getElementById('mainForm');
+document.getElementById('saveBtn').addEventListener('click',()=>saveDraft(form,'draft:naturliche-person'));
+document.getElementById('loadBtn').addEventListener('click',()=>loadDraft(form,'draft:naturliche-person'));
+document.getElementById('exportBtn').addEventListener('click',()=>downloadJSON(form,'naturliche-person.json'));
+</script>
+</body></html>
