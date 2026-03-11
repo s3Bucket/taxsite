@@ -13,7 +13,7 @@
         <div class="topbar">
             <div>
                 <h1>GbR</h1>
-                <p id="userInfo">Bitte trage die Felder entsprechend der Excel-Vorlage ein.</p>
+                <p id="userInfo">Bitte trage die Stammdaten ein.</p>
             </div>
             <div class="actions">
                 <a class="btn btn-secondary" href="/portal.html">Zurück zum Portal</a>
@@ -21,37 +21,37 @@
             </div>
         </div>
 
-        <div class="form-section"><h3 class="section-title">Angaben</h3>
-            <label for="anrede">Anrede</label><input id="anrede" type="text">
-            <label for="unternehmensname">Unternehmensname</label><input id="unternehmensname" type="text">
-            <label for="unternehmensform">Unternehmensform</label><input id="unternehmensform" type="text">
-            <label for="strasse-und-hausnummer">Straße und Hausnummer</label><input id="strasse-und-hausnummer" type="text">
-            <label for="plz">PLZ</label><input id="plz" type="text">
-            <label for="ort">Ort</label><input id="ort" type="text">
-            <label for="telefon">Telefon</label><input id="telefon" type="tel">
-            <label for="mobil">Mobil</label><input id="mobil" type="tel">
-            <label for="e-mail">E-Mail</label><input id="e-mail" type="email">
-            <label for="bankverbindung">Bankverbindung</label><input id="bankverbindung" type="text">
-            <label for="steuernummer">Steuernummer</label><input id="steuernummer" type="text">
-            <label for="unternehmensgegenstand">Unternehmensgegenstand</label><textarea id="unternehmensgegenstand"></textarea>
-            <label for="grundungsdatum">Gründungsdatum</label><input id="grundungsdatum" type="date">
-            <label for="ust-idnr">USt-IdNr.</label><input id="ust-idnr" type="text">
-            <label for="bundesland">Bundesland</label><input id="bundesland" type="text">
-            <label for="gesellschafter">Gesellschafter</label><input id="gesellschafter" type="text">
+        <div class="form-section">
+            <h3 class="section-title">Angaben</h3>
+            <label>Anrede</label><input id="anrede" type="text">
+            <label>Unternehmensname</label><input id="unternehmensname" type="text">
+            <label>Unternehmensform</label><input id="unternehmensform" type="text">
+            <label>Straße und Hausnummer</label><input id="strasse" type="text">
+            <label>PLZ</label><input id="plz" type="text">
+            <label>Ort</label><input id="ort" type="text">
+            <label>Telefon</label><input id="telefon" type="tel">
+            <label>Mobil</label><input id="mobil" type="tel">
+            <label>E-Mail</label><input id="email" type="email">
+            <label>Bankverbindung</label><input id="bankverbindung" type="text">
+            <label>Steuernummer</label><input id="steuernummer" type="text">
+            <label>Unternehmensgegenstand</label><textarea id="gegenstand"></textarea>
+            <label>Gründungsdatum</label><input id="gruendungsdatum" type="date">
+            <label>USt-IdNr.</label><input id="ustid" type="text">
+            <label>Bundesland</label><input id="bundesland" type="text">
+            <label>Gesellschafter</label><input id="gesellschafter" type="text">
         </div>
 
-        <div class="form-section"><h3 class="section-title">Buchhaltung</h3>
-            <label for="ist-sollversteuerung">Ist- / Sollversteuerung</label><input id="ist-sollversteuerung" type="text">
-            <label for="voranmeldungszeitraum">Voranmeldungszeitraum</label><input id="voranmeldungszeitraum" type="text">
-            <label for="bilanz-oder-gewinnermittler">Bilanz oder Gewinnermittler</label><input id="bilanz-oder-gewinnermittler" type="text">
+        <div class="form-section">
+            <h3 class="section-title">Buchhaltung</h3>
+            <label>Ist- / Sollversteuerung</label><input id="versteuerung" type="text">
+            <label>Voranmeldungszeitraum</label><input id="voranmeldung" type="text">
+            <label>Bilanz oder Gewinnermittler</label><input id="bilanz" type="text">
         </div>
 
-        <div class="form-section"><h3 class="section-title">Dokumente</h3>
-            <div class="notice">Dokumente aus der Excel-Vorlage sind hier zunächst als Hinweisfelder hinterlegt.</div>
-            <div class="document-grid">
-                <div><label>Personalausweis der Gesellschafter</label><input type="text" placeholder="liegt vor / wird nachgereicht"></div>
-                <div><label>Gewerbeanmeldung</label><input type="text" placeholder="liegt vor / wird nachgereicht"></div>
-            </div>
+        <div class="form-section">
+            <h3 class="section-title">Dokumente</h3>
+            <label>Personalausweis der Gesellschafter</label><input id="doc_personalausweis_gesellschafter" type="file" multiple>
+            <label>Gewerbeanmeldung</label><input id="doc_gewerbeanmeldung" type="file">
         </div>
 
         <div class="actions"><button onclick="submitPage()">Absenden</button></div>
@@ -67,27 +67,34 @@
     initPage();
 
     async function submitPage() {
-        await submitFormData("gbr", {
-            "anrede": document.getElementById("anrede").value,
-            "unternehmensname": document.getElementById("unternehmensname").value,
-            "unternehmensform": document.getElementById("unternehmensform").value,
-            "strasse-und-hausnummer": document.getElementById("strasse-und-hausnummer").value,
-            "plz": document.getElementById("plz").value,
-            "ort": document.getElementById("ort").value,
-            "telefon": document.getElementById("telefon").value,
-            "mobil": document.getElementById("mobil").value,
-            "e-mail": document.getElementById("e-mail").value,
-            "bankverbindung": document.getElementById("bankverbindung").value,
-            "steuernummer": document.getElementById("steuernummer").value,
-            "unternehmensgegenstand": document.getElementById("unternehmensgegenstand").value,
-            "grundungsdatum": document.getElementById("grundungsdatum").value,
-            "ust-idnr": document.getElementById("ust-idnr").value,
-            "bundesland": document.getElementById("bundesland").value,
-            "gesellschafter": document.getElementById("gesellschafter").value,
-            "ist-sollversteuerung": document.getElementById("ist-sollversteuerung").value,
-            "voranmeldungszeitraum": document.getElementById("voranmeldungszeitraum").value,
-            "bilanz-oder-gewinnermittler": document.getElementById("bilanz-oder-gewinnermittler").value
-        });
+        const fields = {
+            anrede: document.getElementById("anrede").value,
+            unternehmensname: document.getElementById("unternehmensname").value,
+            unternehmensform: document.getElementById("unternehmensform").value,
+            strasse_hausnummer: document.getElementById("strasse").value,
+            plz: document.getElementById("plz").value,
+            ort: document.getElementById("ort").value,
+            telefon: document.getElementById("telefon").value,
+            mobil: document.getElementById("mobil").value,
+            email: document.getElementById("email").value,
+            bankverbindung: document.getElementById("bankverbindung").value,
+            steuernummer: document.getElementById("steuernummer").value,
+            unternehmensgegenstand: document.getElementById("gegenstand").value,
+            gruendungsdatum: document.getElementById("gruendungsdatum").value,
+            ust_idnr: document.getElementById("ustid").value,
+            bundesland: document.getElementById("bundesland").value,
+            gesellschafter: document.getElementById("gesellschafter").value,
+            ist_soll_versteuerung: document.getElementById("versteuerung").value,
+            voranmeldungszeitraum: document.getElementById("voranmeldung").value,
+            bilanz_oder_gewinnermittler: document.getElementById("bilanz").value
+        };
+
+        const fileFields = [
+            { id: "doc_personalausweis_gesellschafter", fieldName: "personalausweis_gesellschafter" },
+            { id: "doc_gewerbeanmeldung", fieldName: "gewerbeanmeldung" }
+        ];
+
+        await submitMultipartForm("gbr", fields, fileFields);
     }
 </script>
 </body>

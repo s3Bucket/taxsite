@@ -13,7 +13,7 @@
         <div class="topbar">
             <div>
                 <h1>Natürliche Person</h1>
-                <p id="userInfo">Bitte trage die Felder entsprechend der Excel-Vorlage ein.</p>
+                <p id="userInfo">Bitte trage die Stammdaten ein.</p>
             </div>
             <div class="actions">
                 <a class="btn btn-secondary" href="/portal.html">Zurück zum Portal</a>
@@ -21,97 +21,67 @@
             </div>
         </div>
 
-        <div class="form-section"><h3 class="section-title">Angaben</h3>
-            <div class="grid grid-2">
-                <div><label>Anrede (Ehepartner 1)</label><input id="anrede__1" type="text"></div>
-                <div><label>Anrede (Ehepartner 2)</label><input id="anrede__2" type="text"></div>
-
-                <div><label>Titel/Akad. Grad (Ehepartner 1)</label><input id="titel-akad-grad__1" type="text"></div>
-                <div><label>Titel/Akad. Grad (Ehepartner 2)</label><input id="titel-akad-grad__2" type="text"></div>
-
-                <div><label>Vorname (Ehepartner 1)</label><input id="vorname__1" type="text"></div>
-                <div><label>Vorname (Ehepartner 2)</label><input id="vorname__2" type="text"></div>
-
-                <div><label>Nachname (Ehepartner 1)</label><input id="nachname__1" type="text"></div>
-                <div><label>Nachname (Ehepartner 2)</label><input id="nachname__2" type="text"></div>
-
-                <div><label>Straße und Hausnummer (Ehepartner 1)</label><input id="strasse-und-hausnummer__1" type="text"></div>
-                <div><label>Straße und Hausnummer (Ehepartner 2)</label><input id="strasse-und-hausnummer__2" type="text"></div>
-
-                <div><label>PLZ (Ehepartner 1)</label><input id="plz__1" type="text"></div>
-                <div><label>PLZ (Ehepartner 2)</label><input id="plz__2" type="text"></div>
-
-                <div><label>Ort (Ehepartner 1)</label><input id="ort__1" type="text"></div>
-                <div><label>Ort (Ehepartner 2)</label><input id="ort__2" type="text"></div>
-
-                <div><label>Telefon (Ehepartner 1)</label><input id="telefon__1" type="tel"></div>
-                <div><label>Telefon (Ehepartner 2)</label><input id="telefon__2" type="tel"></div>
-
-                <div><label>Mobil (Ehepartner 1)</label><input id="mobil__1" type="tel"></div>
-                <div><label>Mobil (Ehepartner 2)</label><input id="mobil__2" type="tel"></div>
-
-                <div><label>E-Mail (Ehepartner 1)</label><input id="e-mail__1" type="email"></div>
-                <div><label>E-Mail (Ehepartner 2)</label><input id="e-mail__2" type="email"></div>
-
-                <div><label>Bankverbindung (Ehepartner 1)</label><input id="bankverbindung__1" type="text"></div>
-                <div><label>Bankverbindung (Ehepartner 2)</label><input id="bankverbindung__2" type="text"></div>
-
-                <div><label>Steuernummer (Ehepartner 1)</label><input id="steuernummer__1" type="text"></div>
-                <div><label>Steuernummer (Ehepartner 2)</label><input id="steuernummer__2" type="text"></div>
-
-                <div><label>Geburtsdatum (Ehepartner 1)</label><input id="geburtsdatum__1" type="date"></div>
-                <div><label>Geburtsdatum (Ehepartner 2)</label><input id="geburtsdatum__2" type="date"></div>
-
-                <div><label>Familienstand (Ehepartner 1)</label><input id="familienstand__1" type="text"></div>
-                <div><label>Familienstand (Ehepartner 2)</label><input id="familienstand__2" type="text"></div>
-
-                <div><label>Staatsangehörigkeit (Ehepartner 1)</label><input id="staatsangehorigkeit__1" type="text"></div>
-                <div><label>Staatsangehörigkeit (Ehepartner 2)</label><input id="staatsangehorigkeit__2" type="text"></div>
-
-                <div><label>Religionszugehörigkeit (Ehepartner 1)</label><input id="religionszugehorigkeit__1" type="text"></div>
-                <div><label>Religionszugehörigkeit (Ehepartner 2)</label><input id="religionszugehorigkeit__2" type="text"></div>
-
-                <div><label>Geschlecht (Ehepartner 1)</label><input id="geschlecht__1" type="text"></div>
-                <div><label>Geschlecht (Ehepartner 2)</label><input id="geschlecht__2" type="text"></div>
-
-                <div><label>Beruf (Ehepartner 1)</label><input id="beruf__1" type="text"></div>
-                <div><label>Beruf (Ehepartner 2)</label><input id="beruf__2" type="text"></div>
-
-                <div><label>Bundesland (Ehepartner 1)</label><input id="bundesland__1" type="text"></div>
-                <div><label>Bundesland (Ehepartner 2)</label><input id="bundesland__2" type="text"></div>
-
-                <div><label>Identifikationsnummer (Ehepartner 1)</label><input id="identifikationsnummer__1" type="text"></div>
-                <div><label>Identifikationsnummer (Ehepartner 2)</label><input id="identifikationsnummer__2" type="text"></div>
-            </div>
+        <div class="form-section">
+            <h3 class="section-title">Angaben – Ehepartner 1</h3>
+            <label>Anrede</label><input id="anrede1" type="text">
+            <label>Titel / akad. Grad</label><input id="titel1" type="text">
+            <label>Vorname</label><input id="vorname1" type="text">
+            <label>Nachname</label><input id="nachname1" type="text">
+            <label>Straße und Hausnummer</label><input id="strasse1" type="text">
+            <label>PLZ</label><input id="plz1" type="text">
+            <label>Ort</label><input id="ort1" type="text">
+            <label>Telefon</label><input id="telefon1" type="tel">
+            <label>Mobil</label><input id="mobil1" type="tel">
+            <label>E-Mail</label><input id="email1" type="email">
+            <label>Bankverbindung</label><input id="bank1" type="text">
+            <label>Steuernummer</label><input id="steuer1" type="text">
+            <label>Geburtsdatum</label><input id="geburt1" type="date">
+            <label>Familienstand</label><input id="familienstand1" type="text">
+            <label>Staatsangehörigkeit</label><input id="staat1" type="text">
+            <label>Religionszugehörigkeit</label><input id="religion1" type="text">
+            <label>Geschlecht</label><input id="geschlecht1" type="text">
+            <label>Beruf</label><input id="beruf1" type="text">
+            <label>Bundesland</label><input id="bundesland1" type="text">
+            <label>Identifikationsnummer</label><input id="ident1" type="text">
         </div>
 
-        <div class="form-section"><h3 class="section-title">Kind</h3>
-            <div class="grid grid-2">
-                <div><label>Name (Ehepartner 1)</label><input id="name__1" type="text"></div>
-                <div><label>Name (Ehepartner 2)</label><input id="name__2" type="text"></div>
-
-                <div><label>Geburtsdatum (Ehepartner 1)</label><input id="geburtsdatum-kind__1" type="date"></div>
-                <div><label>Geburtsdatum (Ehepartner 2)</label><input id="geburtsdatum-kind__2" type="date"></div>
-
-                <div><label>Wohnort (Ehepartner 1)</label><input id="wohnort__1" type="text"></div>
-                <div><label>Wohnort (Ehepartner 2)</label><input id="wohnort__2" type="text"></div>
-
-                <div><label>leiblicher Vater (Ehepartner 1)</label><input id="leiblicher-vater__1" type="text"></div>
-                <div><label>leiblicher Vater (Ehepartner 2)</label><input id="leiblicher-vater__2" type="text"></div>
-
-                <div><label>leibliche Mutter (Ehepartner 1)</label><input id="leibliche-mutter__1" type="text"></div>
-                <div><label>leibliche Mutter (Ehepartner 2)</label><input id="leibliche-mutter__2" type="text"></div>
-
-                <div><label>Identifikationsnummer (Ehepartner 1)</label><input id="identifikationsnummer-kind__1" type="text"></div>
-                <div><label>Identifikationsnummer (Ehepartner 2)</label><input id="identifikationsnummer-kind__2" type="text"></div>
-            </div>
+        <div class="form-section">
+            <h3 class="section-title">Angaben – Ehepartner 2</h3>
+            <label>Anrede</label><input id="anrede2" type="text">
+            <label>Titel / akad. Grad</label><input id="titel2" type="text">
+            <label>Vorname</label><input id="vorname2" type="text">
+            <label>Nachname</label><input id="nachname2" type="text">
+            <label>Straße und Hausnummer</label><input id="strasse2" type="text">
+            <label>PLZ</label><input id="plz2" type="text">
+            <label>Ort</label><input id="ort2" type="text">
+            <label>Telefon</label><input id="telefon2" type="tel">
+            <label>Mobil</label><input id="mobil2" type="tel">
+            <label>E-Mail</label><input id="email2" type="email">
+            <label>Bankverbindung</label><input id="bank2" type="text">
+            <label>Steuernummer</label><input id="steuer2" type="text">
+            <label>Geburtsdatum</label><input id="geburt2" type="date">
+            <label>Familienstand</label><input id="familienstand2" type="text">
+            <label>Staatsangehörigkeit</label><input id="staat2" type="text">
+            <label>Religionszugehörigkeit</label><input id="religion2" type="text">
+            <label>Geschlecht</label><input id="geschlecht2" type="text">
+            <label>Beruf</label><input id="beruf2" type="text">
+            <label>Bundesland</label><input id="bundesland2" type="text">
+            <label>Identifikationsnummer</label><input id="ident2" type="text">
         </div>
 
-        <div class="form-section"><h3 class="section-title">Dokumente</h3>
-            <div class="notice">Dokumente aus der Excel-Vorlage sind hier zunächst als Hinweisfelder hinterlegt.</div>
-            <div class="document-grid">
-                <div><label>Personalausweise</label><input type="text" placeholder="liegt vor / wird nachgereicht"></div>
-            </div>
+        <div class="form-section">
+            <h3 class="section-title">Kind</h3>
+            <label>Name</label><input id="kind_name" type="text">
+            <label>Geburtsdatum</label><input id="kind_geburt" type="date">
+            <label>Wohnort</label><input id="kind_wohnort" type="text">
+            <label>Leiblicher Vater</label><input id="kind_vater" type="text">
+            <label>Leibliche Mutter</label><input id="kind_mutter" type="text">
+            <label>Identifikationsnummer</label><input id="kind_ident" type="text">
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">Dokumente</h3>
+            <label>Personalausweise</label><input id="doc_personalausweise" type="file" multiple>
         </div>
 
         <div class="actions"><button onclick="submitPage()">Absenden</button></div>
@@ -127,60 +97,66 @@
     initPage();
 
     async function submitPage() {
-        await submitFormData("naturliche-person", {
-            "anrede__1": document.getElementById("anrede__1").value,
-            "anrede__2": document.getElementById("anrede__2").value,
-            "titel-akad-grad__1": document.getElementById("titel-akad-grad__1").value,
-            "titel-akad-grad__2": document.getElementById("titel-akad-grad__2").value,
-            "vorname__1": document.getElementById("vorname__1").value,
-            "vorname__2": document.getElementById("vorname__2").value,
-            "nachname__1": document.getElementById("nachname__1").value,
-            "nachname__2": document.getElementById("nachname__2").value,
-            "strasse-und-hausnummer__1": document.getElementById("strasse-und-hausnummer__1").value,
-            "strasse-und-hausnummer__2": document.getElementById("strasse-und-hausnummer__2").value,
-            "plz__1": document.getElementById("plz__1").value,
-            "plz__2": document.getElementById("plz__2").value,
-            "ort__1": document.getElementById("ort__1").value,
-            "ort__2": document.getElementById("ort__2").value,
-            "telefon__1": document.getElementById("telefon__1").value,
-            "telefon__2": document.getElementById("telefon__2").value,
-            "mobil__1": document.getElementById("mobil__1").value,
-            "mobil__2": document.getElementById("mobil__2").value,
-            "e-mail__1": document.getElementById("e-mail__1").value,
-            "e-mail__2": document.getElementById("e-mail__2").value,
-            "bankverbindung__1": document.getElementById("bankverbindung__1").value,
-            "bankverbindung__2": document.getElementById("bankverbindung__2").value,
-            "steuernummer__1": document.getElementById("steuernummer__1").value,
-            "steuernummer__2": document.getElementById("steuernummer__2").value,
-            "geburtsdatum__1": document.getElementById("geburtsdatum__1").value,
-            "geburtsdatum__2": document.getElementById("geburtsdatum__2").value,
-            "familienstand__1": document.getElementById("familienstand__1").value,
-            "familienstand__2": document.getElementById("familienstand__2").value,
-            "staatsangehorigkeit__1": document.getElementById("staatsangehorigkeit__1").value,
-            "staatsangehorigkeit__2": document.getElementById("staatsangehorigkeit__2").value,
-            "religionszugehorigkeit__1": document.getElementById("religionszugehorigkeit__1").value,
-            "religionszugehorigkeit__2": document.getElementById("religionszugehorigkeit__2").value,
-            "geschlecht__1": document.getElementById("geschlecht__1").value,
-            "geschlecht__2": document.getElementById("geschlecht__2").value,
-            "beruf__1": document.getElementById("beruf__1").value,
-            "beruf__2": document.getElementById("beruf__2").value,
-            "bundesland__1": document.getElementById("bundesland__1").value,
-            "bundesland__2": document.getElementById("bundesland__2").value,
-            "identifikationsnummer__1": document.getElementById("identifikationsnummer__1").value,
-            "identifikationsnummer__2": document.getElementById("identifikationsnummer__2").value,
-            "name__1": document.getElementById("name__1").value,
-            "name__2": document.getElementById("name__2").value,
-            "geburtsdatum-kind__1": document.getElementById("geburtsdatum-kind__1").value,
-            "geburtsdatum-kind__2": document.getElementById("geburtsdatum-kind__2").value,
-            "wohnort__1": document.getElementById("wohnort__1").value,
-            "wohnort__2": document.getElementById("wohnort__2").value,
-            "leiblicher-vater__1": document.getElementById("leiblicher-vater__1").value,
-            "leiblicher-vater__2": document.getElementById("leiblicher-vater__2").value,
-            "leibliche-mutter__1": document.getElementById("leibliche-mutter__1").value,
-            "leibliche-mutter__2": document.getElementById("leibliche-mutter__2").value,
-            "identifikationsnummer-kind__1": document.getElementById("identifikationsnummer-kind__1").value,
-            "identifikationsnummer-kind__2": document.getElementById("identifikationsnummer-kind__2").value
-        });
+        const fields = {
+            ehepartner1: {
+                anrede: document.getElementById("anrede1").value,
+                titel: document.getElementById("titel1").value,
+                vorname: document.getElementById("vorname1").value,
+                nachname: document.getElementById("nachname1").value,
+                strasse_hausnummer: document.getElementById("strasse1").value,
+                plz: document.getElementById("plz1").value,
+                ort: document.getElementById("ort1").value,
+                telefon: document.getElementById("telefon1").value,
+                mobil: document.getElementById("mobil1").value,
+                email: document.getElementById("email1").value,
+                bankverbindung: document.getElementById("bank1").value,
+                steuernummer: document.getElementById("steuer1").value,
+                geburtsdatum: document.getElementById("geburt1").value,
+                familienstand: document.getElementById("familienstand1").value,
+                staatsangehoerigkeit: document.getElementById("staat1").value,
+                religionszugehoerigkeit: document.getElementById("religion1").value,
+                geschlecht: document.getElementById("geschlecht1").value,
+                beruf: document.getElementById("beruf1").value,
+                bundesland: document.getElementById("bundesland1").value,
+                identifikationsnummer: document.getElementById("ident1").value
+            },
+            ehepartner2: {
+                anrede: document.getElementById("anrede2").value,
+                titel: document.getElementById("titel2").value,
+                vorname: document.getElementById("vorname2").value,
+                nachname: document.getElementById("nachname2").value,
+                strasse_hausnummer: document.getElementById("strasse2").value,
+                plz: document.getElementById("plz2").value,
+                ort: document.getElementById("ort2").value,
+                telefon: document.getElementById("telefon2").value,
+                mobil: document.getElementById("mobil2").value,
+                email: document.getElementById("email2").value,
+                bankverbindung: document.getElementById("bank2").value,
+                steuernummer: document.getElementById("steuer2").value,
+                geburtsdatum: document.getElementById("geburt2").value,
+                familienstand: document.getElementById("familienstand2").value,
+                staatsangehoerigkeit: document.getElementById("staat2").value,
+                religionszugehoerigkeit: document.getElementById("religion2").value,
+                geschlecht: document.getElementById("geschlecht2").value,
+                beruf: document.getElementById("beruf2").value,
+                bundesland: document.getElementById("bundesland2").value,
+                identifikationsnummer: document.getElementById("ident2").value
+            },
+            kind: {
+                name: document.getElementById("kind_name").value,
+                geburtsdatum: document.getElementById("kind_geburt").value,
+                wohnort: document.getElementById("kind_wohnort").value,
+                leiblicher_vater: document.getElementById("kind_vater").value,
+                leibliche_mutter: document.getElementById("kind_mutter").value,
+                identifikationsnummer: document.getElementById("kind_ident").value
+            }
+        };
+
+        const fileFields = [
+            { id: "doc_personalausweise", fieldName: "personalausweise" }
+        ];
+
+        await submitMultipartForm("naturliche_person", fields, fileFields);
     }
 </script>
 </body>

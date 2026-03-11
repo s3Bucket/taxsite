@@ -1,24 +1,27 @@
-from fastapi import FastAPI, Depends, HTTPException, Response, Request
+from fastapi import FastAPI, Depends, HTTPException, Request, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from itsdangerous import URLSafeSerializer, BadSignature
-from datetime import datetime
 import os
+import json
 import requests
 
 from .database import SessionLocal, engine, Base
 from .models import User
-from .schemas import UserCreate, UserLogin
-from .auth import hash_password, verify_password
 
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
-SECRET_KEY = os.getenv("SECRET_KEY", "change-me-please")
-COOKIE_NAME = "portal_session"
-N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL")
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY is not set")
 
+COOKIE_NAME = "portal_session"
 serializer = URLSafeSerializer(SECRET_KEY, salt="auth-session")
+
+N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL")
+if not N8N_WEBHOOK_URL:
+    raise RuntimeError("N8N_WEBHOOK_URL is not set")
 
 
 def get_db():
@@ -27,10 +30,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
-def create_session_cookie(user_id: int) -> str:
-    return serializer.dumps({"user_id": user_id})
 
 
 def read_session_cookie(cookie_value: str):
@@ -61,78 +60,46 @@ def get_current_user(request: Request, db: Session) -> User:
     return user
 
 
-@app.post("/api/register")
-def register(user: UserCreate, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email == user.email).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="User already exists")
-
-    new_user = User(
-        email=user.email,
-        password_hash=hash_password(user.password)
-    )
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    return {"status": "registered"}
-
-
-@app.post("/api/login")
-def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == user.email).first()
-
-    if not db_user or not verify_password(user.password, db_user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    session_value = create_session_cookie(db_user.id)
-
-    response.set_cookie(
-        key=COOKIE_NAME,
-        value=session_value,
-        httponly=True,
-        secure=True,
-        samesite="Lax",
-        max_age=60 * 60 * 8,
-        path="/"
-    )
-
-    return {"status": "ok", "user": db_user.email}
-
-
-@app.post("/api/logout")
-def logout(response: Response):
-    response.delete_cookie(COOKIE_NAME, path="/")
-    return {"status": "logged_out"}
-
-
-@app.get("/api/auth/check")
-def auth_check(request: Request, db: Session = Depends(get_db)):
-    user = get_current_user(request, db)
-    return {"status": "authenticated", "user": user.email}
-
-
 @app.post("/api/forms/submit")
-async def submit_form(request: Request, db: Session = Depends(get_db)):
+async def submit_form(
+        request: Request,
+        form_name: str = Form(...),
+        data: str = Form(...),
+        files: list[UploadFile] = File(default=[]),
+        db: Session = Depends(get_db)
+):
     user = get_current_user(request, db)
 
-    payload = await request.json()
-
-    enriched_payload = {
-        "submitted_by": {
-            "user_id": user.id,
-            "email": user.email
-        },
-        "submitted_at": datetime.utcnow().isoformat(),
-        "form_data": payload
+    # FormData für n8n vorbereiten
+    forward_data = {
+        "form_name": form_name,
+        "data": data,
+        "submitted_by_user_id": str(user.id),
+        "submitted_by_email": user.email,
     }
 
-    # optional: an n8n weiterleiten
-    if N8N_WEBHOOK_URL:
-        r = requests.post(N8N_WEBHOOK_URL, json=enriched_payload, timeout=20)
-        r.raise_for_status()
+    forward_files = []
+    for file in files:
+        content = await file.read()
+        forward_files.append(
+            (
+                "files",
+                (file.filename, content, file.content_type or "application/octet-stream")
+            )
+        )
+
+    try:
+        response = requests.post(
+            N8N_WEBHOOK_URL,
+            data=forward_data,
+            files=forward_files,
+            timeout=60
+        )
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        raise HTTPException(status_code=502, detail=f"n8n webhook failed: {str(exc)}")
 
     return {
-        "status": "received",
+        "status": "forwarded",
         "submitted_by": user.email
     }

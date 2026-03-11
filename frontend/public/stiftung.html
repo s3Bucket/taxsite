@@ -13,7 +13,7 @@
         <div class="topbar">
             <div>
                 <h1>Stiftung</h1>
-                <p id="userInfo">Bitte trage die Felder entsprechend der Excel-Vorlage ein.</p>
+                <p id="userInfo">Bitte trage die Stammdaten ein.</p>
             </div>
             <div class="actions">
                 <a class="btn btn-secondary" href="/portal.html">Zurück zum Portal</a>
@@ -21,35 +21,34 @@
             </div>
         </div>
 
-        <div class="form-section"><h3 class="section-title">Angaben</h3>
-            <label for="anrede">Anrede</label><input id="anrede" type="text">
-            <label for="unternehmensname">Unternehmensname</label><input id="unternehmensname" type="text">
-            <label for="unternehmensform">Unternehmensform</label><input id="unternehmensform" type="text">
-            <label for="familien-oder-gemeinnutzige-stiftung">Familien- oder gemeinnützige Stiftung</label><input id="familien-oder-gemeinnutzige-stiftung" type="text">
-            <label for="strasse-und-hausnummer">Straße und Hausnummer</label><input id="strasse-und-hausnummer" type="text">
-            <label for="plz">PLZ</label><input id="plz" type="text">
-            <label for="ort">Ort</label><input id="ort" type="text">
-            <label for="telefon">Telefon</label><input id="telefon" type="tel">
-            <label for="mobil">Mobil</label><input id="mobil" type="tel">
-            <label for="e-mail">E-Mail</label><input id="e-mail" type="email">
-            <label for="bankverbindung">Bankverbindung</label><input id="bankverbindung" type="text">
-            <label for="steuernummer">Steuernummer</label><input id="steuernummer" type="text">
-            <label for="unternehmensgegenstand">Unternehmensgegenstand</label><textarea id="unternehmensgegenstand"></textarea>
-            <label for="grundungsdatum">Gründungsdatum</label><input id="grundungsdatum" type="date">
-            <label for="ust-idnr">USt-IdNr.</label><input id="ust-idnr" type="text">
-            <label for="bundesland">Bundesland</label><input id="bundesland" type="text">
-            <label for="registergericht">Registergericht</label><input id="registergericht" type="text">
-            <label for="register">Register</label><input id="register" type="text">
-            <label for="register-nr">Register-Nr.</label><input id="register-nr" type="text">
-            <label for="stifter">Stifter</label><input id="stifter" type="text">
+        <div class="form-section">
+            <h3 class="section-title">Angaben</h3>
+            <label>Anrede</label><input id="anrede" type="text">
+            <label>Unternehmensname</label><input id="unternehmensname" type="text">
+            <label>Unternehmensform</label><input id="unternehmensform" type="text">
+            <label>Familien- oder gemeinnützige Stiftung</label><input id="stiftung_typ" type="text">
+            <label>Straße und Hausnummer</label><input id="strasse" type="text">
+            <label>PLZ</label><input id="plz" type="text">
+            <label>Ort</label><input id="ort" type="text">
+            <label>Telefon</label><input id="telefon" type="tel">
+            <label>Mobil</label><input id="mobil" type="tel">
+            <label>E-Mail</label><input id="email" type="email">
+            <label>Bankverbindung</label><input id="bankverbindung" type="text">
+            <label>Steuernummer</label><input id="steuernummer" type="text">
+            <label>Unternehmensgegenstand</label><textarea id="gegenstand"></textarea>
+            <label>Gründungsdatum</label><input id="gruendungsdatum" type="date">
+            <label>USt-IdNr.</label><input id="ustid" type="text">
+            <label>Bundesland</label><input id="bundesland" type="text">
+            <label>Registergericht</label><input id="registergericht" type="text">
+            <label>Register</label><input id="register" type="text">
+            <label>Register-Nr.</label><input id="register_nr" type="text">
+            <label>Stifter</label><input id="stifter" type="text">
         </div>
 
-        <div class="form-section"><h3 class="section-title">Dokumente</h3>
-            <div class="notice">Dokumente aus der Excel-Vorlage sind hier zunächst als Hinweisfelder hinterlegt.</div>
-            <div class="document-grid">
-                <div><label>Personalausweis des Vorstandes</label><input type="text" placeholder="liegt vor / wird nachgereicht"></div>
-                <div><label>Satzung</label><input type="text" placeholder="liegt vor / wird nachgereicht"></div>
-            </div>
+        <div class="form-section">
+            <h3 class="section-title">Dokumente</h3>
+            <label>Personalausweis des Vorstandes</label><input id="doc_personalausweis_vorstand" type="file" multiple>
+            <label>Satzung</label><input id="doc_satzung" type="file">
         </div>
 
         <div class="actions"><button onclick="submitPage()">Absenden</button></div>
@@ -65,28 +64,35 @@
     initPage();
 
     async function submitPage() {
-        await submitFormData("stiftung", {
-            "anrede": document.getElementById("anrede").value,
-            "unternehmensname": document.getElementById("unternehmensname").value,
-            "unternehmensform": document.getElementById("unternehmensform").value,
-            "familien-oder-gemeinnutzige-stiftung": document.getElementById("familien-oder-gemeinnutzige-stiftung").value,
-            "strasse-und-hausnummer": document.getElementById("strasse-und-hausnummer").value,
-            "plz": document.getElementById("plz").value,
-            "ort": document.getElementById("ort").value,
-            "telefon": document.getElementById("telefon").value,
-            "mobil": document.getElementById("mobil").value,
-            "e-mail": document.getElementById("e-mail").value,
-            "bankverbindung": document.getElementById("bankverbindung").value,
-            "steuernummer": document.getElementById("steuernummer").value,
-            "unternehmensgegenstand": document.getElementById("unternehmensgegenstand").value,
-            "grundungsdatum": document.getElementById("grundungsdatum").value,
-            "ust-idnr": document.getElementById("ust-idnr").value,
-            "bundesland": document.getElementById("bundesland").value,
-            "registergericht": document.getElementById("registergericht").value,
-            "register": document.getElementById("register").value,
-            "register-nr": document.getElementById("register-nr").value,
-            "stifter": document.getElementById("stifter").value
-        });
+        const fields = {
+            anrede: document.getElementById("anrede").value,
+            unternehmensname: document.getElementById("unternehmensname").value,
+            unternehmensform: document.getElementById("unternehmensform").value,
+            stiftung_typ: document.getElementById("stiftung_typ").value,
+            strasse_hausnummer: document.getElementById("strasse").value,
+            plz: document.getElementById("plz").value,
+            ort: document.getElementById("ort").value,
+            telefon: document.getElementById("telefon").value,
+            mobil: document.getElementById("mobil").value,
+            email: document.getElementById("email").value,
+            bankverbindung: document.getElementById("bankverbindung").value,
+            steuernummer: document.getElementById("steuernummer").value,
+            unternehmensgegenstand: document.getElementById("gegenstand").value,
+            gruendungsdatum: document.getElementById("gruendungsdatum").value,
+            ust_idnr: document.getElementById("ustid").value,
+            bundesland: document.getElementById("bundesland").value,
+            registergericht: document.getElementById("registergericht").value,
+            register: document.getElementById("register").value,
+            register_nr: document.getElementById("register_nr").value,
+            stifter: document.getElementById("stifter").value
+        };
+
+        const fileFields = [
+            { id: "doc_personalausweis_vorstand", fieldName: "personalausweis_vorstand" },
+            { id: "doc_satzung", fieldName: "satzung" }
+        ];
+
+        await submitMultipartForm("stiftung", fields, fileFields);
     }
 </script>
 </body>

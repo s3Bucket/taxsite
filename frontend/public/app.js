@@ -27,7 +27,7 @@ async function logout() {
     window.location.href = "/index.html";
 }
 
-async function submitFormData(formName, payload, msgId = "msg") {
+async function submitMultipartForm(formName, fields, fileFields, msgId = "msg") {
     const msg = document.getElementById(msgId);
     if (msg) {
         msg.textContent = "";
@@ -35,24 +35,29 @@ async function submitFormData(formName, payload, msgId = "msg") {
     }
 
     try {
+        const formData = new FormData();
+        formData.append("form_name", formName);
+        formData.append("data", JSON.stringify(fields));
+
+        for (const entry of fileFields) {
+            const input = document.getElementById(entry.id);
+            if (!input || !input.files || input.files.length === 0) continue;
+
+            for (const file of input.files) {
+                formData.append(entry.fieldName, file);
+            }
+        }
+
         const res = await fetch("/api/forms/submit", {
             method: "POST",
             credentials: "include",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                form_name: formName,
-                data: payload
-            })
+            body: formData
         });
 
         const data = await res.json().catch(() => null);
 
         if (!res.ok) {
-            if (msg) {
-                msg.textContent = data?.detail || "Senden fehlgeschlagen.";
-            }
+            if (msg) msg.textContent = data?.detail || "Senden fehlgeschlagen.";
             return false;
         }
 
@@ -63,9 +68,7 @@ async function submitFormData(formName, payload, msgId = "msg") {
 
         return true;
     } catch (err) {
-        if (msg) {
-            msg.textContent = "Server nicht erreichbar.";
-        }
+        if (msg) msg.textContent = "Server nicht erreichbar.";
         return false;
     }
 }
