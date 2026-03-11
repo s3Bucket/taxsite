@@ -1,0 +1,64 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: stammdaten-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: portal
+      POSTGRES_USER: portal
+      POSTGRES_PASSWORD: portalpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  backend:
+    build: ./backend
+    container_name: stammdaten-backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://portal:portalpass@postgres:5432/portal
+      N8N_WEBHOOK_URL: https://dein-n8n.example/webhook/stammdaten
+      APP_SECRET: bitte-ein-langes-zufaelliges-secret-setzen
+    networks:
+      - internal
+      - traefik
+    labels:
+      - traefik.enable=true
+
+      # Router für API
+      - traefik.http.routers.stammdaten-api.rule=Host(`portal.deinedomain.de`) && PathPrefix(`/api`)
+      - traefik.http.routers.stammdaten-api.entrypoints=websecure
+      - traefik.http.routers.stammdaten-api.tls=true
+      - traefik.http.services.stammdaten-api.loadbalancer.server.port=8000
+
+      # Middleware optional: /api Prefix behalten
+      # FastAPI bekommt /api/... direkt
+      # daher hier kein StripPrefix nötig
+
+  frontend:
+    build: ./frontend
+    container_name: stammdaten-frontend
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+
+      # Router für alles außer /api
+      - traefik.http.routers.stammdaten-frontend.rule=Host(`portal.deinedomain.de`)
+      - traefik.http.routers.stammdaten-frontend.entrypoints=websecure
+      - traefik.http.routers.stammdaten-frontend.tls=true
+      - traefik.http.services.stammdaten-frontend.loadbalancer.server.port=80
+
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+  traefik:
+    external: true

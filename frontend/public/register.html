@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrieren</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            background:#f3f6fb;
+            display:flex;
+            height:100vh;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .card{
+            background:white;
+            padding:40px;
+            width:320px;
+            border-radius:10px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin-top:10px;
+        }
+
+        button{
+            width:100%;
+            margin-top:20px;
+            padding:10px;
+            background:#2b6cb0;
+            color:white;
+            border:none;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>Registrieren</h2>
+
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Passwort">
+
+    <button onclick="register()">Registrieren</button>
+
+    <p>
+        <a href="/login.html">Zum Login</a>
+    </p>
+
+</div>
+
+<script>
+
+    async function register(){
+
+        const email=document.getElementById("email").value
+        const password=document.getElementById("password").value
+
+        const res = await fetch("/api/register",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                email:email,
+                password:password
+            })
+
+        })
+
+        if(res.ok){
+
+            alert("Registrierung erfolgreich")
+
+            window.location="/login.html"
+
+        }else{
+
+            alert("Registrierung fehlgeschlagen")
+
+        }
+
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            background:#f3f6fb;
+            padding:40px;
+        }
+
+        .card{
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            max-width:600px;
+            margin:auto;
+            box-shadow:0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        button{
+            padding:10px 20px;
+            margin-top:20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>Stammdaten Portal</h1>
+
+    <p id="user"></p>
+
+    <button onclick="logout()">Logout</button>
+
+    <hr>
+
+    <h2>Formular Test</h2>
+
+    <input id="firma" placeholder="Firma">
+
+    <button onclick="submitForm()">Absenden</button>
+
+</div>
+
+<script>
+
+    const user = localStorage.getItem("user")
+
+    if(!user){
+
+        window.location="/login.html"
+
+    }
+
+    document.getElementById("user").innerText="Eingeloggt als: "+user
+
+
+    function logout(){
+
+        localStorage.removeItem("user")
+
+        window.location="/login.html"
+
+    }
+
+    async function submitForm(){
+
+        const firma=document.getElementById("firma").value
+
+        await fetch("/api/forms/submit",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                firma:firma
+            })
+
+        })
+
+        alert("Gesendet")
+
+    }
+
+</script>
+
+</body>
+</html>
