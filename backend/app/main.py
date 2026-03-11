@@ -39,6 +39,12 @@ def read_session_cookie(cookie_value: str):
 
 @app.post("/api/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
+    if len(user.password.encode("utf-8")) > 72:
+        raise HTTPException(
+            status_code=400,
+            detail="Passwort ist zu lang. Maximal 72 Bytes bei bcrypt."
+        )
+
     existing = db.query(User).filter(User.email == user.email).first()
     if existing:
         raise HTTPException(status_code=400, detail="User already exists")
