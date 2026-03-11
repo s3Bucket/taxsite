@@ -4,6 +4,7 @@ from itsdangerous import URLSafeSerializer, BadSignature
 import os
 import requests
 
+from starlette.datastructures import UploadFile as StarletteUploadFile
 from .database import SessionLocal, engine, Base
 from .models import User
 from .schemas import UserCreate, UserLogin
@@ -158,12 +159,12 @@ async def submit_form(
     forward_files = []
 
     for key, value in form.multi_items():
-        if isinstance(value, UploadFile):
+        if isinstance(value, StarletteUploadFile):
             content = await value.read()
 
             forward_files.append(
                 (
-                    key,   # <-- echter Feldname, z.B. "gesellschaftsvertrag"
+                    key,
                     (
                         value.filename,
                         content,
@@ -172,10 +173,11 @@ async def submit_form(
                 )
             )
 
+    print("FORWARD DATA:", forward_data)
+    print("FORWARD FILE COUNT:", len(forward_files))
+    print("FORWARD FILE FIELDS:", [item[0] for item in forward_files])
+
     try:
-        print("FORWARD DATA:", forward_data)
-        print("FORWARD FILE COUNT:", len(forward_files))
-        print("FORWARD FILE FIELDS:", [item[0] for item in forward_files])
         response = requests.post(
             N8N_WEBHOOK_URL,
             data=forward_data,
