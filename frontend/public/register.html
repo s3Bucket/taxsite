@@ -3,98 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <title>Registrieren</title>
-
     <style>
-
-        body{
-            font-family:Arial;
-            background:#f3f6fb;
-            display:flex;
-            height:100vh;
-            justify-content:center;
-            align-items:center;
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
         }
-
-        .card{
-            background:white;
-            padding:40px;
-            width:320px;
-            border-radius:10px;
-            box-shadow:0 10px 30px rgba(0,0,0,0.1);
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            width: 340px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-
-        input{
-            width:100%;
-            padding:10px;
-            margin-top:10px;
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            box-sizing: border-box;
         }
-
-        button{
-            width:100%;
-            margin-top:20px;
-            padding:10px;
-            background:#2b6cb0;
-            color:white;
-            border:none;
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 10px;
+            background: #2b6cb0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-
+        .msg {
+            margin-top: 12px;
+            min-height: 20px;
+        }
     </style>
 </head>
-
 <body>
-
 <div class="card">
-
     <h2>Registrieren</h2>
 
-    <input id="email" placeholder="Email">
+    <input id="email" type="email" placeholder="E-Mail">
     <input id="password" type="password" placeholder="Passwort">
 
-    <button onclick="register()">Registrieren</button>
+    <button onclick="registerUser()">Registrieren</button>
 
-    <p>
-        <a href="/index.html">Zum Login</a>
-    </p>
+    <div id="msg" class="msg"></div>
 
+    <p><a href="/index.html">Zum Login</a></p>
 </div>
 
 <script>
+    async function registerUser() {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const msg = document.getElementById("msg");
+        msg.textContent = "";
 
-    async function register(){
-
-        const email=document.getElementById("email").value
-        const password=document.getElementById("password").value
-
-        const res = await fetch("/api/register",{
-
-            method:"POST",
-
-            headers:{
-                "Content-Type":"application/json"
+        const res = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
             },
+            body: JSON.stringify({ email, password })
+        });
 
-            body:JSON.stringify({
-                email:email,
-                password:password
-            })
-
-        })
-
-        if(res.ok){
-
-            alert("Registrierung erfolgreich")
-
-            window.location="/login.html"
-
-        }else{
-
-            alert("Registrierung fehlgeschlagen")
-
+        if (!res.ok) {
+            msg.textContent = "Registrierung fehlgeschlagen.";
+            return;
         }
 
+        msg.textContent = "Registrierung erfolgreich. Bitte jetzt anmelden.";
+        setTimeout(() => {
+            window.location.href = "/index.html";
+        }, 1200);
     }
-
 </script>
-
 </body>
 </html>
