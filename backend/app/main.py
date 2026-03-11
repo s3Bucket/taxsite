@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from itsdangerous import URLSafeSerializer, BadSignature
 import os
 import requests
+import hashlib
 
 from starlette.datastructures import UploadFile as StarletteUploadFile
 from .database import SessionLocal, engine, Base
@@ -155,12 +156,25 @@ async def submit_form(
         "submitted_by_email": user.email,
     }
 
-    # Alle Upload-Felder einsammeln
     forward_files = []
+    seen_files = set()
 
     for key, value in form.multi_items():
         if isinstance(value, StarletteUploadFile):
             content = await value.read()
+
+            file_signature = hashlib.sha256(
+                (
+                        f"{key}|{value.filename}|{value.content_type}|".encode("utf-8")
+                        + content
+                )
+            ).hexdigest()
+
+            if file_signature in seen_files:
+                print(f"SKIPPING DUPLICATE FILE: field={key}, filename={value.filename}")
+                continue
+
+            seen_files.add(file_signature)
 
             forward_files.append(
                 (
@@ -172,10 +186,6 @@ async def submit_form(
                     )
                 )
             )
-
-    print("FORWARD DATA:", forward_data)
-    print("FORWARD FILE COUNT:", len(forward_files))
-    print("FORWARD FILE FIELDS:", [item[0] for item in forward_files])
 
     try:
         response = requests.post(
