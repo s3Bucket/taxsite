@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Depends, HTTPException, Response, Request
-from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from itsdangerous import URLSafeSerializer, BadSignature
 import os
@@ -68,9 +67,9 @@ def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
         key=COOKIE_NAME,
         value=session_value,
         httponly=True,
-        secure=True,      # bei HTTPS
+        secure=True,
         samesite="Lax",
-        max_age=60 * 60 * 8,  # 8 Stunden
+        max_age=60 * 60 * 8,
         path="/"
     )
 
