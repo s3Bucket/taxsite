@@ -2,84 +2,62 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f3f6fb;
-            display: flex;
-            height: 100vh;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-        }
-        .card {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            width: 340px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            margin-top: 20px;
-            padding: 10px;
-            background: #2b6cb0;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .error {
-            color: #b91c1c;
-            margin-top: 12px;
-            min-height: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<div class="card">
-    <h2>Login</h2>
+<div class="page-center">
+    <div class="card">
+        <h2>Anmelden</h2>
+        <p>Bitte melde dich mit deinen Zugangsdaten an.</p>
 
-    <input id="email" type="email" placeholder="E-Mail">
-    <input id="password" type="password" placeholder="Passwort">
+        <input id="email" type="email" placeholder="E-Mail">
+        <input id="password" type="password" placeholder="Passwort">
 
-    <button onclick="login()">Anmelden</button>
+        <button onclick="loginUser()">Anmelden</button>
 
-    <div id="error" class="error"></div>
+        <div id="msg" class="msg"></div>
 
-    <p>Noch kein Konto? <a href="/register.html">Registrieren</a></p>
+        <p class="small" style="margin-top:18px;">
+            Noch kein Konto? <a href="/register.html">Jetzt registrieren</a>
+        </p>
+    </div>
 </div>
 
 <script>
-    async function login() {
+    async function loginUser() {
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
-        const errorBox = document.getElementById("error");
-        errorBox.textContent = "";
+        const msg = document.getElementById("msg");
+        msg.textContent = "";
 
-        const res = await fetch("/api/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify({ email, password })
-        });
-
-        if (!res.ok) {
-            errorBox.textContent = "Login fehlgeschlagen.";
+        if (!email || !password) {
+            msg.textContent = "Bitte E-Mail und Passwort eingeben.";
             return;
         }
 
-        // Nur bei erfolgreichem Backend-Login weiter
-        window.location.href = "/eu.html";
+        try {
+            const res = await fetch("/api/login", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                msg.textContent = data?.detail || "Login fehlgeschlagen.";
+                return;
+            }
+
+            window.location.href = "/eu.html";
+        } catch (err) {
+            msg.textContent = "Server nicht erreichbar.";
+        }
     }
 </script>
 </body>

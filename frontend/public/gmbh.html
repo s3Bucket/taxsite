@@ -1,402 +1,70 @@
-<!doctype html><html lang='de'><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width, initial-scale=1'/><title>GmbH – Stammdaten</title><link rel='stylesheet' href='styles.css'/>
-</head><body>
-<header>
-<h1>GmbH – Stammdaten</h1>
-<p>Bitte fülle die Felder aus und sende das Formular ab. Die Daten werden an n8n übergeben.</p>
-<div class='actions'><a class='btn' href='portal.html'>← Zur Übersicht</a></div>
-</header><main><div class='card'>
-<form id='mainForm' autocomplete='on'>
-<div id='alertBox' style='display:none' class='alert'></div>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GmbH</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="panel">
+        <div class="topbar">
+            <div>
+                <h1>GmbH</h1>
+                <p>Stammdaten für GmbH.</p>
+            </div>
+            <div class="actions">
+                <a class="btn btn-secondary" href="/kg-ohg.html">Zur nächsten Seite</a>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
 
-<fieldset><legend>Angaben</legend>
-<div class='fieldset-body'>
-<div style='margin:10px 0'>
-<label for='anrede'>Anrede</label>
-<input id='anrede' type='text' name='anrede' placeholder='Anrede'/>
+        <div class="grid grid-2">
+            <div>
+                <label>Unternehmensname</label>
+                <input id="unternehmensname" type="text">
+            </div>
+            <div>
+                <label>Register-Nr.</label>
+                <input id="register_nr" type="text">
+            </div>
+            <div>
+                <label>Registergericht</label>
+                <input id="registergericht" type="text">
+            </div>
+            <div>
+                <label>Geschäftsführer</label>
+                <input id="geschaeftsfuehrer" type="text">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <label>Unternehmensgegenstand</label>
+            <textarea id="gegenstand"></textarea>
+        </div>
+
+        <div class="actions">
+            <button onclick="submitGmbH()">Absenden</button>
+        </div>
+
+        <div id="msg" class="msg"></div>
+    </div>
 </div>
-<div style='margin:10px 0'>
-<label for='unternehmensname'>Unternehmensname</label>
-<input id='unternehmensname' type='text' name='unternehmensname' placeholder='Unternehmensname'/>
-</div>
-<div style='margin:10px 0'>
-<label for='unternehmensform'>Unternehmensform</label>
-<input id='unternehmensform' type='text' name='unternehmensform' placeholder='Unternehmensform'/>
-</div>
-<div style='margin:10px 0'>
-<label for='strae-und-hausnummer'>Straße und Hausnummer</label>
-<input id='strae-und-hausnummer' type='text' name='strae-und-hausnummer' placeholder='Straße und Hausnummer'/>
-</div>
-<div style='margin:10px 0'>
-<label for='plz'>PLZ</label>
-<input id='plz' type='text' name='plz' placeholder='PLZ'/>
-</div>
-<div style='margin:10px 0'>
-<label for='ort'>Ort</label>
-<input id='ort' type='text' name='ort' placeholder='Ort'/>
-</div>
-<div style='margin:10px 0'>
-<label for='telefon'>Telefon</label>
-<input id='telefon' type='tel' name='telefon' placeholder='Telefon'/>
-</div>
-<div style='margin:10px 0'>
-<label for='mobil'>Mobil</label>
-<input id='mobil' type='tel' name='mobil' placeholder='Mobil'/>
-</div>
-<div style='margin:10px 0'>
-<label for='e-mail'>E-Mail</label>
-<input id='e-mail' type='email' name='e-mail' placeholder='E-Mail'/>
-</div>
-<div style='margin:10px 0'>
-<label for='bankverbindung'>Bankverbindung</label>
-<input id='bankverbindung' type='text' name='bankverbindung' placeholder='Bankverbindung'/>
-</div>
-<div style='margin:10px 0'>
-<label for='steuernummer'>Steuernummer</label>
-<input id='steuernummer' type='text' name='steuernummer' placeholder='Steuernummer'/>
-</div>
-<div style='margin:10px 0'>
-<label for='unternehmensgegenstand'>Unternehmensgegenstand</label>
-<textarea id='unternehmensgegenstand' name='unternehmensgegenstand' rows='3' placeholder='Unternehmensgegenstand'></textarea>
-</div>
-<div style='margin:10px 0'>
-<label for='grundungsdatum'>Gründungsdatum</label>
-<input id='grundungsdatum' type='date' name='grundungsdatum' placeholder='Gründungsdatum'/>
-</div>
-<div style='margin:10px 0'>
-<label for='ust-idnr'>USt-IdNr.</label>
-<input id='ust-idnr' type='text' name='ust-idnr' placeholder='USt-IdNr.'/>
-</div>
-<div style='margin:10px 0'>
-<label for='bundesland'>Bundesland</label>
-<input id='bundesland' type='text' name='bundesland' placeholder='Bundesland'/>
-</div>
-<div style='margin:10px 0'>
-<label for='registergericht'>Registergericht</label>
-<input id='registergericht' type='text' name='registergericht' placeholder='Registergericht'/>
-</div>
-<div style='margin:10px 0'>
-<label for='register'>Register</label>
-<input id='register' type='text' name='register' placeholder='Register'/>
-</div>
-<div style='margin:10px 0'>
-<label for='register-nr'>Register-Nr.</label>
-<input id='register-nr' type='text' name='register-nr' placeholder='Register-Nr.'/>
-</div>
-<div style='margin:10px 0'>
-<label for='gesellschafter'>Gesellschafter</label>
-<input id='gesellschafter' type='text' name='gesellschafter' placeholder='Gesellschafter'/>
-</div>
-</div>
-</fieldset>
-<fieldset><legend>Buchhaltung</legend>
-<div class='fieldset-body'>
-<div style='margin:10px 0'>
-<label for='ist-sollversteuerung'>Ist- / Sollversteuerung</label>
-<input id='ist-sollversteuerung' type='text' name='ist-sollversteuerung' placeholder='Ist- / Sollversteuerung'/>
-</div>
-<div style='margin:10px 0'>
-<label for='voranmeldungszeitraum'>Voranmeldungszeitraum</label>
-<input id='voranmeldungszeitraum' type='text' name='voranmeldungszeitraum' placeholder='Voranmeldungszeitraum'/>
-</div>
-</div>
-</fieldset>
-<fieldset><legend>Dokumente</legend>
-<div class='fieldset-body'>
-<hr/>
-<p class='small'>Dokumente: bitte als Dateien auswählen (die Dateien selbst werden nicht im Entwurf gespeichert – nur die Dateinamen).</p>
-<div style='margin:10px 0'>
-<label>Personalausweis des Geschäftsführers</label>
-<input type='file' name='doc__personalausweis-des-geschaftsfuhrers' multiple />
-</div>
-<div style='margin:10px 0'>
-<label>Personalausweis der Gesellschafter</label>
-<input type='file' name='doc__personalausweis-der-gesellschafter' multiple />
-</div>
-<div style='margin:10px 0'>
-<label>Gewerbeanmeldung</label>
-<input type='file' name='doc__gewerbeanmeldung' multiple />
-</div>
-<div style='margin:10px 0'>
-<label>Gesellschaftsvertrag</label>
-<input type='file' name='doc__gesellschaftsvertrag' multiple />
-</div>
-<div style='margin:10px 0'>
-<label>Transparenzregistereintrag</label>
-<input type='file' name='doc__transparenzregistereintrag' multiple />
-</div>
-</div>
-</fieldset>
-<div class='actions'><button class='primary' type='button' id='submitBtn'>Absenden</button>
-                 <button type='button' id='saveBtn'>Speichern</button><button type='button' id='loadBtn'>Laden</button><button type='button' id='exportBtn'>JSON exportieren</button><button type='reset'>Zurücksetzen</button></div>
-</form></div></main>
+
 <script>
-// === n8n Webhook Submit (enhanced) ===
-const WEBHOOK_URL = "https://DEIN-N8N-WEBHOOK-URL/webhook/stammdaten";
+    requireAuth();
 
-// Timeout helper (AbortController)
-async function fetchWithTimeout(url, options={}, timeoutMs=20000){
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, {...options, signal: controller.signal});
-    return res;
-  } finally {
-    clearTimeout(id);
-  }
-}
-
-function setAlert(type, title, details=[]) {
-  const box = document.getElementById("alertBox");
-  box.className = "alert " + (type || "");
-  box.style.display = "block";
-  const safe = (s) => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
-  let html = `<div class="title">${safe(title)}</div>`;
-  if (details && details.length) {
-    html += "<ul>" + details.map(d => `<li>${safe(d)}</li>`).join("") + "</ul>";
-  }
-  box.innerHTML = html;
-  box.scrollIntoView({behavior:"smooth", block:"start"});
-}
-
-function clearAlert() {
-  const box = document.getElementById("alertBox");
-  box.style.display = "none";
-  box.innerHTML = "";
-}
-
-function toast(msg, isError=false){
-  const t = document.createElement("div");
-  t.textContent = msg;
-  t.style.position="fixed";
-  t.style.left="50%";
-  t.style.bottom="18px";
-  t.style.transform="translateX(-50%)";
-  t.style.background= isError ? "rgba(127,29,29,.98)" : "rgba(15,23,42,.98)";
-  t.style.border="1px solid rgba(37,99,235,.35)";
-  t.style.padding="10px 12px";
-  t.style.borderRadius="12px";
-  t.style.color="#fff";
-  t.style.boxShadow="0 10px 30px rgba(2,6,23,.25)";
-  t.style.zIndex="9999";
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(), 2200);
-}
-
-function markField(el, isError) {
-  if (!el || !el.classList) return;
-  el.classList.toggle("field-error", !!isError);
-}
-
-function inferRequiredFields(form) {
-  // Heuristics: treat common key fields as required if present
-  const keys = [
-    "vorname","nachname","unternehmensname","e-mail","email","straße","strasse","plz","ort"
-  ];
-  const required = [];
-  for (const el of Array.from(form.elements)) {
-    if (!el.name || el.type === "file") continue;
-    const n = el.name.toLowerCase();
-    if (keys.some(k => n.includes(k))) required.push(el);
-  }
-  // ensure uniqueness
-  return Array.from(new Set(required));
-}
-
-function validateForm(form) {
-  clearAlert();
-  let errors = [];
-
-  // clear previous highlighting
-  for (const el of Array.from(form.elements)) markField(el, false);
-
-  // basic email validation if present
-  const emailEls = Array.from(form.elements).filter(e => e.name && (e.name.toLowerCase().includes("email") || e.type==="email"));
-  for (const el of emailEls) {
-    if (el.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())) {
-      errors.push(`Ungültige E-Mail: "${el.value}"`);
-      markField(el, true);
+    async function submitGmbH() {
+        await submitFormData("gmbh", {
+            unternehmensname: document.getElementById("unternehmensname").value,
+            register_nr: document.getElementById("register_nr").value,
+            registergericht: document.getElementById("registergericht").value,
+            geschaeftsfuehrer: document.getElementById("geschaeftsfuehrer").value,
+            gegenstand: document.getElementById("gegenstand").value
+        });
     }
-  }
-
-  // required (heuristic)
-  const req = inferRequiredFields(form);
-  for (const el of req) {
-    if (!el.value || !String(el.value).trim()) {
-      const label = el.closest("div")?.querySelector("label")?.innerText || el.name;
-      errors.push(`Pflichtfeld fehlt: ${label}`);
-      markField(el, true);
-    }
-  }
-
-  // date plausibility: no future dates for "geburtsdatum"
-  const dateEls = Array.from(form.elements).filter(e => e.type==="date" && e.value);
-  const now = new Date();
-  for (const el of dateEls) {
-    const name = el.name.toLowerCase();
-    const d = new Date(el.value + "T00:00:00");
-    if (name.includes("geburtsdatum") && d > now) {
-      errors.push("Geburtsdatum liegt in der Zukunft.");
-      markField(el, true);
-    }
-  }
-
-  if (errors.length) {
-    setAlert("error", "Bitte prüfe die Eingaben.", errors.slice(0, 10));
-    toast("Bitte Pflichtfelder ausfüllen.", true);
-    return false;
-  }
-  return true;
-}
-
-function setSubmitting(isSubmitting) {
-  const submitBtn = document.getElementById("submitBtn");
-  const exportBtn = document.getElementById("exportBtn");
-  const saveBtn = document.getElementById("saveBtn");
-  const loadBtn = document.getElementById("loadBtn");
-  const resetBtn = document.querySelector("button[type='reset']");
-  [submitBtn, exportBtn, saveBtn, loadBtn, resetBtn].forEach(b => { if (b) b.disabled = isSubmitting; });
-  if (submitBtn) {
-    submitBtn.innerHTML = isSubmitting ? `<span class="spinner"></span> Sende…` : "Absenden";
-  }
-}
-
-async function submitToWebhook(form) {
-  clearAlert();
-
-  if (!WEBHOOK_URL || WEBHOOK_URL.includes("DEIN-N8N-WEBHOOK-URL")) {
-    setAlert("error", "Webhook-URL fehlt.", ["Bitte WEBHOOK_URL in der HTML-Datei setzen."]);
-    toast("WEBHOOK_URL fehlt.", true);
-    return;
-  }
-
-  if (!navigator.onLine) {
-    setAlert("error", "Offline.", ["Keine Internetverbindung erkannt. Bitte erneut versuchen."]);
-    toast("Offline.", true);
-    return;
-  }
-
-  if (!validateForm(form)) return;
-
-  const fd = new FormData(form);
-  fd.append("_meta_source", window.location.pathname.split("/").pop() || "form");
-  fd.append("_meta_ts", new Date().toISOString());
-
-  setSubmitting(true);
-
-  try {
-    const res = await fetchWithTimeout(WEBHOOK_URL, { method: "POST", body: fd }, 25000);
-
-    // n8n can return JSON or text; handle both
-    const ct = res.headers.get("content-type") || "";
-    let payloadText = "";
-    let payloadJson = null;
-    if (ct.includes("application/json")) {
-      payloadJson = await res.json().catch(()=>null);
-    } else {
-      payloadText = await res.text().catch(()=> "");
-    }
-
-    if (!res.ok) {
-      const hint = payloadJson ? JSON.stringify(payloadJson).slice(0,300) : payloadText.slice(0,300);
-      throw new Error(`Webhook Fehler (${res.status}): ${hint || "unbekannt"}`);
-    }
-
-    setAlert("success", "Gesendet ✔", [
-      "Die Daten wurden an n8n übergeben.",
-      payloadJson ? "Antwort: JSON empfangen." : (payloadText ? "Antwort: Text empfangen." : "Antwort: leer.")
-    ]);
-    toast("Gesendet ✔");
-
-    // Optional: clear draft on success
-    const key = form.dataset.draftKey;
-    if (key) localStorage.removeItem(key);
-
-    // Optional: reset after success
-    // form.reset();
-
-  } catch (e) {
-    console.error(e);
-    const msg = (e && e.name === "AbortError")
-      ? "Timeout: n8n hat nicht rechtzeitig geantwortet."
-      : ("Senden fehlgeschlagen: " + (e?.message || e));
-    setAlert("error", "Senden fehlgeschlagen.", [
-      msg,
-      "Tipp: Prüfe CORS / Reverse-Proxy, und ob die Webhook-URL stimmt."
-    ]);
-    toast("Senden fehlgeschlagen.", true);
-  } finally {
-    setSubmitting(false);
-  }
-}
-
-// === Draft helpers (local) ===
-function formToJSON(form){
-  const data = {};
-  const fd = new FormData(form);
-  for (const [k,v] of fd.entries()) {
-    if (v instanceof File) {
-      if (!v || !v.name) continue;
-      if (!data[k]) data[k]=[];
-      data[k].push(v.name);
-    } else {
-      if (data[k] !== undefined) {
-        if (!Array.isArray(data[k])) data[k]=[data[k]];
-        data[k].push(v);
-      } else {
-        data[k]=v;
-      }
-    }
-  }
-  return data;
-}
-function saveDraft(form, key){ localStorage.setItem(key, JSON.stringify(formToJSON(form))); toast("Entwurf gespeichert."); }
-function loadDraft(form, key){
-  const raw = localStorage.getItem(key);
-  if (!raw){ toast("Kein Entwurf gefunden."); return; }
-  const data = JSON.parse(raw);
-  for (const [k,v] of Object.entries(data)) {
-    const el = form.elements[k];
-    if (!el) continue;
-    if (el.type === "file") continue;
-    el.value = Array.isArray(v) ? v[0] : v;
-  }
-  toast("Entwurf geladen.");
-}
-function downloadJSON(form, filename){
-  const data = formToJSON(form);
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-// === Collapsible sections ===
-function setupCollapsibles(){
-  document.querySelectorAll("fieldset").forEach(fs => {
-    fs.dataset.collapsible = "1";
-    const legend = fs.querySelector("legend");
-    if (!legend) return;
-    if (!legend.querySelector(".chev")) {
-      const chev = document.createElement("span");
-      chev.className = "chev";
-      legend.prepend(chev);
-    }
-    legend.addEventListener("click", () => {
-      fs.classList.toggle("collapsed");
-    });
-  });
-}
-
-const form = document.getElementById('mainForm');
-form.dataset.draftKey = 'draft:gmbh';
-
-setupCollapsibles();
-
-document.getElementById('submitBtn').addEventListener('click', () => submitToWebhook(form));
-document.getElementById('saveBtn').addEventListener('click', () => saveDraft(form, 'draft:gmbh'));
-document.getElementById('loadBtn').addEventListener('click', () => loadDraft(form, 'draft:gmbh'));
-document.getElementById('exportBtn').addEventListener('click', () => downloadJSON(form, 'gmbh.json'));
 </script>
-</body></html>
+</body>
+</html>

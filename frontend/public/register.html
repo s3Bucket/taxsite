@@ -4,129 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrieren</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f3f6fb;
-            display: flex;
-            height: 100vh;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .card {
-            background: white;
-            padding: 40px;
-            width: 360px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
-            box-sizing: border-box;
-        }
-
-        h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: #1e293b;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-        }
-
-        button {
-            width: 100%;
-            margin-top: 20px;
-            padding: 12px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        button:hover {
-            background: #1d4ed8;
-        }
-
-        .password-rules {
-            display: block;
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 8px;
-            line-height: 1.4;
-        }
-
-        .password-rules ul {
-            margin: 6px 0 0 18px;
-            padding: 0;
-        }
-
-        .password-rules li {
-            margin-bottom: 3px;
-        }
-
-        .msg {
-            margin-top: 16px;
-            min-height: 22px;
-            font-size: 14px;
-            color: #b91c1c;
-        }
-
-        .link-row {
-            margin-top: 18px;
-            font-size: 14px;
-        }
-
-        .link-row a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-
-        .link-row a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<div class="card">
-    <h2>Registrieren</h2>
+<div class="page-center">
+    <div class="card">
+        <h2>Registrieren</h2>
 
-    <input id="email" type="email" placeholder="E-Mail">
+        <input id="email" type="email" placeholder="E-Mail">
+        <input id="password" type="password" placeholder="Passwort">
 
-    <input id="password" type="password" placeholder="Passwort">
+        <small class="password-rules">
+            Passwortregeln:
+            <ul>
+                <li>mindestens 8 Zeichen</li>
+                <li>maximal 72 Zeichen</li>
+                <li>erlaubte Zeichen: Buchstaben, Zahlen und !@#$%^&amp;*()_-+=.?</li>
+            </ul>
+        </small>
 
-    <small class="password-rules">
-        Passwortregeln:
-        <ul>
-            <li>mindestens 8 Zeichen</li>
-            <li>maximal 72 Zeichen</li>
-            <li>erlaubte Zeichen: Buchstaben, Zahlen und !@#$%^&amp;*()_-+=.?</li>
-        </ul>
-    </small>
+        <button onclick="registerUser()">Registrieren</button>
 
-    <button onclick="registerUser()">Registrieren</button>
+        <div id="msg" class="msg"></div>
 
-    <div id="msg" class="msg"></div>
-
-    <div class="link-row">
-        <a href="/index.html">Zum Login</a>
+        <p class="small" style="margin-top:18px;">
+            <a href="/index.html">Zum Login</a>
+        </p>
     </div>
 </div>
 
@@ -137,9 +40,7 @@
         const msg = document.getElementById("msg");
 
         msg.textContent = "";
-        msg.style.color = "#b91c1c";
-
-        // ---------- Frontend Validierung ----------
+        msg.classList.remove("success");
 
         if (!email) {
             msg.textContent = "Bitte eine E-Mail-Adresse eingeben.";
@@ -147,7 +48,6 @@
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
         if (!emailRegex.test(email)) {
             msg.textContent = "Bitte eine gültige E-Mail-Adresse eingeben.";
             return;
@@ -169,13 +69,10 @@
         }
 
         const pwRegex = /^[A-Za-z0-9!@#$%^&*()_\-+=.?]+$/;
-
         if (!pwRegex.test(password)) {
             msg.textContent = "Passwort enthält unerlaubte Zeichen.";
             return;
         }
-
-        // ---------- Request ----------
 
         try {
             const res = await fetch("/api/register", {
@@ -199,22 +96,16 @@
                     return;
                 }
 
-                if (data?.detail) {
-                    msg.textContent = "Registrierung fehlgeschlagen: " + data.detail;
-                    return;
-                }
-
-                msg.textContent = "Registrierung fehlgeschlagen.";
+                msg.textContent = data?.detail || "Registrierung fehlgeschlagen.";
                 return;
             }
 
-            msg.style.color = "#15803d";
             msg.textContent = "Registrierung erfolgreich. Weiter zum Login.";
+            msg.classList.add("success");
 
             setTimeout(() => {
                 window.location.href = "/index.html";
             }, 1200);
-
         } catch (err) {
             msg.textContent = "Server nicht erreichbar.";
         }

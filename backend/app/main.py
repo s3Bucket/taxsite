@@ -1,7 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException, Response, Request
 from sqlalchemy.orm import Session
 from itsdangerous import URLSafeSerializer, BadSignature
+from datetime import datetime
 import os
+import requests
 
 from .database import SessionLocal, engine, Base
 from .models import User
@@ -14,6 +16,7 @@ Base.metadata.create_all(bind=engine)
 
 SECRET_KEY = os.getenv("SECRET_KEY", "change-me-please")
 COOKIE_NAME = "portal_session"
+N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL")
 
 serializer = URLSafeSerializer(SECRET_KEY, salt="auth-session")
 
@@ -37,22 +40,37 @@ def read_session_cookie(cookie_value: str):
         return None
 
 
+def get_current_user(request: Request, db: Session) -> User:
+    cookie_value = request.cookies.get(COOKIE_NAME)
+
+    if not cookie_value:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    session_data = read_session_cookie(cookie_value)
+    if not session_data:
+        raise HTTPException(status_code=401, detail="Invalid session")
+
+    user_id = session_data.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid session")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+
+    return user
+
+
 @app.post("/api/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
-
     existing = db.query(User).filter(User.email == user.email).first()
-
     if existing:
-        raise HTTPException(
-            status_code=400,
-            detail="User already exists"
-        )
+        raise HTTPException(status_code=400, detail="User already exists")
 
     new_user = User(
         email=user.email,
         password_hash=hash_password(user.password)
     )
-
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -90,21 +108,31 @@ def logout(response: Response):
 
 @app.get("/api/auth/check")
 def auth_check(request: Request, db: Session = Depends(get_db)):
-    cookie_value = request.cookies.get(COOKIE_NAME)
-
-    if not cookie_value:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-
-    session_data = read_session_cookie(cookie_value)
-    if not session_data:
-        raise HTTPException(status_code=401, detail="Invalid session")
-
-    user_id = session_data.get("user_id")
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid session")
-
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-
+    user = get_current_user(request, db)
     return {"status": "authenticated", "user": user.email}
+
+
+@app.post("/api/forms/submit")
+async def submit_form(request: Request, db: Session = Depends(get_db)):
+    user = get_current_user(request, db)
+
+    payload = await request.json()
+
+    enriched_payload = {
+        "submitted_by": {
+            "user_id": user.id,
+            "email": user.email
+        },
+        "submitted_at": datetime.utcnow().isoformat(),
+        "form_data": payload
+    }
+
+    # optional: an n8n weiterleiten
+    if N8N_WEBHOOK_URL:
+        r = requests.post(N8N_WEBHOOK_URL, json=enriched_payload, timeout=20)
+        r.raise_for_status()
+
+    return {
+        "status": "received",
+        "submitted_by": user.email
+    }
