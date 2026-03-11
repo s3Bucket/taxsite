@@ -48,6 +48,25 @@ async function submitMultipartForm(formName, fields, fileFields, msgId = "msg") 
             }
         }
 
+        for (const entry of fileFields) {
+            const input = document.getElementById(entry.id);
+            console.log("CHECK FIELD:", entry.id, input);
+
+            if (!input) {
+                console.log("FIELD NOT FOUND:", entry.id);
+                continue;
+            }
+
+            console.log("FILES LENGTH:", input.files ? input.files.length : "no files object");
+
+            if (!input.files || input.files.length === 0) continue;
+
+            for (const file of input.files) {
+                console.log("ADDING FILE:", entry.fieldName, file.name, file.size);
+                formData.append(entry.fieldName, file);
+            }
+        }
+
         const res = await fetch("/api/forms/submit", {
             method: "POST",
             credentials: "include",
