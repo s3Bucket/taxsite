@@ -2,98 +2,52 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Portal</title>
-
+    <title>Login</title>
     <style>
-
-        body{
-            font-family:Arial;
-            background:#f3f6fb;
-            padding:40px;
-        }
-
-        .card{
-            background:white;
-            padding:30px;
-            border-radius:10px;
-            max-width:600px;
-            margin:auto;
-            box-shadow:0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        button{
-            padding:10px 20px;
-            margin-top:20px;
-        }
-
+        body{font-family:Arial;background:#f3f6fb;display:flex;height:100vh;justify-content:center;align-items:center;}
+        .card{background:white;padding:40px;border-radius:10px;width:320px;box-shadow:0 10px 30px rgba(0,0,0,0.1);}
+        input{width:100%;padding:10px;margin-top:10px;}
+        button{width:100%;margin-top:20px;padding:10px;background:#2b6cb0;color:white;border:none;border-radius:5px;cursor:pointer;}
+        .error{color:red;margin-top:10px;}
     </style>
-
 </head>
-
 <body>
-
 <div class="card">
-
-    <h1>Stammdaten Portal</h1>
-
-    <p id="user"></p>
-
-    <button onclick="logout()">Logout</button>
-
-    <hr>
-
-    <h2>Formular Test</h2>
-
-    <input id="firma" placeholder="Firma">
-
-    <button onclick="submitForm()">Absenden</button>
-
+    <h2>Login</h2>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Passwort">
+    <button onclick="login()">Login</button>
+    <div id="error" class="error"></div>
+    <p>Noch kein Konto? <a href="/register.html">Registrieren</a></p>
 </div>
 
 <script>
+    async function login() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
 
-    const user = localStorage.getItem("user")
+        const res = await fetch("/api/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ email, password }),
+            credentials: "include"
+        });
 
-    if(!user){
+        if (!res.ok) {
+            document.getElementById("error").innerText = "Login fehlgeschlagen";
+            return;
+        }
 
-        window.location="/login.html"
-
+        window.location = "/";
     }
 
-    document.getElementById("user").innerText="Eingeloggt als: "+user
-
-
-    function logout(){
-
-        localStorage.removeItem("user")
-
-        window.location="/login.html"
-
+    async function logout() {
+        await fetch("/api/logout", {
+            method: "POST",
+            credentials: "include"
+        });
+        window.location = "/login.html";
     }
-
-    async function submitForm(){
-
-        const firma=document.getElementById("firma").value
-
-        await fetch("/api/forms/submit",{
-
-            method:"POST",
-
-            headers:{
-                "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify({
-                firma:firma
-            })
-
-        })
-
-        alert("Gesendet")
-
-    }
-
 </script>
-
 </body>
 </html>

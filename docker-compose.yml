@@ -3,38 +3,28 @@ version: "3.9"
 services:
   postgres:
     image: postgres:16
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_DB: portal
       POSTGRES_USER: portal
       POSTGRES_PASSWORD: portalpass
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - internal
 
   backend:
-    build:
-      context: ./backend
-    restart: unless-stopped
+    build: ./backend
+    restart: always
     depends_on:
       - postgres
     environment:
       DATABASE_URL: postgresql://portal:portalpass@postgres:5432/portal
-    networks:
-      - internal
+      SECRET_KEY: bitte-ein-lang-zufaelliges-secret-setzen
 
   frontend:
-    build:
-      context: ./frontend
-    restart: unless-stopped
+    build: ./frontend
+    restart: always
     depends_on:
       - backend
-    networks:
-      - internal
 
 volumes:
   postgres_data:
-
-networks:
-  internal:
