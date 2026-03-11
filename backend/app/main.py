@@ -173,6 +173,9 @@ async def submit_form(
             )
 
     try:
+        print("FORWARD DATA:", forward_data)
+        print("FORWARD FILE COUNT:", len(forward_files))
+        print("FORWARD FILE FIELDS:", [item[0] for item in forward_files])
         response = requests.post(
             N8N_WEBHOOK_URL,
             data=forward_data,
