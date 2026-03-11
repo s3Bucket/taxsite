@@ -1,86 +1,94 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Registrieren</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f3f6fb;
-            display: flex;
-            height: 100vh;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-        }
-        .card {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            width: 340px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            margin-top: 20px;
-            padding: 10px;
-            background: #2b6cb0;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .msg {
-            margin-top: 12px;
-            min-height: 20px;
-        }
-    </style>
-</head>
-<body>
-<div class="card">
-    <h2>Registrieren</h2>
+<small>
+    Passwortregeln:
+    <ul>
+        <li>mindestens 8 Zeichen</li>
+        <li>maximal 72 Zeichen</li>
+        <li>Buchstaben, Zahlen oder !@#$%^&*</li>
+    </ul>
+</small>
 
-    <input id="email" type="email" placeholder="E-Mail">
-    <input id="password" type="password" placeholder="Passwort">
-
-    <button onclick="registerUser()">Registrieren</button>
-
-    <div id="msg" class="msg"></div>
-
-    <p><a href="/index.html">Zum Login</a></p>
-</div>
 
 <script>
+
+
     async function registerUser() {
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
         const msg = document.getElementById("msg");
         msg.textContent = "";
+        msg.style.color = "red";
 
-        const res = await fetch("/api/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email, password })
-        });
+        // ---------- Frontend Validierung ----------
 
-        if (!res.ok) {
-            msg.textContent = "Registrierung fehlgeschlagen.";
+        if (!email) {
+            msg.textContent = "Bitte eine E-Mail-Adresse eingeben.";
             return;
         }
 
-        msg.textContent = "Registrierung erfolgreich. Bitte jetzt anmelden.";
-        setTimeout(() => {
-            window.location.href = "/index.html";
-        }, 1200);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            msg.textContent = "Bitte eine gültige E-Mail-Adresse eingeben.";
+            return;
+        }
+
+        if (password.length < 8) {
+            msg.textContent = "Passwort muss mindestens 8 Zeichen lang sein.";
+            return;
+        }
+
+        if (password.length > 72) {
+            msg.textContent = "Passwort ist zu lang (maximal 72 Zeichen).";
+            return;
+        }
+
+        // Optional: nur erlaubte Zeichen prüfen
+        const pwRegex = /^[A-Za-z0-9!@#$%^&*()_\-+=.?]+$/;
+
+        if (!pwRegex.test(password)) {
+            msg.textContent =
+                "Passwort enthält unerlaubte Zeichen.";
+            return;
+        }
+
+        // ---------- Request ----------
+
+        try {
+            const res = await fetch("/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok) {
+
+                if (res.status === 400 && data?.detail === "User already exists") {
+                    msg.textContent = "Dieser Benutzer existiert bereits.";
+                    return;
+                }
+
+                if (res.status === 422) {
+                    msg.textContent = "Ungültige Eingaben.";
+                    return;
+                }
+
+                msg.textContent = "Registrierung fehlgeschlagen.";
+                return;
+            }
+
+            msg.style.color = "green";
+            msg.textContent = "Registrierung erfolgreich. Weiter zum Login.";
+
+            setTimeout(() => {
+                window.location.href = "/index.html";
+            }, 1200);
+
+        } catch (err) {
+            msg.textContent = "Server nicht erreichbar.";
+        }
     }
 </script>
-</body>
-</html>
