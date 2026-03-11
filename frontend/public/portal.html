@@ -24,40 +24,13 @@
         <p>Wähle die passende Rechtsform aus.</p>
 
         <div class="navlinks">
-            <a href="/eu.html">
-                <strong>Einzelunternehmen / Freier Beruf</strong><br>
-                <span class="small">Stammdaten für Einzelunternehmen und freie Berufe</span>
-            </a>
-
-            <a href="/gbr.html">
-                <strong>GbR</strong><br>
-                <span class="small">Gesellschaft bürgerlichen Rechts</span>
-            </a>
-
-            <a href="/gmbh.html">
-                <strong>GmbH</strong><br>
-                <span class="small">Gesellschaft mit beschränkter Haftung</span>
-            </a>
-
-            <a href="/kg-ohg.html">
-                <strong>KG / OHG</strong><br>
-                <span class="small">Kommanditgesellschaft oder offene Handelsgesellschaft</span>
-            </a>
-
-            <a href="/eg.html">
-                <strong>eG</strong><br>
-                <span class="small">Eingetragene Genossenschaft</span>
-            </a>
-
-            <a href="/stiftung.html">
-                <strong>Stiftung</strong><br>
-                <span class="small">Stammdaten für Stiftungen</span>
-            </a>
-
-            <a href="/naturliche-person.html">
-                <strong>Natürliche Person</strong><br>
-                <span class="small">Persönliche Stammdaten</span>
-            </a>
+            <a href="/eu.html"><strong>Einzelunternehmen / Freier Beruf</strong><br><span class="small">Stammdaten für Einzelunternehmen und freie Berufe</span></a>
+            <a href="/gbr.html"><strong>GbR</strong><br><span class="small">Gesellschaft bürgerlichen Rechts</span></a>
+            <a href="/gmbh.html"><strong>GmbH</strong><br><span class="small">Gesellschaft mit beschränkter Haftung</span></a>
+            <a href="/kg-ohg.html"><strong>KG / OHG</strong><br><span class="small">Kommanditgesellschaft oder offene Handelsgesellschaft</span></a>
+            <a href="/eg.html"><strong>eG</strong><br><span class="small">Eingetragene Genossenschaft</span></a>
+            <a href="/stiftung.html"><strong>Stiftung</strong><br><span class="small">Stammdaten für Stiftungen</span></a>
+            <a href="/naturliche-person.html"><strong>Natürliche Person</strong><br><span class="small">Persönliche Stammdaten</span></a>
         </div>
     </div>
 </div>
@@ -66,11 +39,9 @@
     async function initPortal() {
         const auth = await requireAuth();
         if (auth && auth.user) {
-            document.getElementById("userInfo").innerText =
-                "Eingeloggt als: " + auth.user;
+            document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
         }
     }
-
     initPortal();
 </script>
 </body>

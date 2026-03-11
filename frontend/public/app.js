@@ -1,33 +1,3 @@
-async function backendJson(url, options = {}) {
-    const response = await fetch(url, {
-        credentials: "include",
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...(options.headers || {})
-        }
-    });
-
-    let data = null;
-    try {
-        data = await response.json();
-    } catch (_) {}
-
-    return { response, data };
-}
-
-async function logout() {
-    try {
-        await fetch("/api/logout", {
-            method: "POST",
-            credentials: "include"
-        });
-    } catch (_) {
-        // ignore
-    }
-    window.location.href = "/index.html";
-}
-
 async function requireAuth() {
     const res = await fetch("/api/auth/check", {
         method: "GET",
@@ -39,8 +9,22 @@ async function requireAuth() {
         return null;
     }
 
-    const data = await res.json().catch(() => null);
-    return data;
+    try {
+        return await res.json();
+    } catch (_) {
+        return null;
+    }
+}
+
+async function logout() {
+    try {
+        await fetch("/api/logout", {
+            method: "POST",
+            credentials: "include"
+        });
+    } catch (_) {}
+
+    window.location.href = "/index.html";
 }
 
 async function submitFormData(formName, payload, msgId = "msg") {
@@ -59,7 +43,7 @@ async function submitFormData(formName, payload, msgId = "msg") {
             },
             body: JSON.stringify({
                 form_name: formName,
-                ...payload
+                data: payload
             })
         });
 

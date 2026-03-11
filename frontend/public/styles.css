@@ -10,9 +10,7 @@
   --success: #15803d;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -35,11 +33,11 @@ body {
   max-width: 420px;
   padding: 36px;
   border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
 }
 
 .container {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 40px auto;
   padding: 0 20px;
 }
@@ -47,7 +45,7 @@ body {
 .panel {
   background: var(--card);
   border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
   padding: 28px;
 }
 
@@ -60,7 +58,7 @@ body {
   flex-wrap: wrap;
 }
 
-h1, h2, h3 {
+h1,h2,h3 {
   margin-top: 0;
 }
 
@@ -68,9 +66,7 @@ p {
   color: var(--muted);
 }
 
-input,
-textarea,
-select {
+input, textarea {
   width: 100%;
   padding: 12px;
   margin-top: 10px;
@@ -84,16 +80,13 @@ textarea {
   resize: vertical;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+input:focus, textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.12);
 }
 
-button,
-.btn {
+button, .btn {
   display: inline-block;
   border: none;
   background: var(--primary);
@@ -106,8 +99,7 @@ button,
   font-weight: 600;
 }
 
-button:hover,
-.btn:hover {
+button:hover, .btn:hover {
   background: var(--primary-dark);
 }
 
@@ -189,7 +181,7 @@ button:hover,
   padding: 16px;
   text-decoration: none;
   color: var(--text);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 6px 18px rgba(0,0,0,.04);
 }
 
 .navlinks a:hover {
@@ -208,4 +200,25 @@ label {
   margin-top: 24px;
   padding-top: 18px;
   border-top: 1px solid var(--border);
+}
+
+.section-title {
+  margin-top: 28px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.document-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.notice {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 8px 0 20px;
 }
