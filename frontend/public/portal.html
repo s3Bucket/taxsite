@@ -2,124 +2,76 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Portal</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stammdaten Portal</title>
     <link rel="stylesheet" href="/styles.css">
-
-    <style>
-        body{
-            font-family:Arial;
-            background:#f3f6fb;
-            padding:40px;
-        }
-
-        .card{
-            background:white;
-            padding:30px;
-            border-radius:10px;
-            max-width:600px;
-            margin:auto;
-            box-shadow:0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        button{
-            padding:10px 20px;
-            margin-top:20px;
-        }
-    </style>
-
+    <script src="/app.js"></script>
 </head>
-
 <body>
+<div class="container">
+    <div class="panel">
+        <div class="topbar">
+            <div>
+                <h1>Stammdaten Portal</h1>
+                <p id="userInfo">Willkommen im Portal.</p>
+            </div>
+            <div class="actions">
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
 
-<div class="card">
+        <h2>Rechtsformen</h2>
+        <p>Wähle die passende Rechtsform aus.</p>
 
-    <h1>Stammdaten Portal</h1>
+        <div class="navlinks">
+            <a href="/eu.html">
+                <strong>Einzelunternehmen / Freier Beruf</strong><br>
+                <span class="small">Stammdaten für Einzelunternehmen und freie Berufe</span>
+            </a>
 
-    <p id="user"></p>
+            <a href="/gbr.html">
+                <strong>GbR</strong><br>
+                <span class="small">Gesellschaft bürgerlichen Rechts</span>
+            </a>
 
-    <button onclick="logout()">Logout</button>
+            <a href="/gmbh.html">
+                <strong>GmbH</strong><br>
+                <span class="small">Gesellschaft mit beschränkter Haftung</span>
+            </a>
 
-    <hr>
+            <a href="/kg-ohg.html">
+                <strong>KG / OHG</strong><br>
+                <span class="small">Kommanditgesellschaft oder offene Handelsgesellschaft</span>
+            </a>
 
-    <h2>Formular Test</h2>
+            <a href="/eg.html">
+                <strong>eG</strong><br>
+                <span class="small">Eingetragene Genossenschaft</span>
+            </a>
 
-    <input id="firma" placeholder="Firma">
+            <a href="/stiftung.html">
+                <strong>Stiftung</strong><br>
+                <span class="small">Stammdaten für Stiftungen</span>
+            </a>
 
-    <button onclick="submitForm()">Absenden</button>
-
-    <div id="msg"></div>
-
+            <a href="/naturliche-person.html">
+                <strong>Natürliche Person</strong><br>
+                <span class="small">Persönliche Stammdaten</span>
+            </a>
+        </div>
+    </div>
 </div>
 
 <script>
-
-    async function checkSession(){
-
-        const res = await fetch("/api/auth/check",{
-            method:"GET",
-            credentials:"include"
-        })
-
-        if(!res.ok){
-
-            window.location="/index.html"
-            return
-
+    async function initPortal() {
+        const auth = await requireAuth();
+        if (auth && auth.user) {
+            document.getElementById("userInfo").innerText =
+                "Eingeloggt als: " + auth.user;
         }
-
-        const data = await res.json()
-
-        document.getElementById("user").innerText =
-            "Eingeloggt als: "+data.user
-
     }
 
-    checkSession()
-
-    async function logout(){
-
-        await fetch("/api/logout",{
-            method:"POST",
-            credentials:"include"
-        })
-
-        window.location="/index.html"
-
-    }
-
-    async function submitForm(){
-
-        const firma=document.getElementById("firma").value
-
-        const res = await fetch("/api/forms/submit",{
-
-            method:"POST",
-
-            credentials:"include",
-
-            headers:{
-                "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify({
-                firma:firma
-            })
-
-        })
-
-        if(!res.ok){
-
-            document.getElementById("msg").innerText="Senden fehlgeschlagen"
-            return
-
-        }
-
-        document.getElementById("msg").innerText="Gesendet"
-
-    }
-
+    initPortal();
 </script>
-
 </body>
 </html>
