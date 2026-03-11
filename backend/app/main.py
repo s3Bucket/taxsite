@@ -125,9 +125,6 @@ def auth_check(request: Request, db: Session = Depends(get_db)):
 @app.post("/api/forms/submit")
 async def submit_form(
         request: Request,
-        form_name: str = Form(...),
-        data: str = Form(...),
-        files: list[UploadFile] = File(default=[]),
         db: Session = Depends(get_db)
 ):
     user = get_current_user(request, db)
@@ -138,28 +135,42 @@ async def submit_form(
             detail="N8N_WEBHOOK_URL is not configured"
         )
 
-    # FormData für n8n vorbereiten
+    form = await request.form()
+
+    form_name = form.get("form_name")
+    data = form.get("data")
+
+    if not form_name or not data:
+        raise HTTPException(
+            status_code=400,
+            detail="form_name or data missing"
+        )
+
+    # Normale Felder für n8n
     forward_data = {
-        "form_name": form_name,
-        "data": data,
+        "form_name": str(form_name),
+        "data": str(data),
         "submitted_by_user_id": str(user.id),
         "submitted_by_email": user.email,
     }
 
+    # Alle Upload-Felder einsammeln
     forward_files = []
 
-    for file in files:
-        content = await file.read()
-        forward_files.append(
-            (
-                "files",
+    for key, value in form.multi_items():
+        if isinstance(value, UploadFile):
+            content = await value.read()
+
+            forward_files.append(
                 (
-                    file.filename,
-                    content,
-                    file.content_type or "application/octet-stream"
+                    key,   # <-- echter Feldname, z.B. "gesellschaftsvertrag"
+                    (
+                        value.filename,
+                        content,
+                        value.content_type or "application/octet-stream"
+                    )
                 )
             )
-        )
 
     try:
         response = requests.post(
@@ -177,5 +188,6 @@ async def submit_form(
 
     return {
         "status": "forwarded",
-        "submitted_by": user.email
+        "submitted_by": user.email,
+        "file_count": len(forward_files)
     }
