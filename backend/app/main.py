@@ -1,12 +1,13 @@
-from fastapi import FastAPI, Depends, HTTPException, Request, UploadFile, File, Form
+from fastapi import FastAPI, Depends, HTTPException, Request, Response, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from itsdangerous import URLSafeSerializer, BadSignature
 import os
-import json
 import requests
 
 from .database import SessionLocal, engine, Base
 from .models import User
+from .schemas import UserCreate, UserLogin
+from .auth import hash_password, verify_password
 
 app = FastAPI()
 
@@ -19,9 +20,8 @@ if not SECRET_KEY:
 COOKIE_NAME = "portal_session"
 serializer = URLSafeSerializer(SECRET_KEY, salt="auth-session")
 
-N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL")
-if not N8N_WEBHOOK_URL:
-    raise RuntimeError("N8N_WEBHOOK_URL is not set")
+# Darf leer sein; dann funktioniert Auth weiter, nur Submit nicht
+N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "").strip()
 
 
 def get_db():
@@ -30,6 +30,10 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def create_session_cookie(user_id: int) -> str:
+    return serializer.dumps({"user_id": user_id})
 
 
 def read_session_cookie(cookie_value: str):
@@ -60,6 +64,64 @@ def get_current_user(request: Request, db: Session) -> User:
     return user
 
 
+@app.post("/api/register")
+def register(user: UserCreate, db: Session = Depends(get_db)):
+    existing = db.query(User).filter(User.email == user.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="User already exists")
+
+    new_user = User(
+        email=user.email,
+        password_hash=hash_password(user.password)
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return {"status": "registered"}
+
+
+@app.post("/api/login")
+def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.email == user.email).first()
+
+    if not db_user or not verify_password(user.password, db_user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    session_value = create_session_cookie(db_user.id)
+
+    response.set_cookie(
+        key=COOKIE_NAME,
+        value=session_value,
+        httponly=True,
+        secure=True,
+        samesite="Lax",
+        max_age=60 * 60 * 8,
+        path="/"
+    )
+
+    return {
+        "status": "ok",
+        "user": db_user.email
+    }
+
+
+@app.post("/api/logout")
+def logout(response: Response):
+    response.delete_cookie(COOKIE_NAME, path="/")
+    return {"status": "logged_out"}
+
+
+@app.get("/api/auth/check")
+def auth_check(request: Request, db: Session = Depends(get_db)):
+    user = get_current_user(request, db)
+    return {
+        "status": "authenticated",
+        "user": user.email
+    }
+
+
 @app.post("/api/forms/submit")
 async def submit_form(
         request: Request,
@@ -70,6 +132,12 @@ async def submit_form(
 ):
     user = get_current_user(request, db)
 
+    if not N8N_WEBHOOK_URL:
+        raise HTTPException(
+            status_code=500,
+            detail="N8N_WEBHOOK_URL is not configured"
+        )
+
     # FormData für n8n vorbereiten
     forward_data = {
         "form_name": form_name,
@@ -79,12 +147,17 @@ async def submit_form(
     }
 
     forward_files = []
+
     for file in files:
         content = await file.read()
         forward_files.append(
             (
                 "files",
-                (file.filename, content, file.content_type or "application/octet-stream")
+                (
+                    file.filename,
+                    content,
+                    file.content_type or "application/octet-stream"
+                )
             )
         )
 
@@ -97,7 +170,10 @@ async def submit_form(
         )
         response.raise_for_status()
     except requests.RequestException as exc:
-        raise HTTPException(status_code=502, detail=f"n8n webhook failed: {str(exc)}")
+        raise HTTPException(
+            status_code=502,
+            detail=f"n8n webhook failed: {str(exc)}"
+        )
 
     return {
         "status": "forwarded",
