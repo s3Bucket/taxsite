@@ -231,11 +231,12 @@ body {
 
 /* kleines, elegantes Logo */
 .logo {
-  height: 50px;
+  height: 90px;
   width: auto;
   object-fit: contain;
   opacity: 0.85;
   transition: opacity 0.2s ease;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.08));
 }
 
 .logo:hover {
@@ -267,6 +268,6 @@ body {
   }
 
   .logo {
-    height: 40px;
+    height: 60px;
   }
 }
