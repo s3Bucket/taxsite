@@ -6,10 +6,10 @@ import requests
 import hashlib
 
 from starlette.datastructures import UploadFile as StarletteUploadFile
-from database import SessionLocal, engine, Base
-from models import User
-from schemas import UserCreate, UserLogin
-from auth import hash_password, verify_password
+from .database import SessionLocal, engine, Base
+from .models import User
+from .schemas import UserCreate, UserLogin
+from .auth import hash_password, verify_password
 
 app = FastAPI()
 
