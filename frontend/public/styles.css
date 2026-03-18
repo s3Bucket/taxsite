@@ -214,3 +214,18 @@ button:hover, .btn:hover {
   color: var(--muted);
   margin-top: 6px;
 }
+
+.header {
+  width: 100%;
+  padding: 20px 32px 0 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  max-width: 420px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
