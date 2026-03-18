@@ -6,11 +6,48 @@
     <title>Natürliche Person</title>
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
+    <style>
+        .child-card {
+            border: 1px solid #dbe3ef;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 16px;
+            background: #f8fafc;
+        }
+
+        .child-card h4 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+        }
+
+        .inline-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .btn-danger {
+            background: #b91c1c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #991b1b;
+        }
+
+        .upload-hint {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 6px;
+        }
+    </style>
 </head>
 <body>
 <div class="header">
     <img src="/static/Logo.png" alt="BK Steuerberatung Logo" class="logo">
 </div>
+
 <div class="container">
     <div class="panel">
         <div class="topbar">
@@ -46,6 +83,13 @@
             <label>Beruf</label><input id="beruf1" type="text">
             <label>Bundesland</label><input id="bundesland1" type="text">
             <label>Identifikationsnummer</label><input id="ident1" type="text">
+
+            <div class="form-section">
+                <h4>Dokumente – Ehepartner 1</h4>
+                <label>Personalausweis Ehepartner 1</label>
+                <input id="doc_personalausweis_ep1" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                <div class="upload-hint">Mehrere Dateien möglich.</div>
+            </div>
         </div>
 
         <div class="form-section">
@@ -70,36 +114,133 @@
             <label>Beruf</label><input id="beruf2" type="text">
             <label>Bundesland</label><input id="bundesland2" type="text">
             <label>Identifikationsnummer</label><input id="ident2" type="text">
+
+            <div class="form-section">
+                <h4>Dokumente – Ehepartner 2</h4>
+                <label>Personalausweis Ehepartner 2</label>
+                <input id="doc_personalausweis_ep2" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                <div class="upload-hint">Mehrere Dateien möglich.</div>
+            </div>
         </div>
 
         <div class="form-section">
-            <h3 class="section-title">Kind</h3>
-            <label>Name</label><input id="kind_name" type="text">
-            <label>Geburtsdatum</label><input id="kind_geburt" type="date">
-            <label>Wohnort</label><input id="kind_wohnort" type="text">
-            <label>Leiblicher Vater</label><input id="kind_vater" type="text">
-            <label>Leibliche Mutter</label><input id="kind_mutter" type="text">
-            <label>Identifikationsnummer</label><input id="kind_ident" type="text">
+            <div class="topbar" style="margin-bottom: 8px;">
+                <div>
+                    <h3 class="section-title" style="margin-bottom: 0;">Kinder</h3>
+                    <p class="small" style="margin: 4px 0 0 0;">Du kannst beliebig viele Kinder hinzufügen.</p>
+                </div>
+                <div class="actions">
+                    <button type="button" onclick="addChild()">Kind hinzufügen</button>
+                </div>
+            </div>
+
+            <div id="childrenContainer"></div>
         </div>
 
-        <div class="form-section">
-            <h3 class="section-title">Dokumente</h3>
-            <label>Personalausweise</label><input id="doc_personalausweise" type="file" multiple>
+        <div class="actions">
+            <button onclick="submitPage()">Absenden</button>
         </div>
-
-        <div class="actions"><button onclick="submitPage()">Absenden</button></div>
         <div id="msg" class="msg"></div>
     </div>
 </div>
 
 <script>
+    let childCounter = 0;
+
     async function initPage() {
         const auth = await requireAuth();
-        if (auth && auth.user) document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
+        if (auth && auth.user) {
+            document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
+        }
+
+        // Optional: mit einem leeren Kind starten
+        addChild();
     }
+
     initPage();
 
+    function addChild(prefill = {}) {
+        childCounter += 1;
+        const idx = childCounter;
+
+        const container = document.getElementById("childrenContainer");
+        const wrapper = document.createElement("div");
+        wrapper.className = "child-card";
+        wrapper.id = `child-card-${idx}`;
+
+        wrapper.innerHTML = `
+            <h4>Kind ${idx}</h4>
+
+            <label>Name</label>
+            <input id="kind_name_${idx}" type="text" value="${escapeHtml(prefill.name || "")}">
+
+            <label>Geburtsdatum</label>
+            <input id="kind_geburt_${idx}" type="date" value="${escapeHtml(prefill.geburtsdatum || "")}">
+
+            <label>Wohnort</label>
+            <input id="kind_wohnort_${idx}" type="text" value="${escapeHtml(prefill.wohnort || "")}">
+
+            <label>Leiblicher Vater</label>
+            <input id="kind_vater_${idx}" type="text" value="${escapeHtml(prefill.leiblicher_vater || "")}">
+
+            <label>Leibliche Mutter</label>
+            <input id="kind_mutter_${idx}" type="text" value="${escapeHtml(prefill.leibliche_mutter || "")}">
+
+            <label>Identifikationsnummer</label>
+            <input id="kind_ident_${idx}" type="text" value="${escapeHtml(prefill.identifikationsnummer || "")}">
+
+            <div class="form-section">
+                <h4>Dokumente – Kind ${idx}</h4>
+                <label>Personalausweis / Ausweisdokument Kind ${idx}</label>
+                <input id="doc_kind_personalausweis_${idx}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                <div class="upload-hint">Mehrere Dateien möglich.</div>
+            </div>
+
+            <div class="inline-actions">
+                <button type="button" class="btn btn-danger" onclick="removeChild(${idx})">Kind entfernen</button>
+            </div>
+        `;
+
+        container.appendChild(wrapper);
+    }
+
+    function removeChild(idx) {
+        const el = document.getElementById(`child-card-${idx}`);
+        if (el) el.remove();
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+
+    function collectChildren() {
+        const children = [];
+        const childCards = document.querySelectorAll('[id^="child-card-"]');
+
+        childCards.forEach(card => {
+            const idx = card.id.replace("child-card-", "");
+
+            children.push({
+                name: document.getElementById(`kind_name_${idx}`)?.value || "",
+                geburtsdatum: document.getElementById(`kind_geburt_${idx}`)?.value || "",
+                wohnort: document.getElementById(`kind_wohnort_${idx}`)?.value || "",
+                leiblicher_vater: document.getElementById(`kind_vater_${idx}`)?.value || "",
+                leibliche_mutter: document.getElementById(`kind_mutter_${idx}`)?.value || "",
+                identifikationsnummer: document.getElementById(`kind_ident_${idx}`)?.value || "",
+                upload_field_id: `doc_kind_personalausweis_${idx}`
+            });
+        });
+
+        return children;
+    }
+
     async function submitPage() {
+        const children = collectChildren();
+
         const fields = {
             ehepartner1: {
                 anrede: document.getElementById("anrede1").value,
@@ -145,18 +286,23 @@
                 bundesland: document.getElementById("bundesland2").value,
                 identifikationsnummer: document.getElementById("ident2").value
             },
-            kind: {
-                name: document.getElementById("kind_name").value,
-                geburtsdatum: document.getElementById("kind_geburt").value,
-                wohnort: document.getElementById("kind_wohnort").value,
-                leiblicher_vater: document.getElementById("kind_vater").value,
-                leibliche_mutter: document.getElementById("kind_mutter").value,
-                identifikationsnummer: document.getElementById("kind_ident").value
-            }
+            kinder: children.map(child => ({
+                name: child.name,
+                geburtsdatum: child.geburtsdatum,
+                wohnort: child.wohnort,
+                leiblicher_vater: child.leiblicher_vater,
+                leibliche_mutter: child.leibliche_mutter,
+                identifikationsnummer: child.identifikationsnummer
+            }))
         };
 
         const fileFields = [
-            { id: "doc_personalausweise", fieldName: "personalausweise" }
+            { id: "doc_personalausweis_ep1", fieldName: "personalausweis_ehepartner_1" },
+            { id: "doc_personalausweis_ep2", fieldName: "personalausweis_ehepartner_2" },
+            ...children.map((child, index) => ({
+                id: child.upload_field_id,
+                fieldName: `personalausweis_kind_${index + 1}`
+            }))
         ];
 
         await submitMultipartForm("naturliche_person", fields, fileFields);
