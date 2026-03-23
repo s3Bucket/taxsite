@@ -173,14 +173,14 @@
         </div>
 
         <div class="inline-actions">
-          <button type="button" class="btn btn-danger" onclick="removeChild(${idx})">Eintrag entfernen</button>
+          <button type="button" class="btn btn-danger" onclick="removeChildEntry(${idx})">Eintrag entfernen</button>
         </div>
       `;
 
       container.appendChild(wrapper);
     };
 
-    window.removeChild = function (idx) {
+    window.removeChildEntry = function (idx) {
       const el = document.getElementById(`child-card-${idx}`);
       if (!el) return;
       el.remove();
