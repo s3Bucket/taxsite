@@ -453,6 +453,13 @@
       <label>Adresse</label>
       <input id="geschaeftsfuehrer_adresse_${idx}" type="text" value="${escapeHtml(prefill.adresse)}">
 
+      <div class="form-section">
+        <h4>Dokumente – Geschäftsführer ${idx}</h4>
+        <label>Personalausweis</label>
+        <input id="doc_personalausweis_geschaeftsfuehrer_${idx}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+        <div class="upload-hint">Mehrere Dateien möglich.</div>
+      </div>
+
       <div class="inline-actions">
         <button type="button" class="btn btn-danger" onclick="removeGeschaeftsfuehrer(${idx})">Eintrag entfernen</button>
       </div>
@@ -487,6 +494,13 @@
       <label>Adresse</label>
       <input id="gesellschafter_adresse_${idx}" type="text" value="${escapeHtml(prefill.adresse)}">
 
+      <div class="form-section">
+        <h4>Dokumente – Gesellschafter ${idx}</h4>
+        <label>Personalausweis</label>
+        <input id="doc_personalausweis_gesellschafter_${idx}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+        <div class="upload-hint">Mehrere Dateien möglich.</div>
+      </div>
+
       <div class="inline-actions">
         <button type="button" class="btn btn-danger" onclick="removeGesellschafter(${idx})">Eintrag entfernen</button>
       </div>
@@ -514,7 +528,8 @@
         const idx = card.id.replace("geschaeftsfuehrer-card-", "");
         return {
           name: document.getElementById(`geschaeftsfuehrer_name_${idx}`)?.value || "",
-          adresse: document.getElementById(`geschaeftsfuehrer_adresse_${idx}`)?.value || ""
+          adresse: document.getElementById(`geschaeftsfuehrer_adresse_${idx}`)?.value || "",
+          upload_field_id: `doc_personalausweis_geschaeftsfuehrer_${idx}`
         };
       });
 
@@ -522,7 +537,8 @@
         const idx = card.id.replace("gesellschafter-card-", "");
         return {
           name: document.getElementById(`gesellschafter_name_${idx}`)?.value || "",
-          adresse: document.getElementById(`gesellschafter_adresse_${idx}`)?.value || ""
+          adresse: document.getElementById(`gesellschafter_adresse_${idx}`)?.value || "",
+          upload_field_id: `doc_personalausweis_gesellschafter_${idx}`
         };
       });
 
@@ -545,11 +561,25 @@
         ist_soll_versteuerung: document.getElementById("versteuerung")?.value || "",
         voranmeldungszeitraum: document.getElementById("voranmeldung")?.value || "",
         bilanz_oder_gewinnermittler: document.getElementById("bilanz")?.value || "",
-        geschaeftsfuehrer,
-        gesellschafter
+        geschaeftsfuehrer: geschaeftsfuehrer.map(item => ({
+          name: item.name,
+          adresse: item.adresse
+        })),
+        gesellschafter: gesellschafter.map(item => ({
+          name: item.name,
+          adresse: item.adresse
+        }))
       };
 
       const fileFields = [
+        ...geschaeftsfuehrer.map((item, index) => ({
+          id: item.upload_field_id,
+          fieldName: `personalausweis_geschaeftsfuehrer_${index + 1}`
+        })),
+        ...gesellschafter.map((item, index) => ({
+          id: item.upload_field_id,
+          fieldName: `personalausweis_gesellschafter_${index + 1}`
+        })),
         { id: "doc_handelsregister", fieldName: "handelsregisterauszug" },
         { id: "doc_gewerbeanmeldung", fieldName: "gewerbeanmeldung" }
       ];
