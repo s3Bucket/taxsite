@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stammdaten Portal</title>
-
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
 
@@ -57,6 +56,14 @@
             min-height: 80vh;
         }
 
+        .portal-loading,
+        .portal-error {
+            padding: 20px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
         @media (max-width: 960px) {
             .portal-layout {
                 grid-template-columns: 1fr;
@@ -68,48 +75,40 @@
         }
     </style>
 </head>
-
 <body>
-
 <div class="header">
-    <img src="/static/Logo.png" alt="Logo" class="logo">
+    <img src="/static/Logo.png" alt="BK Steuerberatung Logo" class="logo">
 </div>
 
 <div class="container">
     <div class="panel">
-
         <div class="topbar">
             <div>
                 <h1>Stammdaten Portal</h1>
                 <p id="userInfo">Willkommen im Portal.</p>
             </div>
             <div class="actions">
-                <button onclick="logout()">Logout</button>
+                <button type="button" onclick="logout()">Logout</button>
             </div>
         </div>
 
         <div class="portal-layout">
-
-            <!-- LEFT NAV -->
             <aside class="side-nav">
                 <h3>Rechtsformen</h3>
 
-                <a data-page="/eu.html">Einzelunternehmen / Freier Beruf</a>
-                <a data-page="/gbr.html">GbR</a>
-                <a data-page="/gmbh.html">GmbH</a>
-                <a data-page="/kg-ohg.html">KG / OHG</a>
-                <a data-page="/eg.html">eG</a>
-                <a data-page="/stiftung.html">Stiftung</a>
-                <a data-page="/naturliche-person.html">Natürliche Person</a>
+                <a href="#" data-page="/eu.html">Einzelunternehmen / Freier Beruf</a>
+                <a href="#" data-page="/gbr.html">GbR</a>
+                <a href="#" data-page="/gmbh.html">GmbH</a>
+                <a href="#" data-page="/kg-ohg.html">KG / OHG</a>
+                <a href="#" data-page="/eg.html">eG</a>
+                <a href="#" data-page="/stiftung.html">Stiftung</a>
+                <a href="#" data-page="/naturliche-person.html">Natürliche Person</a>
             </aside>
 
-            <!-- RIGHT CONTENT -->
             <main id="portalContent" class="portal-content">
-                <p>Bitte links eine Rechtsform auswählen.</p>
+                <div class="portal-loading">Bitte links eine Rechtsform auswählen.</div>
             </main>
-
         </div>
-
     </div>
 </div>
 
@@ -117,85 +116,80 @@
     async function initPortal() {
         const auth = await requireAuth();
         if (auth && auth.user) {
-            document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
+            const userInfo = document.getElementById("userInfo");
+            if (userInfo) {
+                userInfo.innerText = "Eingeloggt als: " + auth.user;
+            }
         }
 
-        bindNav();
+        bindPortalNav();
 
         const params = new URLSearchParams(window.location.search);
         const startPage = params.get("page") || "/eu.html";
-
-        await loadPage(startPage);
+        await loadPortalPage(startPage);
     }
 
-    function bindNav() {
+    function bindPortalNav() {
         document.querySelectorAll("[data-page]").forEach(link => {
-            link.addEventListener("click", async (e) => {
-                e.preventDefault();
-
+            link.addEventListener("click", async (event) => {
+                event.preventDefault();
                 const page = link.dataset.page;
 
                 history.replaceState(null, "", "/portal.html?page=" + encodeURIComponent(page));
-
-                await loadPage(page);
-                setActive(page);
+                await loadPortalPage(page);
             });
         });
     }
 
-    function setActive(page) {
+    function setActiveNav(page) {
         document.querySelectorAll("[data-page]").forEach(link => {
             link.classList.toggle("active", link.dataset.page === page);
         });
     }
 
-    async function loadPage(page) {
+    async function loadPortalPage(page) {
         const target = document.getElementById("portalContent");
-
-        target.innerHTML = "<p>Lade...</p>";
+        target.innerHTML = '<div class="portal-loading">Lade Inhalt ...</div>';
 
         try {
-            const res = await fetch(page, {
+            const response = await fetch(page, {
                 method: "GET",
                 credentials: "include"
             });
 
-            if (!res.ok) {
-                target.innerHTML = "<p>Seite konnte nicht geladen werden.</p>";
+            if (!response.ok) {
+                target.innerHTML = '<div class="portal-error">Seite konnte nicht geladen werden.</div>';
                 return;
             }
 
-            const html = await res.text();
+            const html = await response.text();
             const doc = new DOMParser().parseFromString(html, "text/html");
 
             const panel = doc.querySelector(".panel");
-
             if (!panel) {
-                target.innerHTML = "<p>Ungültige Seite.</p>";
+                target.innerHTML = '<div class="portal-error">Kein gültiger Seiteninhalt gefunden.</div>';
                 return;
             }
 
-            // Topbar entfernen (wichtig!)
             const topbar = panel.querySelector(".topbar");
-            if (topbar) topbar.remove();
+            if (topbar) {
+                topbar.remove();
+            }
 
             target.innerHTML = panel.innerHTML;
 
-            // 🔥 HIER passiert die Magie
             if (window.portalPageInits && typeof window.portalPageInits[page] === "function") {
                 await window.portalPageInits[page]();
             }
 
-            setActive(page);
-
-        } catch (err) {
-            console.error(err);
-            target.innerHTML = "<p>Fehler beim Laden.</p>";
+            setActiveNav(page);
+        } catch (error) {
+            console.error("Fehler beim Laden der Portalseite:", error);
+            target.innerHTML = '<div class="portal-error">Fehler beim Laden der Seite.</div>';
         }
     }
 
     initPortal();
 </script>
-
 </body>
 </html>
