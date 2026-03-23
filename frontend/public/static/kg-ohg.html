@@ -6,38 +6,6 @@
     <title>KG / OHG</title>
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
-
-    <style>
-        body.embedded-page {
-            background: #fff;
-        }
-
-        body.embedded-page .header,
-        body.embedded-page .topbar .actions {
-            display: none !important;
-        }
-
-        body.embedded-page .container {
-            max-width: none;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        body.embedded-page .panel {
-            border: 0;
-            box-shadow: none;
-            border-radius: 0;
-            margin: 0;
-            padding-top: 22px;
-        }
-
-        body.embedded-page .topbar {
-            padding-top: 0;
-            margin-bottom: 10px;
-        }
-    </style>
-
 </head>
 <body>
 <div class="header">
@@ -144,16 +112,5 @@
         await submitMultipartForm("kg-ohg", fields, fileFields);
     }
 </script>
-
-<script>
-    (function () {
-        const params = new URLSearchParams(window.location.search);
-        const isEmbedded = params.get('embedded') === '1' || window.self !== window.top;
-        if (isEmbedded) {
-            document.body.classList.add('embedded-page');
-        }
-    })();
-</script>
-
 </body>
 </html>

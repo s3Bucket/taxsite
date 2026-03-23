@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stammdaten Portal</title>
+    <title>Stammdaten Portal | BK Steuerberatung</title>
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
     <style>
         .portal-shell {
             display: grid;
-            grid-template-columns: 300px minmax(0, 1fr);
+            grid-template-columns: 320px minmax(0, 1fr);
             gap: 24px;
             align-items: start;
         }
@@ -64,19 +64,16 @@
             box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
         }
 
-        .portal-content {
-            min-width: 0;
-        }
-
-        .portal-frame-wrap {
+        .portal-content-card {
             background: #fff;
             border: 1px solid #dbe3ef;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+            min-height: 70vh;
         }
 
-        .portal-frame-head {
+        .portal-content-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -86,22 +83,54 @@
             background: #f8fafc;
         }
 
-        .portal-frame-head strong {
+        .portal-content-head strong {
             font-size: 16px;
         }
 
-        .portal-frame-head span {
+        .portal-content-head span {
             color: #64748b;
             font-size: 14px;
         }
 
-        .portal-frame {
-            width: 100%;
-            height: 78vh;
-            min-height: 820px;
-            border: 0;
-            display: block;
-            background: #fff;
+        .portal-content-body {
+            padding: 0;
+        }
+
+        .portal-loader,
+        .portal-error {
+            padding: 28px;
+        }
+
+        .portal-error {
+            color: #991b1b;
+        }
+
+        .portal-page-wrapper .panel {
+            border: 0 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .portal-page-wrapper .topbar .actions {
+            display: none !important;
+        }
+
+        .portal-page-wrapper .topbar {
+            padding: 22px 22px 8px 22px;
+            margin-bottom: 0;
+        }
+
+        .portal-page-wrapper .form-section,
+        .portal-page-wrapper .actions,
+        .portal-page-wrapper .msg {
+            margin-left: 22px;
+            margin-right: 22px;
+        }
+
+        .portal-page-wrapper .actions {
+            padding-bottom: 24px;
         }
 
         @media (max-width: 980px) {
@@ -111,11 +140,6 @@
 
             .portal-sidebar {
                 position: static;
-            }
-
-            .portal-frame {
-                height: 70vh;
-                min-height: 650px;
             }
         }
     </style>
@@ -129,7 +153,7 @@
         <div class="topbar">
             <div>
                 <h1>Stammdaten Portal</h1>
-                <p id="userInfo">Willkommen im Portal.</p>
+                <p id="portalUserInfo">Willkommen im Portal.</p>
             </div>
             <div class="actions">
                 <button onclick="logout()">Logout</button>
@@ -139,28 +163,32 @@
         <div class="portal-shell">
             <aside class="portal-sidebar">
                 <h2>Rechtsformen</h2>
-                <p>Wähle links die passende Rechtsform. Das Formular wird direkt rechts geladen.</p>
+                <p>Wähle links die passende Rechtsform. Das jeweilige Formular wird rechts direkt in den Inhaltsbereich geladen.</p>
 
                 <nav class="portal-nav" aria-label="Rechtsformen Navigation">
-                    <a class="portal-nav-link" href="/eu.html?embedded=1" data-page="/eu.html?embedded=1" data-title="Einzelunternehmen / Freier Beruf"><strong>Einzelunternehmen / Freier Beruf</strong></a>
-                    <a class="portal-nav-link" href="/gbr.html?embedded=1" data-page="/gbr.html?embedded=1" data-title="GbR"><strong>GbR</strong></a>
-                    <a class="portal-nav-link" href="/gmbh.html?embedded=1" data-page="/gmbh.html?embedded=1" data-title="GmbH"><strong>GmbH</strong></a>
-                    <a class="portal-nav-link" href="/kg-ohg.html?embedded=1" data-page="/kg-ohg.html?embedded=1" data-title="KG / OHG"><strong>KG / OHG</strong></a>
-                    <a class="portal-nav-link" href="/eg.html?embedded=1" data-page="/eg.html?embedded=1" data-title="eG"><strong>eG</strong></a>
-                    <a class="portal-nav-link" href="/stiftung.html?embedded=1" data-page="/stiftung.html?embedded=1" data-title="Stiftung"><strong>Stiftung</strong></a>
-                    <a class="portal-nav-link" href="/naturliche-person.html?embedded=1" data-page="/naturliche-person.html?embedded=1" data-title="Natürliche Person"><strong>Natürliche Person</strong></a>
+                    <a class="portal-nav-link" href="/eu.html" data-page="/eu.html" data-title="Einzelunternehmen / Freier Beruf"><strong>Einzelunternehmen / Freier Beruf</strong></a>
+                    <a class="portal-nav-link" href="/gbr.html" data-page="/gbr.html" data-title="GbR"><strong>GbR</strong></a>
+                    <a class="portal-nav-link" href="/gmbh.html" data-page="/gmbh.html" data-title="GmbH"><strong>GmbH</strong></a>
+                    <a class="portal-nav-link" href="/kg-ohg.html" data-page="/kg-ohg.html" data-title="KG / OHG"><strong>KG / OHG</strong></a>
+                    <a class="portal-nav-link" href="/eg.html" data-page="/eg.html" data-title="eG"><strong>eG</strong></a>
+                    <a class="portal-nav-link" href="/stiftung.html" data-page="/stiftung.html" data-title="Stiftung"><strong>Stiftung</strong></a>
+                    <a class="portal-nav-link" href="/naturliche-person.html" data-page="/naturliche-person.html" data-title="Natürliche Person"><strong>Natürliche Person</strong></a>
                 </nav>
             </aside>
 
             <section class="portal-content">
-                <div class="portal-frame-wrap">
-                    <div class="portal-frame-head">
+                <div class="portal-content-card">
+                    <div class="portal-content-head">
                         <div>
-                            <strong id="frameTitle">Einzelunternehmen / Freier Beruf</strong><br>
-                            <span>Die Eingabe bleibt innerhalb des Portals.</span>
+                            <strong id="contentTitle">Einzelunternehmen / Freier Beruf</strong><br>
+                            <span>Geladen aus derselben Domain ohne iframe.</span>
                         </div>
                     </div>
-                    <iframe id="contentFrame" class="portal-frame" src="/eu.html?embedded=1" title="Formularbereich"></iframe>
+                    <div id="dynamicPageStyles"></div>
+                    <div id="dynamicPageScripts"></div>
+                    <div id="contentHost" class="portal-content-body">
+                        <div class="portal-loader">Formular wird geladen …</div>
+                    </div>
                 </div>
             </section>
         </div>
@@ -168,46 +196,138 @@
 </div>
 
 <script>
+    const links = Array.from(document.querySelectorAll('.portal-nav-link'));
+    const contentHost = document.getElementById('contentHost');
+    const contentTitle = document.getElementById('contentTitle');
+    const styleHost = document.getElementById('dynamicPageStyles');
+    const scriptHost = document.getElementById('dynamicPageScripts');
+    const allowedPages = new Set(links.map((link) => link.dataset.page));
+
     async function initPortal() {
         const auth = await requireAuth();
         if (auth && auth.user) {
-            document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
+            document.getElementById('portalUserInfo').innerText = 'Eingeloggt als: ' + auth.user;
         }
     }
-
-    initPortal();
-
-    const links = Array.from(document.querySelectorAll('.portal-nav-link'));
-    const frame = document.getElementById('contentFrame');
-    const frameTitle = document.getElementById('frameTitle');
 
     function setActiveLink(page) {
         links.forEach((link) => {
             const isActive = link.dataset.page === page;
             link.classList.toggle('active', isActive);
             if (isActive) {
-                frameTitle.textContent = link.dataset.title;
+                contentTitle.textContent = link.dataset.title;
             }
         });
+    }
+
+    function runScriptsFromDocument(doc, page) {
+        scriptHost.innerHTML = '';
+        const scripts = Array.from(doc.querySelectorAll('script'));
+
+        scripts.forEach((oldScript, index) => {
+            if (oldScript.src && oldScript.src.includes('/app.js')) {
+                return;
+            }
+
+            const newScript = document.createElement('script');
+            newScript.dataset.sourcePage = page;
+            newScript.dataset.scriptIndex = String(index);
+
+            if (oldScript.src) {
+                newScript.src = oldScript.src;
+            } else {
+                newScript.textContent = oldScript.textContent;
+            }
+
+            scriptHost.appendChild(newScript);
+        });
+    }
+
+    function applyStylesFromDocument(doc) {
+        styleHost.innerHTML = '';
+        const styles = Array.from(doc.querySelectorAll('style'));
+
+        styles.forEach((style) => {
+            const cloned = document.createElement('style');
+            cloned.textContent = style.textContent;
+            styleHost.appendChild(cloned);
+        });
+    }
+
+    async function loadPage(page, pushState = true) {
+        if (!allowedPages.has(page)) {
+            contentHost.innerHTML = '<div class="portal-error">Die angeforderte Seite ist nicht erlaubt.</div>';
+            return;
+        }
+
+        setActiveLink(page);
+        contentHost.innerHTML = '<div class="portal-loader">Formular wird geladen …</div>';
+
+        try {
+            const response = await fetch(page, {
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'portal-fetch'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const panel = doc.querySelector('.container .panel');
+
+            if (!panel) {
+                throw new Error('Kein Panel gefunden');
+            }
+
+            applyStylesFromDocument(doc);
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'portal-page-wrapper';
+            wrapper.innerHTML = panel.innerHTML;
+
+            const embeddedActions = wrapper.querySelector('.topbar .actions');
+            if (embeddedActions) {
+                embeddedActions.remove();
+            }
+
+            contentHost.innerHTML = '';
+            contentHost.appendChild(wrapper);
+            runScriptsFromDocument(doc, page);
+
+            if (pushState) {
+                history.replaceState({ page }, '', '/portal.html?page=' + encodeURIComponent(page));
+            }
+        } catch (error) {
+            console.error(error);
+            contentHost.innerHTML = '<div class="portal-error">Die Seite konnte nicht geladen werden.</div>';
+        }
     }
 
     links.forEach((link) => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
-            const page = link.dataset.page;
-            frame.src = page;
-            setActiveLink(page);
-            history.replaceState(null, '', '/portal.html?page=' + encodeURIComponent(page));
+            loadPage(link.dataset.page);
         });
     });
 
-    const params = new URLSearchParams(window.location.search);
-    const requestedPage = params.get('page');
-    const allowedPages = new Set(links.map((link) => link.dataset.page));
-    const startPage = allowedPages.has(requestedPage) ? requestedPage : '/eu.html?embedded=1';
+    window.addEventListener('popstate', (event) => {
+        const page = event.state?.page;
+        if (page && allowedPages.has(page)) {
+            loadPage(page, false);
+        }
+    });
 
-    frame.src = startPage;
-    setActiveLink(startPage);
+    initPortal().then(() => {
+        const params = new URLSearchParams(window.location.search);
+        const requestedPage = params.get('page');
+        const startPage = allowedPages.has(requestedPage) ? requestedPage : '/eu.html';
+        loadPage(startPage, false);
+    });
 </script>
 </body>
 </html>

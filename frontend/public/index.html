@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login | BK Steuerberatung</title>
     <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js"></script>
 </head>
 <body>
 <div class="header">
@@ -15,37 +16,42 @@
         <h2>Anmelden</h2>
         <p>Bitte melde dich mit deinen Zugangsdaten an.</p>
 
-        <input id="email" type="email" placeholder="E-Mail">
-        <input id="password" type="password" placeholder="Passwort">
+        <label for="email">E-Mail</label>
+        <input id="email" type="email" placeholder="name@beispiel.de" autocomplete="email">
 
-        <button onclick="loginUser()">Anmelden</button>
+        <label for="password">Passwort</label>
+        <input id="password" type="password" placeholder="Passwort" autocomplete="current-password">
+
+        <div class="auth-actions">
+            <button onclick="loginUser()">Anmelden</button>
+            <a class="btn btn-secondary" href="/register.html">Jetzt registrieren</a>
+        </div>
 
         <div id="msg" class="msg"></div>
-
-        <p class="small" style="margin-top:18px;">
-            Noch kein Konto? <a href="/register.html">Jetzt registrieren</a>
-        </p>
     </div>
 </div>
 
 <script>
+    redirectIfAuthenticated();
+
     async function loginUser() {
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-        const msg = document.getElementById("msg");
-        msg.textContent = "";
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const msg = document.getElementById('msg');
+        msg.textContent = '';
+        msg.classList.remove('success');
 
         if (!email || !password) {
-            msg.textContent = "Bitte E-Mail und Passwort eingeben.";
+            msg.textContent = 'Bitte E-Mail und Passwort eingeben.';
             return;
         }
 
         try {
-            const res = await fetch("/api/login", {
-                method: "POST",
-                credentials: "include",
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                credentials: 'include',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ email, password })
             });
@@ -53,15 +59,21 @@
             const data = await res.json().catch(() => null);
 
             if (!res.ok) {
-                msg.textContent = data?.detail || "Login fehlgeschlagen.";
+                msg.textContent = data?.detail || data?.message || 'Login fehlgeschlagen.';
                 return;
             }
 
-            window.location.href = "/portal.html";
-        } catch (err) {
-            msg.textContent = "Server nicht erreichbar.";
+            window.location.href = '/portal.html';
+        } catch (_) {
+            msg.textContent = 'Server nicht erreichbar.';
         }
     }
+
+    document.getElementById('password').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            loginUser();
+        }
+    });
 </script>
 </body>
 </html>
