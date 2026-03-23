@@ -3,9 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KG / OHG</title>
+    <title>Einzelunternehmen / Freier Beruf</title>
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
+
+    <style>
+        body.embedded-page {
+            background: #fff;
+        }
+
+        body.embedded-page .header,
+        body.embedded-page .topbar .actions {
+            display: none !important;
+        }
+
+        body.embedded-page .container {
+            max-width: none;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.embedded-page .panel {
+            border: 0;
+            box-shadow: none;
+            border-radius: 0;
+            margin: 0;
+            padding-top: 22px;
+        }
+
+        body.embedded-page .topbar {
+            padding-top: 0;
+            margin-bottom: 10px;
+        }
+    </style>
+
 </head>
 <body>
 <div class="header">
@@ -15,7 +47,7 @@
     <div class="panel">
         <div class="topbar">
             <div>
-                <h1>KG / OHG</h1>
+                <h1>Einzelunternehmen / Freier Beruf</h1>
                 <p id="userInfo">Bitte trage die Stammdaten ein.</p>
             </div>
             <div class="actions">
@@ -41,29 +73,24 @@
             <label>Gründungsdatum</label><input id="gruendungsdatum" type="date">
             <label>USt-IdNr.</label><input id="ustid" type="text">
             <label>Bundesland</label><input id="bundesland" type="text">
-            <label>Registergericht</label><input id="registergericht" type="text">
-            <label>Register</label><input id="register" type="text">
-            <label>Register-Nr.</label><input id="register_nr" type="text">
-            <label>Komplementär / Vollhafter</label><input id="komplementaer" type="text">
-            <label>Kommandist</label><input id="kommandist" type="text">
         </div>
 
         <div class="form-section">
             <h3 class="section-title">Buchhaltung</h3>
             <label>Ist- / Sollversteuerung</label><input id="versteuerung" type="text">
             <label>Voranmeldungszeitraum</label><input id="voranmeldung" type="text">
+            <label>Bilanz oder Gewinnermittler</label><input id="bilanz" type="text">
         </div>
 
         <div class="form-section">
             <h3 class="section-title">Dokumente</h3>
-            <label>Personalausweis des Geschäftsführers</label><input id="doc_personalausweis_geschaeftsfuehrer" type="file" multiple>
-            <label>Personalausweis der Gesellschafter</label><input id="doc_personalausweis_gesellschafter" type="file" multiple>
+            <label>Personalausweis des Inhabers</label><input id="doc_personalausweis_inhaber" type="file" multiple>
             <label>Gewerbeanmeldung</label><input id="doc_gewerbeanmeldung" type="file">
-            <label>Gesellschaftsvertrag</label><input id="doc_gesellschaftsvertrag" type="file">
-            <label>Transparenzregistereintrag</label><input id="doc_transparenzregister" type="file">
         </div>
 
-        <div class="actions"><button onclick="submitPage()">Absenden</button></div>
+        <div class="actions">
+            <button onclick="submitPage()">Absenden</button>
+        </div>
         <div id="msg" class="msg"></div>
     </div>
 </div>
@@ -92,25 +119,29 @@
             gruendungsdatum: document.getElementById("gruendungsdatum").value,
             ust_idnr: document.getElementById("ustid").value,
             bundesland: document.getElementById("bundesland").value,
-            registergericht: document.getElementById("registergericht").value,
-            register: document.getElementById("register").value,
-            register_nr: document.getElementById("register_nr").value,
-            komplementaer_vollhafter: document.getElementById("komplementaer").value,
-            kommandist: document.getElementById("kommandist").value,
             ist_soll_versteuerung: document.getElementById("versteuerung").value,
-            voranmeldungszeitraum: document.getElementById("voranmeldung").value
+            voranmeldungszeitraum: document.getElementById("voranmeldung").value,
+            bilanz_oder_gewinnermittler: document.getElementById("bilanz").value
         };
 
         const fileFields = [
-            { id: "doc_personalausweis_geschaeftsfuehrer", fieldName: "personalausweis_geschaeftsfuehrer" },
-            { id: "doc_personalausweis_gesellschafter", fieldName: "personalausweis_gesellschafter" },
-            { id: "doc_gewerbeanmeldung", fieldName: "gewerbeanmeldung" },
-            { id: "doc_gesellschaftsvertrag", fieldName: "gesellschaftsvertrag" },
-            { id: "doc_transparenzregister", fieldName: "transparenzregistereintrag" }
+            { id: "doc_personalausweis_inhaber", fieldName: "personalausweis_inhaber" },
+            { id: "doc_gewerbeanmeldung", fieldName: "gewerbeanmeldung" }
         ];
 
-        await submitMultipartForm("kg-ohg", fields, fileFields);
+        await submitMultipartForm("eu", fields, fileFields);
     }
 </script>
+
+<script>
+    (function () {
+        const params = new URLSearchParams(window.location.search);
+        const isEmbedded = params.get('embedded') === '1' || window.self !== window.top;
+        if (isEmbedded) {
+            document.body.classList.add('embedded-page');
+        }
+    })();
+</script>
+
 </body>
 </html>

@@ -42,6 +42,38 @@
             margin-top: 6px;
         }
     </style>
+
+    <style>
+        body.embedded-page {
+            background: #fff;
+        }
+
+        body.embedded-page .header,
+        body.embedded-page .topbar .actions {
+            display: none !important;
+        }
+
+        body.embedded-page .container {
+            max-width: none;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.embedded-page .panel {
+            border: 0;
+            box-shadow: none;
+            border-radius: 0;
+            margin: 0;
+            padding-top: 22px;
+        }
+
+        body.embedded-page .topbar {
+            padding-top: 0;
+            margin-bottom: 10px;
+        }
+    </style>
+
 </head>
 <body>
 <div class="header">
@@ -197,7 +229,7 @@
             </div>
 
             <div class="inline-actions">
-                <button type="button" class="btn btn-danger" onclick="removeChild(${idx})">Kind entfernen</button>
+                <button type="button" class="btn btn-danger" onclick="removeChild(${idx})">Eintrag entfernen</button>
             </div>
         `;
 
@@ -206,7 +238,15 @@
 
     function removeChild(idx) {
         const el = document.getElementById(`child-card-${idx}`);
-        if (el) el.remove();
+        if (!el) return;
+
+        el.style.transition = "all 0.2s ease";
+        el.style.opacity = "0";
+        el.style.transform = "scale(0.98)";
+
+        setTimeout(() => {
+            el.remove();
+        }, 200);
     }
 
     function escapeHtml(value) {
@@ -308,5 +348,16 @@
         await submitMultipartForm("naturliche_person", fields, fileFields);
     }
 </script>
+
+<script>
+    (function () {
+        const params = new URLSearchParams(window.location.search);
+        const isEmbedded = params.get('embedded') === '1' || window.self !== window.top;
+        if (isEmbedded) {
+            document.body.classList.add('embedded-page');
+        }
+    })();
+</script>
+
 </body>
 </html>

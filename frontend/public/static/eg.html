@@ -3,9 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stiftung</title>
+    <title>eG</title>
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
+
+    <style>
+        body.embedded-page {
+            background: #fff;
+        }
+
+        body.embedded-page .header,
+        body.embedded-page .topbar .actions {
+            display: none !important;
+        }
+
+        body.embedded-page .container {
+            max-width: none;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.embedded-page .panel {
+            border: 0;
+            box-shadow: none;
+            border-radius: 0;
+            margin: 0;
+            padding-top: 22px;
+        }
+
+        body.embedded-page .topbar {
+            padding-top: 0;
+            margin-bottom: 10px;
+        }
+    </style>
+
 </head>
 <body>
 <div class="header">
@@ -15,7 +47,7 @@
     <div class="panel">
         <div class="topbar">
             <div>
-                <h1>Stiftung</h1>
+                <h1>eG</h1>
                 <p id="userInfo">Bitte trage die Stammdaten ein.</p>
             </div>
             <div class="actions">
@@ -29,7 +61,7 @@
             <label>Anrede</label><input id="anrede" type="text">
             <label>Unternehmensname</label><input id="unternehmensname" type="text">
             <label>Unternehmensform</label><input id="unternehmensform" type="text">
-            <label>Familien- oder gemeinnützige Stiftung</label><input id="stiftung_typ" type="text">
+            <label>Dienstleistungs- oder Asset-eG</label><input id="eg_typ" type="text">
             <label>Straße und Hausnummer</label><input id="strasse" type="text">
             <label>PLZ</label><input id="plz" type="text">
             <label>Ort</label><input id="ort" type="text">
@@ -45,13 +77,25 @@
             <label>Registergericht</label><input id="registergericht" type="text">
             <label>Register</label><input id="register" type="text">
             <label>Register-Nr.</label><input id="register_nr" type="text">
-            <label>Stifter</label><input id="stifter" type="text">
+            <label>Gesellschafter</label><input id="gesellschafter" type="text">
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">Buchhaltung</h3>
+            <label>Ist- / Sollversteuerung</label><input id="versteuerung" type="text">
+            <label>Voranmeldungszeitraum</label><input id="voranmeldung" type="text">
         </div>
 
         <div class="form-section">
             <h3 class="section-title">Dokumente</h3>
             <label>Personalausweis des Vorstandes</label><input id="doc_personalausweis_vorstand" type="file" multiple>
             <label>Satzung</label><input id="doc_satzung" type="file">
+            <label>Allgemeine Geschäftsordnung (AGO)</label><input id="doc_ago" type="file">
+            <label>Förderrichtlinie (FGO)</label><input id="doc_fgo" type="file">
+            <label>Gründungsprotokoll inkl. Eröffnungsbilanz</label><input id="doc_gruendungsprotokoll" type="file">
+            <label>Mitgliederliste zur Gründung</label><input id="doc_mitgliederliste" type="file">
+            <label>Gewerbeanmeldung</label><input id="doc_gewerbeanmeldung" type="file">
+            <label>Transparenzregistereintrag</label><input id="doc_transparenzregister" type="file">
         </div>
 
         <div class="actions"><button onclick="submitPage()">Absenden</button></div>
@@ -71,7 +115,7 @@
             anrede: document.getElementById("anrede").value,
             unternehmensname: document.getElementById("unternehmensname").value,
             unternehmensform: document.getElementById("unternehmensform").value,
-            stiftung_typ: document.getElementById("stiftung_typ").value,
+            eg_typ: document.getElementById("eg_typ").value,
             strasse_hausnummer: document.getElementById("strasse").value,
             plz: document.getElementById("plz").value,
             ort: document.getElementById("ort").value,
@@ -87,16 +131,35 @@
             registergericht: document.getElementById("registergericht").value,
             register: document.getElementById("register").value,
             register_nr: document.getElementById("register_nr").value,
-            stifter: document.getElementById("stifter").value
+            gesellschafter: document.getElementById("gesellschafter").value,
+            ist_soll_versteuerung: document.getElementById("versteuerung").value,
+            voranmeldungszeitraum: document.getElementById("voranmeldung").value
         };
 
         const fileFields = [
             { id: "doc_personalausweis_vorstand", fieldName: "personalausweis_vorstand" },
-            { id: "doc_satzung", fieldName: "satzung" }
+            { id: "doc_satzung", fieldName: "satzung" },
+            { id: "doc_ago", fieldName: "allgemeine_geschaeftsordnung" },
+            { id: "doc_fgo", fieldName: "foerderrichtlinie" },
+            { id: "doc_gruendungsprotokoll", fieldName: "gruendungsprotokoll_eroeffnungsbilanz" },
+            { id: "doc_mitgliederliste", fieldName: "mitgliederliste" },
+            { id: "doc_gewerbeanmeldung", fieldName: "gewerbeanmeldung" },
+            { id: "doc_transparenzregister", fieldName: "transparenzregistereintrag" }
         ];
 
-        await submitMultipartForm("stiftung", fields, fileFields);
+        await submitMultipartForm("eg", fields, fileFields);
     }
 </script>
+
+<script>
+    (function () {
+        const params = new URLSearchParams(window.location.search);
+        const isEmbedded = params.get('embedded') === '1' || window.self !== window.top;
+        if (isEmbedded) {
+            document.body.classList.add('embedded-page');
+        }
+    })();
+</script>
+
 </body>
 </html>

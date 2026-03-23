@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stammdaten Portal</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js"></script>
+    <style>
+        .portal-shell {
+            display: grid;
+            grid-template-columns: 300px minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .portal-sidebar {
+            position: sticky;
+            top: 20px;
+            background: #fff;
+            border: 1px solid #dbe3ef;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        }
+
+        .portal-sidebar h2 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+        }
+
+        .portal-sidebar p {
+            margin: 0 0 18px 0;
+            color: #64748b;
+            line-height: 1.45;
+        }
+
+        .portal-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .portal-nav-link {
+            display: block;
+            padding: 13px 14px;
+            text-decoration: none;
+            color: #0f172a;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .portal-nav-link:hover {
+            background: #eef4ff;
+            border-color: #93c5fd;
+            transform: translateY(-1px);
+        }
+
+        .portal-nav-link.active {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-color: #60a5fa;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
+        }
+
+        .portal-content {
+            min-width: 0;
+        }
+
+        .portal-frame-wrap {
+            background: #fff;
+            border: 1px solid #dbe3ef;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+        }
+
+        .portal-frame-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 18px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .portal-frame-head strong {
+            font-size: 16px;
+        }
+
+        .portal-frame-head span {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .portal-frame {
+            width: 100%;
+            height: 78vh;
+            min-height: 820px;
+            border: 0;
+            display: block;
+            background: #fff;
+        }
+
+        @media (max-width: 980px) {
+            .portal-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .portal-sidebar {
+                position: static;
+            }
+
+            .portal-frame {
+                height: 70vh;
+                min-height: 650px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <img src="/static/Logo.png" alt="BK Steuerberatung Logo" class="logo">
+</div>
+<div class="container">
+    <div class="panel">
+        <div class="topbar">
+            <div>
+                <h1>Stammdaten Portal</h1>
+                <p id="userInfo">Willkommen im Portal.</p>
+            </div>
+            <div class="actions">
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="portal-shell">
+            <aside class="portal-sidebar">
+                <h2>Rechtsformen</h2>
+                <p>Wähle links die passende Rechtsform. Das Formular wird direkt rechts geladen.</p>
+
+                <nav class="portal-nav" aria-label="Rechtsformen Navigation">
+                    <a class="portal-nav-link" href="/eu.html?embedded=1" data-page="/eu.html?embedded=1" data-title="Einzelunternehmen / Freier Beruf"><strong>Einzelunternehmen / Freier Beruf</strong></a>
+                    <a class="portal-nav-link" href="/gbr.html?embedded=1" data-page="/gbr.html?embedded=1" data-title="GbR"><strong>GbR</strong></a>
+                    <a class="portal-nav-link" href="/gmbh.html?embedded=1" data-page="/gmbh.html?embedded=1" data-title="GmbH"><strong>GmbH</strong></a>
+                    <a class="portal-nav-link" href="/kg-ohg.html?embedded=1" data-page="/kg-ohg.html?embedded=1" data-title="KG / OHG"><strong>KG / OHG</strong></a>
+                    <a class="portal-nav-link" href="/eg.html?embedded=1" data-page="/eg.html?embedded=1" data-title="eG"><strong>eG</strong></a>
+                    <a class="portal-nav-link" href="/stiftung.html?embedded=1" data-page="/stiftung.html?embedded=1" data-title="Stiftung"><strong>Stiftung</strong></a>
+                    <a class="portal-nav-link" href="/naturliche-person.html?embedded=1" data-page="/naturliche-person.html?embedded=1" data-title="Natürliche Person"><strong>Natürliche Person</strong></a>
+                </nav>
+            </aside>
+
+            <section class="portal-content">
+                <div class="portal-frame-wrap">
+                    <div class="portal-frame-head">
+                        <div>
+                            <strong id="frameTitle">Einzelunternehmen / Freier Beruf</strong><br>
+                            <span>Die Eingabe bleibt innerhalb des Portals.</span>
+                        </div>
+                    </div>
+                    <iframe id="contentFrame" class="portal-frame" src="/eu.html?embedded=1" title="Formularbereich"></iframe>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function initPortal() {
+        const auth = await requireAuth();
+        if (auth && auth.user) {
+            document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
+        }
+    }
+
+    initPortal();
+
+    const links = Array.from(document.querySelectorAll('.portal-nav-link'));
+    const frame = document.getElementById('contentFrame');
+    const frameTitle = document.getElementById('frameTitle');
+
+    function setActiveLink(page) {
+        links.forEach((link) => {
+            const isActive = link.dataset.page === page;
+            link.classList.toggle('active', isActive);
+            if (isActive) {
+                frameTitle.textContent = link.dataset.title;
+            }
+        });
+    }
+
+    links.forEach((link) => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            const page = link.dataset.page;
+            frame.src = page;
+            setActiveLink(page);
+            history.replaceState(null, '', '/portal.html?page=' + encodeURIComponent(page));
+        });
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const requestedPage = params.get('page');
+    const allowedPages = new Set(links.map((link) => link.dataset.page));
+    const startPage = allowedPages.has(requestedPage) ? requestedPage : '/eu.html?embedded=1';
+
+    frame.src = startPage;
+    setActiveLink(startPage);
+</script>
+</body>
+</html>
