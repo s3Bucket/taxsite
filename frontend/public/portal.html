@@ -3,331 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stammdaten Portal | BK Steuerberatung</title>
+    <title>Stammdaten Portal</title>
+
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
+
     <style>
-        .portal-shell {
+        .portal-layout {
             display: grid;
-            grid-template-columns: 320px minmax(0, 1fr);
+            grid-template-columns: 280px 1fr;
             gap: 24px;
             align-items: start;
         }
 
-        .portal-sidebar {
-            position: sticky;
-            top: 20px;
+        .side-nav {
             background: #fff;
             border: 1px solid #dbe3ef;
             border-radius: 16px;
             padding: 18px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+            position: sticky;
+            top: 20px;
         }
 
-        .portal-sidebar h2 {
-            margin: 0 0 8px 0;
-            font-size: 20px;
+        .side-nav h3 {
+            margin-top: 0;
+            margin-bottom: 14px;
         }
 
-        .portal-sidebar p {
-            margin: 0 0 18px 0;
-            color: #64748b;
-            line-height: 1.45;
-        }
-
-        .portal-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .portal-nav-link {
+        .side-nav a {
             display: block;
-            padding: 13px 14px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
             text-decoration: none;
             color: #0f172a;
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+            border-radius: 10px;
+            transition: 0.2s ease;
+            cursor: pointer;
         }
 
-        .portal-nav-link:hover {
-            background: #eef4ff;
+        .side-nav a:hover,
+        .side-nav a.active {
+            background: #e8f0fe;
             border-color: #93c5fd;
-            transform: translateY(-1px);
         }
 
-        .portal-nav-link.active {
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            border-color: #60a5fa;
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
-        }
-
-        .portal-content-card {
+        .portal-content {
             background: #fff;
             border: 1px solid #dbe3ef;
             border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
-            min-height: 70vh;
+            padding: 20px;
+            min-height: 80vh;
         }
 
-        .portal-content-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 14px 18px;
-            border-bottom: 1px solid #e2e8f0;
-            background: #f8fafc;
-        }
-
-        .portal-content-head strong {
-            font-size: 16px;
-        }
-
-        .portal-content-head span {
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        .portal-content-body {
-            padding: 0;
-        }
-
-        .portal-loader,
-        .portal-error {
-            padding: 28px;
-        }
-
-        .portal-error {
-            color: #991b1b;
-        }
-
-        .portal-page-wrapper .panel {
-            border: 0 !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .portal-page-wrapper .topbar .actions {
-            display: none !important;
-        }
-
-        .portal-page-wrapper .topbar {
-            padding: 22px 22px 8px 22px;
-            margin-bottom: 0;
-        }
-
-        .portal-page-wrapper .form-section,
-        .portal-page-wrapper .actions,
-        .portal-page-wrapper .msg {
-            margin-left: 22px;
-            margin-right: 22px;
-        }
-
-        .portal-page-wrapper .actions {
-            padding-bottom: 24px;
-        }
-
-        @media (max-width: 980px) {
-            .portal-shell {
+        @media (max-width: 960px) {
+            .portal-layout {
                 grid-template-columns: 1fr;
             }
 
-            .portal-sidebar {
+            .side-nav {
                 position: static;
             }
         }
     </style>
 </head>
+
 <body>
+
 <div class="header">
-    <img src="/static/Logo.png" alt="BK Steuerberatung Logo" class="logo">
+    <img src="/static/Logo.png" alt="Logo" class="logo">
 </div>
+
 <div class="container">
     <div class="panel">
+
         <div class="topbar">
             <div>
                 <h1>Stammdaten Portal</h1>
-                <p id="portalUserInfo">Willkommen im Portal.</p>
+                <p id="userInfo">Willkommen im Portal.</p>
             </div>
             <div class="actions">
                 <button onclick="logout()">Logout</button>
             </div>
         </div>
 
-        <div class="portal-shell">
-            <aside class="portal-sidebar">
-                <h2>Rechtsformen</h2>
-                <p>Wähle links die passende Rechtsform. Das jeweilige Formular wird rechts direkt in den Inhaltsbereich geladen.</p>
+        <div class="portal-layout">
 
-                <nav class="portal-nav" aria-label="Rechtsformen Navigation">
-                    <a class="portal-nav-link" href="/eu.html" data-page="/eu.html" data-title="Einzelunternehmen / Freier Beruf"><strong>Einzelunternehmen / Freier Beruf</strong></a>
-                    <a class="portal-nav-link" href="/gbr.html" data-page="/gbr.html" data-title="GbR"><strong>GbR</strong></a>
-                    <a class="portal-nav-link" href="/gmbh.html" data-page="/gmbh.html" data-title="GmbH"><strong>GmbH</strong></a>
-                    <a class="portal-nav-link" href="/kg-ohg.html" data-page="/kg-ohg.html" data-title="KG / OHG"><strong>KG / OHG</strong></a>
-                    <a class="portal-nav-link" href="/eg.html" data-page="/eg.html" data-title="eG"><strong>eG</strong></a>
-                    <a class="portal-nav-link" href="/stiftung.html" data-page="/stiftung.html" data-title="Stiftung"><strong>Stiftung</strong></a>
-                    <a class="portal-nav-link" href="/naturliche-person.html" data-page="/naturliche-person.html" data-title="Natürliche Person"><strong>Natürliche Person</strong></a>
-                </nav>
+            <!-- LEFT NAV -->
+            <aside class="side-nav">
+                <h3>Rechtsformen</h3>
+
+                <a data-page="/eu.html">Einzelunternehmen / Freier Beruf</a>
+                <a data-page="/gbr.html">GbR</a>
+                <a data-page="/gmbh.html">GmbH</a>
+                <a data-page="/kg-ohg.html">KG / OHG</a>
+                <a data-page="/eg.html">eG</a>
+                <a data-page="/stiftung.html">Stiftung</a>
+                <a data-page="/naturliche-person.html">Natürliche Person</a>
             </aside>
 
-            <section class="portal-content">
-                <div class="portal-content-card">
-                    <div class="portal-content-head">
-                        <div>
-                            <strong id="contentTitle">Einzelunternehmen / Freier Beruf</strong><br>
-                            <span>Geladen aus derselben Domain ohne iframe.</span>
-                        </div>
-                    </div>
-                    <div id="dynamicPageStyles"></div>
-                    <div id="dynamicPageScripts"></div>
-                    <div id="contentHost" class="portal-content-body">
-                        <div class="portal-loader">Formular wird geladen …</div>
-                    </div>
-                </div>
-            </section>
+            <!-- RIGHT CONTENT -->
+            <main id="portalContent" class="portal-content">
+                <p>Bitte links eine Rechtsform auswählen.</p>
+            </main>
+
         </div>
+
     </div>
 </div>
 
 <script>
-    const links = Array.from(document.querySelectorAll('.portal-nav-link'));
-    const contentHost = document.getElementById('contentHost');
-    const contentTitle = document.getElementById('contentTitle');
-    const styleHost = document.getElementById('dynamicPageStyles');
-    const scriptHost = document.getElementById('dynamicPageScripts');
-    const allowedPages = new Set(links.map((link) => link.dataset.page));
-
     async function initPortal() {
         const auth = await requireAuth();
         if (auth && auth.user) {
-            document.getElementById('portalUserInfo').innerText = 'Eingeloggt als: ' + auth.user;
+            document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
         }
+
+        bindNav();
+
+        const params = new URLSearchParams(window.location.search);
+        const startPage = params.get("page") || "/eu.html";
+
+        await loadPage(startPage);
     }
 
-    function setActiveLink(page) {
-        links.forEach((link) => {
-            const isActive = link.dataset.page === page;
-            link.classList.toggle('active', isActive);
-            if (isActive) {
-                contentTitle.textContent = link.dataset.title;
-            }
+    function bindNav() {
+        document.querySelectorAll("[data-page]").forEach(link => {
+            link.addEventListener("click", async (e) => {
+                e.preventDefault();
+
+                const page = link.dataset.page;
+
+                history.replaceState(null, "", "/portal.html?page=" + encodeURIComponent(page));
+
+                await loadPage(page);
+                setActive(page);
+            });
         });
     }
 
-    function runScriptsFromDocument(doc, page) {
-        scriptHost.innerHTML = '';
-        const scripts = Array.from(doc.querySelectorAll('script'));
+    function setActive(page) {
+        document.querySelectorAll("[data-page]").forEach(link => {
+            link.classList.toggle("active", link.dataset.page === page);
+        });
+    }
 
-        scripts.forEach((oldScript, index) => {
-            if (oldScript.src && oldScript.src.includes('/app.js')) {
+    async function loadPage(page) {
+        const target = document.getElementById("portalContent");
+
+        target.innerHTML = "<p>Lade...</p>";
+
+        try {
+            const res = await fetch(page, {
+                method: "GET",
+                credentials: "include"
+            });
+
+            if (!res.ok) {
+                target.innerHTML = "<p>Seite konnte nicht geladen werden.</p>";
                 return;
             }
 
-            const newScript = document.createElement('script');
-            newScript.dataset.sourcePage = page;
-            newScript.dataset.scriptIndex = String(index);
+            const html = await res.text();
+            const doc = new DOMParser().parseFromString(html, "text/html");
 
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.textContent = oldScript.textContent;
-            }
-
-            scriptHost.appendChild(newScript);
-        });
-    }
-
-    function applyStylesFromDocument(doc) {
-        styleHost.innerHTML = '';
-        const styles = Array.from(doc.querySelectorAll('style'));
-
-        styles.forEach((style) => {
-            const cloned = document.createElement('style');
-            cloned.textContent = style.textContent;
-            styleHost.appendChild(cloned);
-        });
-    }
-
-    async function loadPage(page, pushState = true) {
-        if (!allowedPages.has(page)) {
-            contentHost.innerHTML = '<div class="portal-error">Die angeforderte Seite ist nicht erlaubt.</div>';
-            return;
-        }
-
-        setActiveLink(page);
-        contentHost.innerHTML = '<div class="portal-loader">Formular wird geladen …</div>';
-
-        try {
-            const response = await fetch(page, {
-                credentials: 'same-origin',
-                headers: {
-                    'X-Requested-With': 'portal-fetch'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('HTTP ' + response.status);
-            }
-
-            const html = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const panel = doc.querySelector('.container .panel');
+            const panel = doc.querySelector(".panel");
 
             if (!panel) {
-                throw new Error('Kein Panel gefunden');
+                target.innerHTML = "<p>Ungültige Seite.</p>";
+                return;
             }
 
-            applyStylesFromDocument(doc);
+            // Topbar entfernen (wichtig!)
+            const topbar = panel.querySelector(".topbar");
+            if (topbar) topbar.remove();
 
-            const wrapper = document.createElement('div');
-            wrapper.className = 'portal-page-wrapper';
-            wrapper.innerHTML = panel.innerHTML;
+            target.innerHTML = panel.innerHTML;
 
-            const embeddedActions = wrapper.querySelector('.topbar .actions');
-            if (embeddedActions) {
-                embeddedActions.remove();
+            // 🔥 HIER passiert die Magie
+            if (window.portalPageInits && typeof window.portalPageInits[page] === "function") {
+                await window.portalPageInits[page]();
             }
 
-            contentHost.innerHTML = '';
-            contentHost.appendChild(wrapper);
-            runScriptsFromDocument(doc, page);
+            setActive(page);
 
-            if (pushState) {
-                history.replaceState({ page }, '', '/portal.html?page=' + encodeURIComponent(page));
-            }
-        } catch (error) {
-            console.error(error);
-            contentHost.innerHTML = '<div class="portal-error">Die Seite konnte nicht geladen werden.</div>';
+        } catch (err) {
+            console.error(err);
+            target.innerHTML = "<p>Fehler beim Laden.</p>";
         }
     }
 
-    links.forEach((link) => {
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
-            loadPage(link.dataset.page);
-        });
-    });
-
-    window.addEventListener('popstate', (event) => {
-        const page = event.state?.page;
-        if (page && allowedPages.has(page)) {
-            loadPage(page, false);
-        }
-    });
-
-    initPortal().then(() => {
-        const params = new URLSearchParams(window.location.search);
-        const requestedPage = params.get('page');
-        const startPage = allowedPages.has(requestedPage) ? requestedPage : '/eu.html';
-        loadPage(startPage, false);
-    });
+    initPortal();
 </script>
+
 </body>
 </html>
