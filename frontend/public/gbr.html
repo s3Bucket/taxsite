@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GbR</title>
     <link rel="stylesheet" href="/styles.css">
-    <script src="/app.js"></script>
+    <script src="/app.js?v=2"></script>
 </head>
 <body>
 <div class="header">
@@ -41,7 +41,15 @@
             <label>Gründungsdatum</label><input id="gruendungsdatum" type="date">
             <label>USt-IdNr.</label><input id="ustid" type="text">
             <label>Bundesland</label><input id="bundesland" type="text">
-            <label>Gesellschafter</label><input id="gesellschafter" type="text">
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">Gesellschafter</h3>
+            <div id="gesellschafterContainer"></div>
+
+            <div class="inline-actions">
+                <button type="button" onclick="addGesellschafter()">Gesellschafter hinzufügen</button>
+            </div>
         </div>
 
         <div class="form-section">
@@ -53,7 +61,6 @@
 
         <div class="form-section">
             <h3 class="section-title">Dokumente</h3>
-            <label>Personalausweis der Gesellschafter</label><input id="doc_personalausweis_gesellschafter" type="file" multiple>
             <label>Gewerbeanmeldung</label><input id="doc_gewerbeanmeldung" type="file">
         </div>
 
@@ -68,37 +75,18 @@
         if (auth && auth.user) document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
     }
     initPage();
-
-    async function submitPage() {
-        const fields = {
-            anrede: document.getElementById("anrede").value,
-            unternehmensname: document.getElementById("unternehmensname").value,
-            unternehmensform: document.getElementById("unternehmensform").value,
-            strasse_hausnummer: document.getElementById("strasse").value,
-            plz: document.getElementById("plz").value,
-            ort: document.getElementById("ort").value,
-            telefon: document.getElementById("telefon").value,
-            mobil: document.getElementById("mobil").value,
-            email: document.getElementById("email").value,
-            bankverbindung: document.getElementById("bankverbindung").value,
-            steuernummer: document.getElementById("steuernummer").value,
-            unternehmensgegenstand: document.getElementById("gegenstand").value,
-            gruendungsdatum: document.getElementById("gruendungsdatum").value,
-            ust_idnr: document.getElementById("ustid").value,
-            bundesland: document.getElementById("bundesland").value,
-            gesellschafter: document.getElementById("gesellschafter").value,
-            ist_soll_versteuerung: document.getElementById("versteuerung").value,
-            voranmeldungszeitraum: document.getElementById("voranmeldung").value,
-            bilanz_oder_gewinnermittler: document.getElementById("bilanz").value
-        };
-
-        const fileFields = [
-            { id: "doc_personalausweis_gesellschafter", fieldName: "personalausweis_gesellschafter" },
-            { id: "doc_gewerbeanmeldung", fieldName: "gewerbeanmeldung" }
-        ];
-
-        await submitMultipartForm("gbr", fields, fileFields);
-    }
 </script>
 </body>
 </html>
+
+<script>
+    async function initPage() {
+        const auth = await requireAuth();
+        if (auth && auth.user) document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
+
+        if (window.portalPageInits && typeof window.portalPageInits["/gbr.html"] === "function") {
+            await window.portalPageInits["/gbr.html"]();
+        }
+    }
+    initPage();
+</script>
