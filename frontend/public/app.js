@@ -69,9 +69,7 @@
 
       for (const entry of fileFields) {
         const input = document.getElementById(entry.id);
-        if (!input || !input.files || input.files.length === 0) {
-          continue;
-        }
+        if (!input || !input.files || input.files.length === 0) continue;
 
         for (const file of input.files) {
           formData.append(entry.fieldName, file);
@@ -145,37 +143,37 @@
       wrapper.id = `child-card-${idx}`;
 
       wrapper.innerHTML = `
-    <h4>Kind ${idx}</h4>
+        <h4>Kind ${idx}</h4>
 
-    <label>Name</label>
-    <input id="kind_name_${idx}" type="text" value="${escapeHtml(prefill.name)}">
+        <label>Name</label>
+        <input id="kind_name_${idx}" type="text" value="${escapeHtml(prefill.name)}">
 
-    <label>Geburtsdatum</label>
-    <input id="kind_geburt_${idx}" type="date" value="${escapeHtml(prefill.geburtsdatum)}">
+        <label>Geburtsdatum</label>
+        <input id="kind_geburt_${idx}" type="date" value="${escapeHtml(prefill.geburtsdatum)}">
 
-    <label>Wohnort</label>
-    <input id="kind_wohnort_${idx}" type="text" value="${escapeHtml(prefill.wohnort)}">
+        <label>Wohnort</label>
+        <input id="kind_wohnort_${idx}" type="text" value="${escapeHtml(prefill.wohnort)}">
 
-    <label>Leiblicher Vater</label>
-    <input id="kind_vater_${idx}" type="text" value="${escapeHtml(prefill.leiblicher_vater)}">
+        <label>Leiblicher Vater</label>
+        <input id="kind_vater_${idx}" type="text" value="${escapeHtml(prefill.leiblicher_vater)}">
 
-    <label>Leibliche Mutter</label>
-    <input id="kind_mutter_${idx}" type="text" value="${escapeHtml(prefill.leibliche_mutter)}">
+        <label>Leibliche Mutter</label>
+        <input id="kind_mutter_${idx}" type="text" value="${escapeHtml(prefill.leibliche_mutter)}">
 
-    <label>Identifikationsnummer</label>
-    <input id="kind_ident_${idx}" type="text" value="${escapeHtml(prefill.identifikationsnummer)}">
+        <label>Identifikationsnummer</label>
+        <input id="kind_ident_${idx}" type="text" value="${escapeHtml(prefill.identifikationsnummer)}">
 
-    <div class="form-section">
-      <h4>Dokumente – Kind ${idx}</h4>
-      <label>Personalausweis / Ausweisdokument Kind ${idx}</label>
-      <input id="doc_kind_personalausweis_${idx}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-      <div class="upload-hint">Mehrere Dateien möglich.</div>
-    </div>
+        <div class="form-section">
+          <h4>Dokumente – Kind ${idx}</h4>
+          <label>Personalausweis / Ausweisdokument Kind ${idx}</label>
+          <input id="doc_kind_personalausweis_${idx}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+          <div class="upload-hint">Mehrere Dateien möglich.</div>
+        </div>
 
-    <div class="inline-actions">
-      <button type="button" class="btn btn-danger" onclick="removeChildEntry(${idx})">Eintrag entfernen</button>
-    </div>
-  `;
+        <div class="inline-actions">
+          <button type="button" class="btn btn-danger" onclick="removeChildEntry(${idx})">Eintrag entfernen</button>
+        </div>
+      `;
 
       container.appendChild(wrapper);
     };
