@@ -715,4 +715,117 @@
       addKommanditist();
     }
   };
+
+  window.portalPageInits = window.portalPageInits || {};
+
+  window.portalPageInits["/eg.html"] = async function () {
+    const auth = await requireAuth({ redirect: false });
+    if (auth && auth.user) {
+      const userInfo = document.getElementById("userInfo");
+      if (userInfo) {
+        userInfo.innerText = "Eingeloggt als: " + auth.user;
+      }
+    }
+
+    let vorstandCounter = 0;
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+    }
+
+    window.addVorstand = function (prefill = {}) {
+      vorstandCounter += 1;
+      const idx = vorstandCounter;
+
+      const container = document.getElementById("vorstandContainer");
+      if (!container) return;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "child-card";
+      wrapper.id = `vorstand-card-${idx}`;
+
+      wrapper.innerHTML = `
+      <h4>Vorstandsmitglied ${idx}</h4>
+
+      <label>Name</label>
+      <input id="vorstand_name_${idx}" type="text" value="${escapeHtml(prefill.name)}">
+
+      <div class="form-section">
+        <h4>Dokumente – Vorstandsmitglied ${idx}</h4>
+        <label>Personalausweis</label>
+        <input id="doc_personalausweis_vorstand_${idx}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+        <div class="upload-hint">Mehrere Dateien möglich.</div>
+      </div>
+
+      <div class="inline-actions">
+        <button type="button" class="btn btn-danger" onclick="removeVorstand(${idx})">Eintrag entfernen</button>
+      </div>
+    `;
+
+      container.appendChild(wrapper);
+    };
+
+    window.removeVorstand = function (idx) {
+      const el = document.getElementById(`vorstand-card-${idx}`);
+      if (!el) return;
+      el.remove();
+    };
+
+    window.submitPage = async function () {
+      const vorstandCards = Array.from(
+          document.querySelectorAll('[id^="vorstand-card-"]')
+      );
+
+      const vorstand = vorstandCards.map(card => {
+        const idx = card.id.replace("vorstand-card-", "");
+        return {
+          name: document.getElementById(`vorstand_name_${idx}`)?.value || "",
+          upload_field_id: `doc_personalausweis_vorstand_${idx}`
+        };
+      });
+
+      const fields = {
+        anrede: document.getElementById("anrede")?.value || "",
+        unternehmensname: document.getElementById("unternehmensname")?.value || "",
+        unternehmensform: document.getElementById("unternehmensform")?.value || "",
+        strasse_hausnummer: document.getElementById("strasse")?.value || "",
+        plz: document.getElementById("plz")?.value || "",
+        ort: document.getElementById("ort")?.value || "",
+        telefon: document.getElementById("telefon")?.value || "",
+        mobil: document.getElementById("mobil")?.value || "",
+        email: document.getElementById("email")?.value || "",
+        bankverbindung: document.getElementById("bankverbindung")?.value || "",
+        steuernummer: document.getElementById("steuernummer")?.value || "",
+        unternehmensgegenstand: document.getElementById("gegenstand")?.value || "",
+        gruendungsdatum: document.getElementById("gruendungsdatum")?.value || "",
+        ust_idnr: document.getElementById("ustid")?.value || "",
+        bundesland: document.getElementById("bundesland")?.value || "",
+        ist_soll_versteuerung: document.getElementById("versteuerung")?.value || "",
+        voranmeldungszeitraum: document.getElementById("voranmeldung")?.value || "",
+        bilanz_oder_gewinnermittler: document.getElementById("bilanz")?.value || "",
+        vorstand: vorstand.map(item => ({
+          name: item.name
+        }))
+      };
+
+      const fileFields = [
+        ...vorstand.map((item, index) => ({
+          id: item.upload_field_id,
+          fieldName: `personalausweis_vorstand_${index + 1}`
+        })),
+        { id: "doc_registerauszug", fieldName: "registerauszug" }
+      ];
+
+      await submitMultipartForm("eg", fields, fileFields);
+    };
+
+    const container = document.getElementById("vorstandContainer");
+    if (container && container.children.length === 0) {
+      addVorstand();
+    }
+  };
 })();
