@@ -410,4 +410,162 @@
       addGesellschafter();
     }
   };
+
+  window.portalPageInits = window.portalPageInits || {};
+
+  window.portalPageInits["/gmbh.html"] = async function () {
+    const auth = await requireAuth({ redirect: false });
+    if (auth && auth.user) {
+      const userInfo = document.getElementById("userInfo");
+      if (userInfo) {
+        userInfo.innerText = "Eingeloggt als: " + auth.user;
+      }
+    }
+
+    let geschaeftsfuehrerCounter = 0;
+    let gesellschafterCounter = 0;
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+    }
+
+    window.addGeschaeftsfuehrer = function (prefill = {}) {
+      geschaeftsfuehrerCounter += 1;
+      const idx = geschaeftsfuehrerCounter;
+
+      const container = document.getElementById("geschaeftsfuehrerContainer");
+      if (!container) return;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "child-card";
+      wrapper.id = `geschaeftsfuehrer-card-${idx}`;
+
+      wrapper.innerHTML = `
+      <h4>Geschäftsführer ${idx}</h4>
+
+      <label>Name</label>
+      <input id="geschaeftsfuehrer_name_${idx}" type="text" value="${escapeHtml(prefill.name)}">
+
+      <label>Adresse</label>
+      <input id="geschaeftsfuehrer_adresse_${idx}" type="text" value="${escapeHtml(prefill.adresse)}">
+
+      <div class="inline-actions">
+        <button type="button" class="btn btn-danger" onclick="removeGeschaeftsfuehrer(${idx})">Eintrag entfernen</button>
+      </div>
+    `;
+
+      container.appendChild(wrapper);
+    };
+
+    window.removeGeschaeftsfuehrer = function (idx) {
+      const el = document.getElementById(`geschaeftsfuehrer-card-${idx}`);
+      if (!el) return;
+      el.remove();
+    };
+
+    window.addGesellschafter = function (prefill = {}) {
+      gesellschafterCounter += 1;
+      const idx = gesellschafterCounter;
+
+      const container = document.getElementById("gesellschafterContainer");
+      if (!container) return;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "child-card";
+      wrapper.id = `gesellschafter-card-${idx}`;
+
+      wrapper.innerHTML = `
+      <h4>Gesellschafter ${idx}</h4>
+
+      <label>Name</label>
+      <input id="gesellschafter_name_${idx}" type="text" value="${escapeHtml(prefill.name)}">
+
+      <label>Adresse</label>
+      <input id="gesellschafter_adresse_${idx}" type="text" value="${escapeHtml(prefill.adresse)}">
+
+      <div class="inline-actions">
+        <button type="button" class="btn btn-danger" onclick="removeGesellschafter(${idx})">Eintrag entfernen</button>
+      </div>
+    `;
+
+      container.appendChild(wrapper);
+    };
+
+    window.removeGesellschafter = function (idx) {
+      const el = document.getElementById(`gesellschafter-card-${idx}`);
+      if (!el) return;
+      el.remove();
+    };
+
+    window.submitPage = async function () {
+      const geschaeftsfuehrerCards = Array.from(
+          document.querySelectorAll('[id^="geschaeftsfuehrer-card-"]')
+      );
+
+      const gesellschafterCards = Array.from(
+          document.querySelectorAll('[id^="gesellschafter-card-"]')
+      );
+
+      const geschaeftsfuehrer = geschaeftsfuehrerCards.map(card => {
+        const idx = card.id.replace("geschaeftsfuehrer-card-", "");
+        return {
+          name: document.getElementById(`geschaeftsfuehrer_name_${idx}`)?.value || "",
+          adresse: document.getElementById(`geschaeftsfuehrer_adresse_${idx}`)?.value || ""
+        };
+      });
+
+      const gesellschafter = gesellschafterCards.map(card => {
+        const idx = card.id.replace("gesellschafter-card-", "");
+        return {
+          name: document.getElementById(`gesellschafter_name_${idx}`)?.value || "",
+          adresse: document.getElementById(`gesellschafter_adresse_${idx}`)?.value || ""
+        };
+      });
+
+      const fields = {
+        anrede: document.getElementById("anrede")?.value || "",
+        unternehmensname: document.getElementById("unternehmensname")?.value || "",
+        unternehmensform: document.getElementById("unternehmensform")?.value || "",
+        strasse_hausnummer: document.getElementById("strasse")?.value || "",
+        plz: document.getElementById("plz")?.value || "",
+        ort: document.getElementById("ort")?.value || "",
+        telefon: document.getElementById("telefon")?.value || "",
+        mobil: document.getElementById("mobil")?.value || "",
+        email: document.getElementById("email")?.value || "",
+        bankverbindung: document.getElementById("bankverbindung")?.value || "",
+        steuernummer: document.getElementById("steuernummer")?.value || "",
+        unternehmensgegenstand: document.getElementById("gegenstand")?.value || "",
+        gruendungsdatum: document.getElementById("gruendungsdatum")?.value || "",
+        ust_idnr: document.getElementById("ustid")?.value || "",
+        bundesland: document.getElementById("bundesland")?.value || "",
+        ist_soll_versteuerung: document.getElementById("versteuerung")?.value || "",
+        voranmeldungszeitraum: document.getElementById("voranmeldung")?.value || "",
+        bilanz_oder_gewinnermittler: document.getElementById("bilanz")?.value || "",
+        geschaeftsfuehrer,
+        gesellschafter
+      };
+
+      const fileFields = [
+        { id: "doc_handelsregister", fieldName: "handelsregisterauszug" },
+        { id: "doc_gewerbeanmeldung", fieldName: "gewerbeanmeldung" }
+      ];
+
+      await submitMultipartForm("gmbh", fields, fileFields);
+    };
+
+    const gfContainer = document.getElementById("geschaeftsfuehrerContainer");
+    const gContainer = document.getElementById("gesellschafterContainer");
+
+    if (gfContainer && gfContainer.children.length === 0) {
+      addGeschaeftsfuehrer();
+    }
+
+    if (gContainer && gContainer.children.length === 0) {
+      addGesellschafter();
+    }
+  };
 })();
