@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stiftung</title>
     <link rel="stylesheet" href="/styles.css">
-    <script src="/app.js"></script>
+    <script src="/app.js?v=6"></script>
 </head>
 <body>
 <div class="header">
     <img src="/static/Logo.png" alt="BK Steuerberatung Logo" class="logo">
 </div>
+
 <div class="container">
     <div class="panel">
         <div class="topbar">
@@ -20,7 +21,7 @@
             </div>
             <div class="actions">
                 <a class="btn btn-secondary" href="/portal.html">Zurück zum Portal</a>
-                <button onclick="logout()">Logout</button>
+                <button type="button" onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -29,7 +30,6 @@
             <label>Anrede</label><input id="anrede" type="text">
             <label>Unternehmensname</label><input id="unternehmensname" type="text">
             <label>Unternehmensform</label><input id="unternehmensform" type="text">
-            <label>Familien- oder gemeinnützige Stiftung</label><input id="stiftung_typ" type="text">
             <label>Straße und Hausnummer</label><input id="strasse" type="text">
             <label>PLZ</label><input id="plz" type="text">
             <label>Ort</label><input id="ort" type="text">
@@ -42,19 +42,33 @@
             <label>Gründungsdatum</label><input id="gruendungsdatum" type="date">
             <label>USt-IdNr.</label><input id="ustid" type="text">
             <label>Bundesland</label><input id="bundesland" type="text">
-            <label>Registergericht</label><input id="registergericht" type="text">
-            <label>Register</label><input id="register" type="text">
-            <label>Register-Nr.</label><input id="register_nr" type="text">
-            <label>Stifter</label><input id="stifter" type="text">
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">Stifter</h3>
+            <div id="stifterContainer"></div>
+
+            <div class="inline-actions">
+                <button type="button" onclick="addStifter()">Stifter hinzufügen</button>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">Buchhaltung</h3>
+            <label>Ist- / Sollversteuerung</label><input id="versteuerung" type="text">
+            <label>Voranmeldungszeitraum</label><input id="voranmeldung" type="text">
+            <label>Bilanz oder Gewinnermittler</label><input id="bilanz" type="text">
         </div>
 
         <div class="form-section">
             <h3 class="section-title">Dokumente</h3>
-            <label>Personalausweis des Vorstandes</label><input id="doc_personalausweis_vorstand" type="file" multiple>
-            <label>Satzung</label><input id="doc_satzung" type="file">
+            <label>Stiftungsurkunde</label>
+            <input id="doc_stiftungsurkunde" type="file" accept=".pdf,.jpg,.jpeg,.png">
         </div>
 
-        <div class="actions"><button onclick="submitPage()">Absenden</button></div>
+        <div class="actions">
+            <button type="button" onclick="submitPage()">Absenden</button>
+        </div>
         <div id="msg" class="msg"></div>
     </div>
 </div>
@@ -62,41 +76,15 @@
 <script>
     async function initPage() {
         const auth = await requireAuth();
-        if (auth && auth.user) document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
+        if (auth && auth.user) {
+            document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
+        }
+
+        if (window.portalPageInits && typeof window.portalPageInits["/stiftung.html"] === "function") {
+            await window.portalPageInits["/stiftung.html"]();
+        }
     }
     initPage();
-
-    async function submitPage() {
-        const fields = {
-            anrede: document.getElementById("anrede").value,
-            unternehmensname: document.getElementById("unternehmensname").value,
-            unternehmensform: document.getElementById("unternehmensform").value,
-            stiftung_typ: document.getElementById("stiftung_typ").value,
-            strasse_hausnummer: document.getElementById("strasse").value,
-            plz: document.getElementById("plz").value,
-            ort: document.getElementById("ort").value,
-            telefon: document.getElementById("telefon").value,
-            mobil: document.getElementById("mobil").value,
-            email: document.getElementById("email").value,
-            bankverbindung: document.getElementById("bankverbindung").value,
-            steuernummer: document.getElementById("steuernummer").value,
-            unternehmensgegenstand: document.getElementById("gegenstand").value,
-            gruendungsdatum: document.getElementById("gruendungsdatum").value,
-            ust_idnr: document.getElementById("ustid").value,
-            bundesland: document.getElementById("bundesland").value,
-            registergericht: document.getElementById("registergericht").value,
-            register: document.getElementById("register").value,
-            register_nr: document.getElementById("register_nr").value,
-            stifter: document.getElementById("stifter").value
-        };
-
-        const fileFields = [
-            { id: "doc_personalausweis_vorstand", fieldName: "personalausweis_vorstand" },
-            { id: "doc_satzung", fieldName: "satzung" }
-        ];
-
-        await submitMultipartForm("stiftung", fields, fileFields);
-    }
 </script>
 </body>
 </html>
