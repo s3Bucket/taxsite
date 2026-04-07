@@ -4,129 +4,545 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stammdaten Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
 
     <style>
-        .portal-layout {
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #0f172a;
+        }
+
+        /* ── Page shell ──────────────────────────────────────────────── */
+        .portal-shell {
             display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 24px;
-            align-items: start;
+            grid-template-rows: 64px 1fr;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
         }
 
-        .side-nav {
-            background: #fff;
-            border: 1px solid #dbe3ef;
-            border-radius: 16px;
-            padding: 18px;
+        /* ── Top bar ─────────────────────────────────────────────────── */
+        .portal-topbar {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            background: #0f172a;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
             position: sticky;
-            top: 20px;
+            top: 0;
+            z-index: 100;
         }
 
-        .side-nav h3 {
-            margin-top: 0;
-            margin-bottom: 14px;
+        .portal-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
 
-        .side-nav a {
-            display: block;
-            padding: 12px 14px;
-            margin-bottom: 10px;
+        .portal-brand img {
+            height: 36px;
+            width: auto;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+            opacity: 0.9;
+        }
+
+        .portal-brand-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255,255,255,0.15);
+        }
+
+        .portal-brand-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.55);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .portal-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .portal-user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px 6px 8px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 40px;
+        }
+
+        .portal-user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        #userInfoName {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .portal-logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: rgba(255,255,255,0.55);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .portal-logout-btn:hover {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.85);
+            border-color: rgba(255,255,255,0.25);
+        }
+
+        /* ── Sidebar ─────────────────────────────────────────────────── */
+        .portal-sidebar {
+            background: #0f172a;
+            border-right: 1px solid rgba(255,255,255,0.07);
+            padding: 24px 16px;
+            position: sticky;
+            top: 64px;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-section-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            padding: 0 12px;
+            margin-bottom: 8px;
+            margin-top: 4px;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 12px;
+            margin-bottom: 2px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.55);
+            border-radius: 9px;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.85);
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(37, 99, 235, 0.18);
+            border-color: rgba(37, 99, 235, 0.35);
+            color: #93c5fd;
+        }
+
+        .sidebar-nav-item.active .nav-icon svg {
+            stroke: #93c5fd;
+        }
+
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            opacity: 0.7;
+        }
+
+        .sidebar-nav-item.active .nav-icon {
+            opacity: 1;
+        }
+
+        .sidebar-spacer {
+            flex: 1;
+        }
+
+        .sidebar-footer {
+            padding: 12px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            margin-top: 12px;
+        }
+
+        .sidebar-footer-text {
+            font-size: 11px;
+            color: rgba(255,255,255,0.2);
+            line-height: 1.5;
+        }
+
+        /* ── Main content ────────────────────────────────────────────── */
+        .portal-main {
+            background: #f1f5f9;
+            overflow-y: auto;
+        }
+
+        #portalContent {
+            padding: 28px;
+            min-height: calc(100vh - 64px);
+        }
+
+        /* ── Empty / loading states ──────────────────────────────────── */
+        .portal-welcome {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            gap: 16px;
+        }
+
+        .portal-welcome-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            border: 1px solid #bfdbfe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+        }
+
+        .portal-welcome h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .portal-welcome p {
+            margin: 0;
+            font-size: 14px;
+            color: #64748b;
+            max-width: 320px;
+        }
+
+        .portal-loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .portal-error-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .portal-error-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── Quick-links grid (welcome screen) ───────────────────────── */
+        .quicklinks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 28px;
+            max-width: 720px;
+        }
+
+        .quicklink-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
             text-decoration: none;
             color: #0f172a;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            transition: 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
             cursor: pointer;
+            transition: all 0.15s ease;
         }
 
-        .side-nav a:hover,
-        .side-nav a.active {
-            background: #e8f0fe;
+        .quicklink-card:hover {
             border-color: #93c5fd;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.1);
+            transform: translateY(-1px);
         }
 
-        .portal-content {
-            background: #fff;
-            border: 1px solid #dbe3ef;
-            border-radius: 16px;
-            padding: 20px;
-            min-height: 80vh;
+        .quicklink-card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            background: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .portal-loading,
-        .portal-error {
-            padding: 20px;
-            border-radius: 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+        .quicklink-card span {
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        @media (max-width: 960px) {
-            .portal-layout {
+        /* ── Responsive ──────────────────────────────────────────────── */
+        @media (max-width: 900px) {
+            .portal-shell {
                 grid-template-columns: 1fr;
+                grid-template-rows: 64px auto 1fr;
             }
 
-            .side-nav {
+            .portal-topbar {
+                grid-column: 1;
+            }
+
+            .portal-sidebar {
                 position: static;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.07);
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 12px;
+            }
+
+            .sidebar-section-label,
+            .sidebar-spacer,
+            .sidebar-footer {
+                display: none;
+            }
+
+            .sidebar-nav-item {
+                margin-bottom: 0;
             }
         }
     </style>
 </head>
 <body>
-<div class="header">
-    <img src="/static/Logo.png" alt="BK Steuerberatung Logo" class="logo">
-</div>
 
-<div class="container">
-    <div class="panel">
-        <div class="topbar">
-            <div>
-                <h1>Stammdaten Portal</h1>
-                <p id="userInfo">Willkommen im Portal.</p>
+<div class="portal-shell">
+
+    <!-- Top bar -->
+    <header class="portal-topbar">
+        <div class="portal-brand">
+            <img src="/static/Logo.png" alt="BK Steuerberatung Logo">
+            <div class="portal-brand-divider"></div>
+            <span class="portal-brand-label">Stammdaten Portal</span>
+        </div>
+        <div class="portal-topbar-right">
+            <div class="portal-user-badge">
+                <div class="portal-user-avatar" id="userAvatar">–</div>
+                <span id="userInfoName">Lade …</span>
             </div>
-            <div class="actions">
-                <button type="button" onclick="logout()">Logout</button>
+            <button class="portal-logout-btn" onclick="logout()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="portal-sidebar">
+        <div class="sidebar-section-label">Rechtsformen</div>
+
+        <a class="sidebar-nav-item" href="#" data-page="/eu.html">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+            </span>
+            Einzelunternehmen / Freier Beruf
+        </a>
+
+        <a class="sidebar-nav-item" href="#" data-page="/gbr.html">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+            </span>
+            GbR
+        </a>
+
+        <a class="sidebar-nav-item" href="#" data-page="/gmbh.html">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+            </span>
+            GmbH
+        </a>
+
+        <a class="sidebar-nav-item" href="#" data-page="/kg-ohg.html">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+            </span>
+            KG / OHG
+        </a>
+
+        <a class="sidebar-nav-item" href="#" data-page="/eg.html">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/>
+                </svg>
+            </span>
+            eG
+        </a>
+
+        <a class="sidebar-nav-item" href="#" data-page="/stiftung.html">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+            </span>
+            Stiftung
+        </a>
+
+        <a class="sidebar-nav-item" href="#" data-page="/naturliche-person.html">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+            </span>
+            Natürliche Person
+        </a>
+
+        <div class="sidebar-spacer"></div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-text">BK Steuerberatung<br>Stammdaten-Verwaltung</div>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="portal-main">
+        <div id="portalContent">
+            <!-- Welcome screen -->
+            <div class="portal-welcome">
+                <div class="portal-welcome-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </div>
+                <h2>Rechtsform auswählen</h2>
+                <p>Wählen Sie links die gewünschte Rechtsform, um die Stammdaten zu erfassen oder zu bearbeiten.</p>
+
+                <div class="quicklinks-grid" id="quicklinksGrid">
+                    <!-- filled by JS -->
+                </div>
             </div>
         </div>
+    </main>
 
-        <div class="portal-layout">
-            <aside class="side-nav">
-                <h3>Rechtsformen</h3>
-
-                <a href="#" data-page="/eu.html">Einzelunternehmen / Freier Beruf</a>
-                <a href="#" data-page="/gbr.html">GbR</a>
-                <a href="#" data-page="/gmbh.html">GmbH</a>
-                <a href="#" data-page="/kg-ohg.html">KG / OHG</a>
-                <a href="#" data-page="/eg.html">eG</a>
-                <a href="#" data-page="/stiftung.html">Stiftung</a>
-                <a href="#" data-page="/naturliche-person.html">Natürliche Person</a>
-            </aside>
-
-            <main id="portalContent" class="portal-content">
-                <div class="portal-loading">Bitte links eine Rechtsform auswählen.</div>
-            </main>
-        </div>
-    </div>
 </div>
 
 <script>
+    const NAV_PAGES = [
+        { page: "/eu.html",               label: "EU / Freier Beruf" },
+        { page: "/gbr.html",              label: "GbR" },
+        { page: "/gmbh.html",             label: "GmbH" },
+        { page: "/kg-ohg.html",           label: "KG / OHG" },
+        { page: "/eg.html",               label: "eG" },
+        { page: "/stiftung.html",         label: "Stiftung" },
+        { page: "/naturliche-person.html",label: "Natürliche Person" },
+    ];
+
     async function initPortal() {
         const auth = await requireAuth();
         if (auth && auth.user) {
-            const userInfo = document.getElementById("userInfo");
-            if (userInfo) {
-                userInfo.innerText = "Eingeloggt als: " + auth.user;
-            }
+            const nameEl  = document.getElementById("userInfoName");
+            const avatarEl = document.getElementById("userAvatar");
+            if (nameEl)   nameEl.textContent  = auth.user;
+            if (avatarEl) avatarEl.textContent = auth.user.charAt(0).toUpperCase();
         }
 
+        buildQuicklinks();
         bindPortalNav();
 
-        const params = new URLSearchParams(window.location.search);
-        const startPage = params.get("page") || "/eu.html";
-        await loadPortalPage(startPage);
+        const params    = new URLSearchParams(window.location.search);
+        const startPage = params.get("page");
+        if (startPage) await loadPortalPage(startPage);
+    }
+
+    function buildQuicklinks() {
+        const grid = document.getElementById("quicklinksGrid");
+        if (!grid) return;
+        NAV_PAGES.forEach(({ page, label }) => {
+            const card = document.createElement("div");
+            card.className = "quicklink-card";
+            card.innerHTML = `
+                <div class="quicklink-card-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                </div>
+                <span>${label}</span>`;
+            card.addEventListener("click", () => {
+                history.replaceState(null, "", "/portal.html?page=" + encodeURIComponent(page));
+                loadPortalPage(page);
+            });
+            grid.appendChild(card);
+        });
     }
 
     function bindPortalNav() {
@@ -134,7 +550,6 @@
             link.addEventListener("click", async (event) => {
                 event.preventDefault();
                 const page = link.dataset.page;
-
                 history.replaceState(null, "", "/portal.html?page=" + encodeURIComponent(page));
                 await loadPortalPage(page);
             });
@@ -149,34 +564,42 @@
 
     async function loadPortalPage(page) {
         const target = document.getElementById("portalContent");
-        target.innerHTML = '<div class="portal-loading">Lade Inhalt ...</div>';
+        target.innerHTML = `
+            <div class="portal-loading-state">
+                <div class="spinner"></div>
+                <span style="font-size:13px;color:#64748b;">Lade Inhalt …</span>
+            </div>`;
 
         try {
-            const response = await fetch(page, {
-                method: "GET",
-                credentials: "include"
-            });
+            const response = await fetch(page, { method: "GET", credentials: "include" });
 
             if (!response.ok) {
-                target.innerHTML = '<div class="portal-error">Seite konnte nicht geladen werden.</div>';
+                target.innerHTML = `
+                    <div class="portal-error-state">
+                        <div class="portal-error-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                        </div>
+                        <span style="font-size:14px;color:#64748b;">Seite konnte nicht geladen werden.</span>
+                    </div>`;
                 return;
             }
 
             const html = await response.text();
-            const doc = new DOMParser().parseFromString(html, "text/html");
-
+            const doc  = new DOMParser().parseFromString(html, "text/html");
             const panel = doc.querySelector(".panel");
+
             if (!panel) {
-                target.innerHTML = '<div class="portal-error">Kein gültiger Seiteninhalt gefunden.</div>';
+                target.innerHTML = `<div class="portal-error-state"><span style="font-size:14px;color:#64748b;">Kein gültiger Seiteninhalt gefunden.</span></div>`;
                 return;
             }
 
             const topbar = panel.querySelector(".topbar");
-            if (topbar) {
-                topbar.remove();
-            }
+            if (topbar) topbar.remove();
 
             target.innerHTML = panel.innerHTML;
+            target.style.padding = "28px";
 
             if (window.portalPageInits && typeof window.portalPageInits[page] === "function") {
                 await window.portalPageInits[page]();
@@ -185,7 +608,15 @@
             setActiveNav(page);
         } catch (error) {
             console.error("Fehler beim Laden der Portalseite:", error);
-            target.innerHTML = '<div class="portal-error">Fehler beim Laden der Seite.</div>';
+            target.innerHTML = `
+                <div class="portal-error-state">
+                    <div class="portal-error-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                    </div>
+                    <span style="font-size:14px;color:#64748b;">Fehler beim Laden der Seite.</span>
+                </div>`;
         }
     }
 
