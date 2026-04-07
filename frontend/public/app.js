@@ -124,86 +124,103 @@
     const auth = await requireAuth({ redirect: false });
     if (auth && auth.user) {
       const userInfo = document.getElementById('userInfo');
-      if (userInfo) {
-        userInfo.innerText = 'Eingeloggt als: ' + auth.user;
-      }
+      if (userInfo) userInfo.innerText = 'Eingeloggt als: ' + auth.user;
     }
 
-    let childCounter = 0;
+    // childUidCounter only ever goes up – gives each card a stable unique DOM id.
+    // The visible number (Kind 1, Kind 2 …) is always recalculated from DOM position.
+    let childUidCounter = 0;
+
+    function renumberChildren() {
+      document.querySelectorAll('#childrenContainer .child-card').forEach((card, i) => {
+        const n = i + 1;
+        const heading = card.querySelector('.child-heading');
+        if (heading) heading.textContent = 'Kind ' + n;
+        const fileLabel = card.querySelector('.child-file-label');
+        if (fileLabel) fileLabel.textContent = 'Personalausweis / Ausweisdokument Kind ' + n;
+      });
+    }
 
     window.addChild = function (prefill = {}) {
-      childCounter += 1;
-      const idx = childCounter;
+      childUidCounter += 1;
+      const uid = childUidCounter;
 
       const container = document.getElementById('childrenContainer');
       if (!container) return;
 
       const wrapper = document.createElement('div');
       wrapper.className = 'child-card';
-      wrapper.id = `child-card-${idx}`;
+      wrapper.id = `child-card-${uid}`;
 
       wrapper.innerHTML = `
-        <h4>Kind ${idx}</h4>
-
-        <label>Name</label>
-        <input id="kind_name_${idx}" type="text" value="${escapeHtml(prefill.name)}">
-
-        <label>Geburtsdatum</label>
-        <input id="kind_geburt_${idx}" type="date" value="${escapeHtml(prefill.geburtsdatum)}">
-
-        <label>Wohnort</label>
-        <input id="kind_wohnort_${idx}" type="text" value="${escapeHtml(prefill.wohnort)}">
-
-        <label>Leiblicher Vater</label>
-        <input id="kind_vater_${idx}" type="text" value="${escapeHtml(prefill.leiblicher_vater)}">
-
-        <label>Leibliche Mutter</label>
-        <input id="kind_mutter_${idx}" type="text" value="${escapeHtml(prefill.leibliche_mutter)}">
-
-        <label>Identifikationsnummer</label>
-        <input id="kind_ident_${idx}" type="text" value="${escapeHtml(prefill.identifikationsnummer)}">
-
-        <div class="form-section">
-          <h4>Dokumente – Kind ${idx}</h4>
-          <label>Personalausweis / Ausweisdokument Kind ${idx}</label>
-          <input id="doc_kind_personalausweis_${idx}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-          <div class="upload-hint">Mehrere Dateien möglich.</div>
+        <h4 class="child-heading">Kind</h4>
+        <div class="form-row">
+          <div>
+            <label>Name</label>
+            <input id="kind_name_${uid}" type="text" value="${escapeHtml(prefill.name)}">
+          </div>
+          <div>
+            <label>Geburtsdatum</label>
+            <input id="kind_geburt_${uid}" type="date" value="${escapeHtml(prefill.geburtsdatum)}">
+          </div>
         </div>
-
+        <div class="form-row">
+          <div>
+            <label>Wohnort</label>
+            <input id="kind_wohnort_${uid}" type="text" value="${escapeHtml(prefill.wohnort)}">
+          </div>
+          <div>
+            <label>Identifikationsnummer</label>
+            <input id="kind_ident_${uid}" type="text" value="${escapeHtml(prefill.identifikationsnummer)}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Leiblicher Vater</label>
+            <input id="kind_vater_${uid}" type="text" value="${escapeHtml(prefill.leiblicher_vater)}">
+          </div>
+          <div>
+            <label>Leibliche Mutter</label>
+            <input id="kind_mutter_${uid}" type="text" value="${escapeHtml(prefill.leibliche_mutter)}">
+          </div>
+        </div>
+        <label class="child-file-label">Personalausweis / Ausweisdokument Kind</label>
+        <input id="doc_kind_personalausweis_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+        <div class="upload-hint">Mehrere Dateien möglich.</div>
         <div class="inline-actions">
-          <button type="button" class="btn btn-danger" onclick="removeChildEntry(${idx})">Eintrag entfernen</button>
+          <button type="button" class="btn btn-danger" onclick="removeChildEntry(${uid})">Eintrag entfernen</button>
         </div>
       `;
 
       container.appendChild(wrapper);
+      renumberChildren();
     };
 
-    window.removeChildEntry = function (idx) {
-      const el = document.getElementById(`child-card-${idx}`);
+    window.removeChildEntry = function (uid) {
+      const el = document.getElementById(`child-card-${uid}`);
       if (!el) return;
 
-      el.style.transition = 'all 0.2s ease';
+      el.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
       el.style.opacity = '0';
       el.style.transform = 'scale(0.98)';
 
-      setTimeout(() => {
-        el.remove();
-      }, 200);
+      setTimeout(() => { el.remove(); renumberChildren(); }, 200);
     };
 
     window.submitPage = async function () {
-      const childCards = Array.from(document.querySelectorAll('[id^="child-card-"]'));
+      const childCards = Array.from(document.querySelectorAll('#childrenContainer .child-card'));
 
-      const children = childCards.map(card => {
-        const idx = card.id.replace('child-card-', '');
+      const children = childCards.map((card, index) => {
+        const uid = card.id.replace('child-card-', '');
         return {
-          name: document.getElementById(`kind_name_${idx}`)?.value || '',
-          geburtsdatum: document.getElementById(`kind_geburt_${idx}`)?.value || '',
-          wohnort: document.getElementById(`kind_wohnort_${idx}`)?.value || '',
-          leiblicher_vater: document.getElementById(`kind_vater_${idx}`)?.value || '',
-          leibliche_mutter: document.getElementById(`kind_mutter_${idx}`)?.value || '',
-          identifikationsnummer: document.getElementById(`kind_ident_${idx}`)?.value || '',
-          upload_field_id: `doc_kind_personalausweis_${idx}`
+          name: document.getElementById(`kind_name_${uid}`)?.value || '',
+          geburtsdatum: document.getElementById(`kind_geburt_${uid}`)?.value || '',
+          wohnort: document.getElementById(`kind_wohnort_${uid}`)?.value || '',
+          leiblicher_vater: document.getElementById(`kind_vater_${uid}`)?.value || '',
+          leibliche_mutter: document.getElementById(`kind_mutter_${uid}`)?.value || '',
+          identifikationsnummer: document.getElementById(`kind_ident_${uid}`)?.value || '',
+          upload_field_id: `doc_kind_personalausweis_${uid}`,
+          field_index: index + 1
         };
       });
 
@@ -265,9 +282,9 @@
       const fileFields = [
         { id: 'doc_personalausweis_ep1', fieldName: 'personalausweis_ehepartner_1' },
         { id: 'doc_personalausweis_ep2', fieldName: 'personalausweis_ehepartner_2' },
-        ...children.map((child, index) => ({
+        ...children.map(child => ({
           id: child.upload_field_id,
-          fieldName: `personalausweis_kind_${index + 1}`
+          fieldName: `personalausweis_kind_${child.field_index}`
         }))
       ];
 
