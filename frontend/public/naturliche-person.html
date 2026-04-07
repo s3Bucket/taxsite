@@ -245,7 +245,10 @@
 </div>
 
 <script>
-    let childCounter = 0;
+    // childUidCounter gives each card a stable unique DOM id (never reused).
+    // Visual numbers (Kind 1, Kind 2 …) are derived from DOM position after
+    // every add/remove so they always stay gapless.
+    let childUidCounter = 0;
 
     async function initPage() {
         const auth = await requireAuth();
@@ -258,63 +261,75 @@
     initPage();
 
     function addChild(prefill = {}) {
-        childCounter += 1;
-        const idx       = childCounter;
+        childUidCounter += 1;
+        const uid       = childUidCounter;
         const container = document.getElementById("childrenContainer");
         const wrapper   = document.createElement("div");
         wrapper.className = "child-card";
-        wrapper.id        = `child-card-${idx}`;
+        wrapper.id        = `child-card-${uid}`;
 
         wrapper.innerHTML = `
-            <h4>Kind ${idx}</h4>
+            <h4 class="child-heading">Kind</h4>
             <div class="form-row">
                 <div>
                     <label>Name</label>
-                    <input id="kind_name_${idx}" type="text" value="${escapeHtml(prefill.name || "")}">
+                    <input id="kind_name_${uid}" type="text" value="${escapeHtml(prefill.name || "")}">
                 </div>
                 <div>
                     <label>Geburtsdatum</label>
-                    <input id="kind_geburt_${idx}" type="date" value="${escapeHtml(prefill.geburtsdatum || "")}">
+                    <input id="kind_geburt_${uid}" type="date" value="${escapeHtml(prefill.geburtsdatum || "")}">
                 </div>
             </div>
             <div class="form-row">
                 <div>
                     <label>Wohnort</label>
-                    <input id="kind_wohnort_${idx}" type="text" value="${escapeHtml(prefill.wohnort || "")}">
+                    <input id="kind_wohnort_${uid}" type="text" value="${escapeHtml(prefill.wohnort || "")}">
                 </div>
                 <div>
                     <label>Identifikationsnummer</label>
-                    <input id="kind_ident_${idx}" type="text" value="${escapeHtml(prefill.identifikationsnummer || "")}">
+                    <input id="kind_ident_${uid}" type="text" value="${escapeHtml(prefill.identifikationsnummer || "")}">
                 </div>
             </div>
             <div class="form-row">
                 <div>
                     <label>Leiblicher Vater</label>
-                    <input id="kind_vater_${idx}" type="text" value="${escapeHtml(prefill.leiblicher_vater || "")}">
+                    <input id="kind_vater_${uid}" type="text" value="${escapeHtml(prefill.leiblicher_vater || "")}">
                 </div>
                 <div>
                     <label>Leibliche Mutter</label>
-                    <input id="kind_mutter_${idx}" type="text" value="${escapeHtml(prefill.leibliche_mutter || "")}">
+                    <input id="kind_mutter_${uid}" type="text" value="${escapeHtml(prefill.leibliche_mutter || "")}">
                 </div>
             </div>
-            <label>Personalausweis / Ausweisdokument Kind ${idx}</label>
-            <input id="doc_kind_personalausweis_${idx}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+            <label class="child-file-label">Personalausweis / Ausweisdokument</label>
+            <input id="doc_kind_personalausweis_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
             <div class="upload-hint">Mehrere Dateien möglich.</div>
             <div class="inline-actions">
-                <button type="button" class="btn btn-danger" onclick="removeChildEntry(${idx})">Eintrag entfernen</button>
+                <button type="button" class="btn btn-danger" onclick="removeChild(${uid})">Eintrag entfernen</button>
             </div>
         `;
 
         container.appendChild(wrapper);
+        renumberChildren();
     }
 
-    function removeChild(idx) {
-        const el = document.getElementById(`child-card-${idx}`);
+    function removeChild(uid) {
+        const el = document.getElementById(`child-card-${uid}`);
         if (!el) return;
         el.style.transition = "opacity 0.2s ease, transform 0.2s ease";
         el.style.opacity    = "0";
         el.style.transform  = "scale(0.98)";
-        setTimeout(() => el.remove(), 200);
+        setTimeout(() => { el.remove(); renumberChildren(); }, 200);
+    }
+
+    // Re-labels all cards based on their current DOM position (1-based).
+    function renumberChildren() {
+        document.querySelectorAll("#childrenContainer .child-card").forEach((card, i) => {
+            const n = i + 1;
+            const heading = card.querySelector(".child-heading");
+            if (heading) heading.textContent = `Kind ${n}`;
+            const fileLabel = card.querySelector(".child-file-label");
+            if (fileLabel) fileLabel.textContent = `Personalausweis / Ausweisdokument Kind ${n}`;
+        });
     }
 
     function escapeHtml(value) {
@@ -326,18 +341,19 @@
     }
 
     function collectChildren() {
-        const children  = [];
-        const childCards = document.querySelectorAll('[id^="child-card-"]');
-        childCards.forEach(card => {
-            const idx = card.id.replace("child-card-", "");
+        const children = [];
+        document.querySelectorAll("#childrenContainer .child-card").forEach((card, index) => {
+            const uid = card.id.replace("child-card-", "");
             children.push({
-                name:                  document.getElementById(`kind_name_${idx}`)?.value   || "",
-                geburtsdatum:          document.getElementById(`kind_geburt_${idx}`)?.value || "",
-                wohnort:               document.getElementById(`kind_wohnort_${idx}`)?.value || "",
-                leiblicher_vater:      document.getElementById(`kind_vater_${idx}`)?.value  || "",
-                leibliche_mutter:      document.getElementById(`kind_mutter_${idx}`)?.value || "",
-                identifikationsnummer: document.getElementById(`kind_ident_${idx}`)?.value  || "",
-                upload_field_id:       `doc_kind_personalausweis_${idx}`
+                name:                  document.getElementById(`kind_name_${uid}`)?.value    || "",
+                geburtsdatum:          document.getElementById(`kind_geburt_${uid}`)?.value  || "",
+                wohnort:               document.getElementById(`kind_wohnort_${uid}`)?.value || "",
+                leiblicher_vater:      document.getElementById(`kind_vater_${uid}`)?.value   || "",
+                leibliche_mutter:      document.getElementById(`kind_mutter_${uid}`)?.value  || "",
+                identifikationsnummer: document.getElementById(`kind_ident_${uid}`)?.value   || "",
+                upload_field_id:       `doc_kind_personalausweis_${uid}`,
+                // Position-based field name for the backend (1, 2, 3 … always gapless)
+                field_index:           index + 1
             });
         });
         return children;
@@ -404,9 +420,9 @@
         const fileFields = [
             { id: "doc_personalausweis_ep1", fieldName: "personalausweis_ehepartner_1" },
             { id: "doc_personalausweis_ep2", fieldName: "personalausweis_ehepartner_2" },
-            ...children.map((child, index) => ({
+            ...children.map(child => ({
                 id:        child.upload_field_id,
-                fieldName: `personalausweis_kind_${index + 1}`
+                fieldName: `personalausweis_kind_${child.field_index}`
             }))
         ];
 
