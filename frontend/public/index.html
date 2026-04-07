@@ -7,45 +7,30 @@
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
 </head>
-<body>
-<div class="auth-page">
-    <aside class="auth-sidebar">
-        <div class="auth-sidebar-top">
-            <div class="auth-sidebar-logo">
-                <img src="/static/Logo.png" alt="BK Steuerberatung Logo">
-            </div>
-            <div class="auth-sidebar-headline">
-                <h1>Stammdaten&shy;Portal</h1>
-                <p>Sicherer Zugang zur digitalen Stammdaten&shy;verwaltung für Ihre steuerlichen Mandate.</p>
-            </div>
-            <div class="auth-sidebar-badges">
-                <div class="auth-badge"><div class="auth-badge-dot"></div>Verschlüsselte Übertragung</div>
-                <div class="auth-badge"><div class="auth-badge-dot"></div>DSGVO-konformes System</div>
-                <div class="auth-badge"><div class="auth-badge-dot"></div>Alle Rechtsformen abgedeckt</div>
-            </div>
+<body class="auth-body">
+
+<div class="auth-wrap">
+    <img src="/static/Logo.png" alt="BK Steuerberatung" class="auth-logo">
+
+    <div class="auth-card">
+        <p class="auth-card-title">Anmelden</p>
+        <p class="auth-card-sub">Bitte melden Sie sich mit Ihren Zugangsdaten an.</p>
+
+        <label for="email">E-Mail-Adresse</label>
+        <input id="email" type="email" placeholder="name@beispiel.de" autocomplete="email">
+
+        <label for="password">Passwort</label>
+        <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+
+        <div class="auth-actions" style="margin-top:24px;">
+            <button class="btn-full" onclick="loginUser()">Anmelden</button>
+            <a class="btn btn-secondary btn-full" href="/register.html">Jetzt registrieren</a>
         </div>
-        <div class="auth-sidebar-footer">© BK Steuerberatung</div>
-    </aside>
 
-    <main class="auth-main">
-        <div class="auth-card">
-            <h2>Anmelden</h2>
-            <p>Bitte melden Sie sich mit Ihren Zugangsdaten an.</p>
+        <div id="msg" class="msg"></div>
+    </div>
 
-            <label for="email">E-Mail</label>
-            <input id="email" type="email" placeholder="name@beispiel.de" autocomplete="email">
-
-            <label for="password">Passwort</label>
-            <input id="password" type="password" placeholder="Passwort" autocomplete="current-password">
-
-            <div class="auth-actions">
-                <button onclick="loginUser()">Anmelden</button>
-                <a class="btn btn-secondary" href="/register.html">Jetzt registrieren</a>
-            </div>
-
-            <div id="msg" class="msg"></div>
-        </div>
-    </main>
+    <p class="auth-footer">© BK Steuerberatung &nbsp;·&nbsp; Stammdaten-Portal</p>
 </div>
 
 <script>
@@ -84,8 +69,8 @@
         }
     }
 
-    document.getElementById('password').addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') loginUser();
+    document.getElementById('password').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') loginUser();
     });
 </script>
 </body>

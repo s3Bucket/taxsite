@@ -7,52 +7,33 @@
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
 </head>
-<body>
-<div class="auth-page">
-    <aside class="auth-sidebar">
-        <div class="auth-sidebar-top">
-            <div class="auth-sidebar-logo">
-                <img src="/static/Logo.png" alt="BK Steuerberatung Logo">
-            </div>
-            <div class="auth-sidebar-headline">
-                <h1>Zugang anlegen</h1>
-                <p>Registrieren Sie sich für das digitale Stammdaten&shy;portal der BK Steuerberatung.</p>
-            </div>
-            <div class="auth-sidebar-badges">
-                <div class="auth-badge"><div class="auth-badge-dot"></div>Verschlüsselte Übertragung</div>
-                <div class="auth-badge"><div class="auth-badge-dot"></div>DSGVO-konformes System</div>
-                <div class="auth-badge"><div class="auth-badge-dot"></div>Alle Rechtsformen abgedeckt</div>
-            </div>
+<body class="auth-body">
+
+<div class="auth-wrap">
+    <img src="/static/Logo.png" alt="BK Steuerberatung" class="auth-logo">
+
+    <div class="auth-card">
+        <p class="auth-card-title">Zugang anlegen</p>
+        <p class="auth-card-sub">Erstellen Sie hier Ihren Zugang für das Stammdaten-Portal.</p>
+
+        <label for="email">E-Mail-Adresse</label>
+        <input id="email" type="email" placeholder="name@beispiel.de" autocomplete="email">
+
+        <label for="password">Passwort</label>
+        <input id="password" type="password" placeholder="Mindestens 8 Zeichen" autocomplete="new-password">
+
+        <label for="passwordConfirm">Passwort wiederholen</label>
+        <input id="passwordConfirm" type="password" placeholder="••••••••" autocomplete="new-password">
+
+        <div class="auth-actions" style="margin-top:24px;">
+            <button class="btn-full" onclick="registerUser()">Registrieren</button>
+            <a class="btn btn-secondary btn-full" href="/index.html">Zurück zum Login</a>
         </div>
-        <div class="auth-sidebar-footer">© BK Steuerberatung</div>
-    </aside>
 
-    <main class="auth-main">
-        <div class="auth-card">
-            <h2>Registrierung</h2>
-            <p>Legen Sie hier einen neuen Zugang für das Portal an.</p>
+        <div id="msg" class="msg"></div>
+    </div>
 
-            <label for="email">E-Mail</label>
-            <input id="email" type="email" placeholder="name@beispiel.de" autocomplete="email">
-
-            <label for="password">Passwort</label>
-            <input id="password" type="password" placeholder="Passwort" autocomplete="new-password">
-
-            <label for="passwordConfirm">Passwort wiederholen</label>
-            <input id="passwordConfirm" type="password" placeholder="Passwort wiederholen" autocomplete="new-password">
-
-            <div class="password-rules">
-                Das Passwort muss mindestens 8 Zeichen lang sein.
-            </div>
-
-            <div class="auth-actions">
-                <button onclick="registerUser()">Registrieren</button>
-                <a class="btn btn-secondary" href="/index.html">Zurück zum Login</a>
-            </div>
-
-            <div id="msg" class="msg"></div>
-        </div>
-    </main>
+    <p class="auth-footer">© BK Steuerberatung &nbsp;·&nbsp; Stammdaten-Portal</p>
 </div>
 
 <script>
@@ -70,12 +51,10 @@
             msg.textContent = 'Bitte alle Felder ausfüllen.';
             return;
         }
-
         if (password.length < 8) {
             msg.textContent = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
             return;
         }
-
         if (password !== passwordConfirm) {
             msg.textContent = 'Die Passwörter stimmen nicht überein.';
             return;
@@ -98,7 +77,6 @@
 
             msg.textContent = data?.message || 'Registrierung erfolgreich. Sie werden weitergeleitet …';
             msg.classList.add('success');
-
             setTimeout(() => { window.location.href = '/portal.html'; }, 700);
         } catch (_) {
             msg.textContent = 'Server nicht erreichbar.';
