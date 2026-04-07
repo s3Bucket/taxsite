@@ -8,36 +8,53 @@
     <script src="/app.js"></script>
 </head>
 <body>
-<div class="header">
-    <img src="/static/Logo.png" alt="BK Steuerberatung Logo" class="logo">
-</div>
-<div class="page-center">
-    <div class="card">
-        <h2>Anmelden</h2>
-        <p>Bitte melde dich mit deinen Zugangsdaten an.</p>
-
-        <label for="email">E-Mail</label>
-        <input id="email" type="email" placeholder="name@beispiel.de" autocomplete="email">
-
-        <label for="password">Passwort</label>
-        <input id="password" type="password" placeholder="Passwort" autocomplete="current-password">
-
-        <div class="auth-actions">
-            <button onclick="loginUser()">Anmelden</button>
-            <a class="btn btn-secondary" href="/register.html">Jetzt registrieren</a>
+<div class="auth-page">
+    <aside class="auth-sidebar">
+        <div class="auth-sidebar-top">
+            <div class="auth-sidebar-logo">
+                <img src="/static/Logo.png" alt="BK Steuerberatung Logo">
+            </div>
+            <div class="auth-sidebar-headline">
+                <h1>Stammdaten&shy;Portal</h1>
+                <p>Sicherer Zugang zur digitalen Stammdaten&shy;verwaltung für Ihre steuerlichen Mandate.</p>
+            </div>
+            <div class="auth-sidebar-badges">
+                <div class="auth-badge"><div class="auth-badge-dot"></div>Verschlüsselte Übertragung</div>
+                <div class="auth-badge"><div class="auth-badge-dot"></div>DSGVO-konformes System</div>
+                <div class="auth-badge"><div class="auth-badge-dot"></div>Alle Rechtsformen abgedeckt</div>
+            </div>
         </div>
+        <div class="auth-sidebar-footer">© BK Steuerberatung</div>
+    </aside>
 
-        <div id="msg" class="msg"></div>
-    </div>
+    <main class="auth-main">
+        <div class="auth-card">
+            <h2>Anmelden</h2>
+            <p>Bitte melden Sie sich mit Ihren Zugangsdaten an.</p>
+
+            <label for="email">E-Mail</label>
+            <input id="email" type="email" placeholder="name@beispiel.de" autocomplete="email">
+
+            <label for="password">Passwort</label>
+            <input id="password" type="password" placeholder="Passwort" autocomplete="current-password">
+
+            <div class="auth-actions">
+                <button onclick="loginUser()">Anmelden</button>
+                <a class="btn btn-secondary" href="/register.html">Jetzt registrieren</a>
+            </div>
+
+            <div id="msg" class="msg"></div>
+        </div>
+    </main>
 </div>
 
 <script>
     redirectIfAuthenticated();
 
     async function loginUser() {
-        const email = document.getElementById('email').value.trim();
+        const email    = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
-        const msg = document.getElementById('msg');
+        const msg      = document.getElementById('msg');
         msg.textContent = '';
         msg.classList.remove('success');
 
@@ -50,9 +67,7 @@
             const res = await fetch('/api/login', {
                 method: 'POST',
                 credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
 
@@ -70,9 +85,7 @@
     }
 
     document.getElementById('password').addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-            loginUser();
-        }
+        if (event.key === 'Enter') loginUser();
     });
 </script>
 </body>

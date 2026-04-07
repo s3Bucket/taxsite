@@ -8,16 +8,12 @@
     <script src="/app.js?v=3"></script>
 </head>
 <body>
-<div class="header">
-    <img src="/static/Logo.png" alt="BK Steuerberatung Logo" class="logo">
-</div>
-
 <div class="container">
     <div class="panel">
         <div class="topbar">
             <div>
                 <h1>GmbH</h1>
-                <p id="userInfo">Bitte trage die Stammdaten ein.</p>
+                <p id="userInfo">Bitte tragen Sie die Stammdaten ein.</p>
             </div>
             <div class="actions">
                 <a class="btn btn-secondary" href="/portal.html">Zurück zum Portal</a>
@@ -27,21 +23,72 @@
 
         <div class="form-section">
             <h3 class="section-title">Angaben</h3>
-            <label>Anrede</label><input id="anrede" type="text">
-            <label>Unternehmensname</label><input id="unternehmensname" type="text">
-            <label>Unternehmensform</label><input id="unternehmensform" type="text">
-            <label>Straße und Hausnummer</label><input id="strasse" type="text">
-            <label>PLZ</label><input id="plz" type="text">
-            <label>Ort</label><input id="ort" type="text">
-            <label>Telefon</label><input id="telefon" type="tel">
-            <label>Mobil</label><input id="mobil" type="tel">
-            <label>E-Mail</label><input id="email" type="email">
-            <label>Bankverbindung</label><input id="bankverbindung" type="text">
-            <label>Steuernummer</label><input id="steuernummer" type="text">
-            <label>Unternehmensgegenstand</label><textarea id="gegenstand"></textarea>
-            <label>Gründungsdatum</label><input id="gruendungsdatum" type="date">
-            <label>USt-IdNr.</label><input id="ustid" type="text">
-            <label>Bundesland</label><input id="bundesland" type="text">
+            <div class="form-row">
+                <div>
+                    <label>Anrede</label>
+                    <input id="anrede" type="text">
+                </div>
+                <div>
+                    <label>Unternehmensform</label>
+                    <input id="unternehmensform" type="text">
+                </div>
+            </div>
+            <label>Unternehmensname</label>
+            <input id="unternehmensname" type="text">
+            <label>Straße und Hausnummer</label>
+            <input id="strasse" type="text">
+            <div class="form-row">
+                <div>
+                    <label>PLZ</label>
+                    <input id="plz" type="text">
+                </div>
+                <div>
+                    <label>Ort</label>
+                    <input id="ort" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Telefon</label>
+                    <input id="telefon" type="tel">
+                </div>
+                <div>
+                    <label>Mobil</label>
+                    <input id="mobil" type="tel">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>E-Mail</label>
+                    <input id="email" type="email">
+                </div>
+                <div>
+                    <label>Bankverbindung</label>
+                    <input id="bankverbindung" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Steuernummer</label>
+                    <input id="steuernummer" type="text">
+                </div>
+                <div>
+                    <label>USt-IdNr.</label>
+                    <input id="ustid" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Gründungsdatum</label>
+                    <input id="gruendungsdatum" type="date">
+                </div>
+                <div>
+                    <label>Bundesland</label>
+                    <input id="bundesland" type="text">
+                </div>
+            </div>
+            <label>Unternehmensgegenstand</label>
+            <textarea id="gegenstand"></textarea>
         </div>
 
         <div class="form-section">
@@ -62,15 +109,32 @@
 
         <div class="form-section">
             <h3 class="section-title">Buchhaltung</h3>
-            <label>Ist- / Sollversteuerung</label><input id="versteuerung" type="text">
-            <label>Voranmeldungszeitraum</label><input id="voranmeldung" type="text">
-            <label>Bilanz oder Gewinnermittler</label><input id="bilanz" type="text">
+            <div class="form-row">
+                <div>
+                    <label>Ist- / Sollversteuerung</label>
+                    <input id="versteuerung" type="text">
+                </div>
+                <div>
+                    <label>Voranmeldungszeitraum</label>
+                    <input id="voranmeldung" type="text">
+                </div>
+            </div>
+            <label>Bilanz oder Gewinnermittler</label>
+            <input id="bilanz" type="text">
         </div>
 
         <div class="form-section">
             <h3 class="section-title">Dokumente</h3>
-            <label>Handelsregisterauszug</label><input id="doc_handelsregister" type="file">
-            <label>Gewerbeanmeldung</label><input id="doc_gewerbeanmeldung" type="file">
+            <div class="form-row">
+                <div>
+                    <label>Handelsregisterauszug</label>
+                    <input id="doc_handelsregister" type="file">
+                </div>
+                <div>
+                    <label>Gewerbeanmeldung</label>
+                    <input id="doc_gewerbeanmeldung" type="file">
+                </div>
+            </div>
         </div>
 
         <div class="actions">

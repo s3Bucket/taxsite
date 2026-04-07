@@ -6,54 +6,14 @@
     <title>Natürliche Person</title>
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
-    <style>
-        .child-card {
-            border: 1px solid #dbe3ef;
-            border-radius: 12px;
-            padding: 18px;
-            margin-top: 16px;
-            background: #f8fafc;
-        }
-
-        .child-card h4 {
-            margin: 0 0 12px 0;
-            font-size: 16px;
-        }
-
-        .inline-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
-
-        .btn-danger {
-            background: #b91c1c;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #991b1b;
-        }
-
-        .upload-hint {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 6px;
-        }
-    </style>
 </head>
 <body>
-<div class="header">
-    <img src="/static/Logo.png" alt="BK Steuerberatung Logo" class="logo">
-</div>
-
 <div class="container">
     <div class="panel">
         <div class="topbar">
             <div>
                 <h1>Natürliche Person</h1>
-                <p id="userInfo">Bitte trage die Stammdaten ein.</p>
+                <p id="userInfo">Bitte tragen Sie die Stammdaten ein.</p>
             </div>
             <div class="actions">
                 <a class="btn btn-secondary" href="/portal.html">Zurück zum Portal</a>
@@ -61,79 +21,219 @@
             </div>
         </div>
 
+        <!-- Ehepartner 1 -->
         <div class="form-section">
             <h3 class="section-title">Angaben – Ehepartner 1</h3>
-            <label>Anrede</label><input id="anrede1" type="text">
-            <label>Titel / akad. Grad</label><input id="titel1" type="text">
-            <label>Vorname</label><input id="vorname1" type="text">
-            <label>Nachname</label><input id="nachname1" type="text">
-            <label>Straße und Hausnummer</label><input id="strasse1" type="text">
-            <label>PLZ</label><input id="plz1" type="text">
-            <label>Ort</label><input id="ort1" type="text">
-            <label>Telefon</label><input id="telefon1" type="tel">
-            <label>Mobil</label><input id="mobil1" type="tel">
-            <label>E-Mail</label><input id="email1" type="email">
-            <label>Bankverbindung</label><input id="bank1" type="text">
-            <label>Steuernummer</label><input id="steuer1" type="text">
-            <label>Geburtsdatum</label><input id="geburt1" type="date">
-            <label>Familienstand</label><input id="familienstand1" type="text">
-            <label>Staatsangehörigkeit</label><input id="staat1" type="text">
-            <label>Religionszugehörigkeit</label><input id="religion1" type="text">
-            <label>Geschlecht</label><input id="geschlecht1" type="text">
-            <label>Beruf</label><input id="beruf1" type="text">
-            <label>Bundesland</label><input id="bundesland1" type="text">
-            <label>Identifikationsnummer</label><input id="ident1" type="text">
-
-            <div class="form-section">
-                <h4>Dokumente – Ehepartner 1</h4>
-                <label>Personalausweis Ehepartner 1</label>
-                <input id="doc_personalausweis_ep1" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-                <div class="upload-hint">Mehrere Dateien möglich.</div>
+            <div class="form-row">
+                <div>
+                    <label>Anrede</label>
+                    <input id="anrede1" type="text">
+                </div>
+                <div>
+                    <label>Titel / akad. Grad</label>
+                    <input id="titel1" type="text">
+                </div>
             </div>
+            <div class="form-row">
+                <div>
+                    <label>Vorname</label>
+                    <input id="vorname1" type="text">
+                </div>
+                <div>
+                    <label>Nachname</label>
+                    <input id="nachname1" type="text">
+                </div>
+            </div>
+            <label>Straße und Hausnummer</label>
+            <input id="strasse1" type="text">
+            <div class="form-row">
+                <div>
+                    <label>PLZ</label>
+                    <input id="plz1" type="text">
+                </div>
+                <div>
+                    <label>Ort</label>
+                    <input id="ort1" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Telefon</label>
+                    <input id="telefon1" type="tel">
+                </div>
+                <div>
+                    <label>Mobil</label>
+                    <input id="mobil1" type="tel">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>E-Mail</label>
+                    <input id="email1" type="email">
+                </div>
+                <div>
+                    <label>Bankverbindung</label>
+                    <input id="bank1" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Steuernummer</label>
+                    <input id="steuer1" type="text">
+                </div>
+                <div>
+                    <label>Identifikationsnummer</label>
+                    <input id="ident1" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Geburtsdatum</label>
+                    <input id="geburt1" type="date">
+                </div>
+                <div>
+                    <label>Familienstand</label>
+                    <input id="familienstand1" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Staatsangehörigkeit</label>
+                    <input id="staat1" type="text">
+                </div>
+                <div>
+                    <label>Religionszugehörigkeit</label>
+                    <input id="religion1" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Geschlecht</label>
+                    <input id="geschlecht1" type="text">
+                </div>
+                <div>
+                    <label>Beruf</label>
+                    <input id="beruf1" type="text">
+                </div>
+            </div>
+            <label>Bundesland</label>
+            <input id="bundesland1" type="text">
+            <label>Personalausweis Ehepartner 1</label>
+            <input id="doc_personalausweis_ep1" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+            <div class="upload-hint">Mehrere Dateien möglich.</div>
         </div>
 
+        <!-- Ehepartner 2 -->
         <div class="form-section">
             <h3 class="section-title">Angaben – Ehepartner 2</h3>
-            <label>Anrede</label><input id="anrede2" type="text">
-            <label>Titel / akad. Grad</label><input id="titel2" type="text">
-            <label>Vorname</label><input id="vorname2" type="text">
-            <label>Nachname</label><input id="nachname2" type="text">
-            <label>Straße und Hausnummer</label><input id="strasse2" type="text">
-            <label>PLZ</label><input id="plz2" type="text">
-            <label>Ort</label><input id="ort2" type="text">
-            <label>Telefon</label><input id="telefon2" type="tel">
-            <label>Mobil</label><input id="mobil2" type="tel">
-            <label>E-Mail</label><input id="email2" type="email">
-            <label>Bankverbindung</label><input id="bank2" type="text">
-            <label>Steuernummer</label><input id="steuer2" type="text">
-            <label>Geburtsdatum</label><input id="geburt2" type="date">
-            <label>Familienstand</label><input id="familienstand2" type="text">
-            <label>Staatsangehörigkeit</label><input id="staat2" type="text">
-            <label>Religionszugehörigkeit</label><input id="religion2" type="text">
-            <label>Geschlecht</label><input id="geschlecht2" type="text">
-            <label>Beruf</label><input id="beruf2" type="text">
-            <label>Bundesland</label><input id="bundesland2" type="text">
-            <label>Identifikationsnummer</label><input id="ident2" type="text">
-
-            <div class="form-section">
-                <h4>Dokumente – Ehepartner 2</h4>
-                <label>Personalausweis Ehepartner 2</label>
-                <input id="doc_personalausweis_ep2" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-                <div class="upload-hint">Mehrere Dateien möglich.</div>
+            <div class="form-row">
+                <div>
+                    <label>Anrede</label>
+                    <input id="anrede2" type="text">
+                </div>
+                <div>
+                    <label>Titel / akad. Grad</label>
+                    <input id="titel2" type="text">
+                </div>
             </div>
+            <div class="form-row">
+                <div>
+                    <label>Vorname</label>
+                    <input id="vorname2" type="text">
+                </div>
+                <div>
+                    <label>Nachname</label>
+                    <input id="nachname2" type="text">
+                </div>
+            </div>
+            <label>Straße und Hausnummer</label>
+            <input id="strasse2" type="text">
+            <div class="form-row">
+                <div>
+                    <label>PLZ</label>
+                    <input id="plz2" type="text">
+                </div>
+                <div>
+                    <label>Ort</label>
+                    <input id="ort2" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Telefon</label>
+                    <input id="telefon2" type="tel">
+                </div>
+                <div>
+                    <label>Mobil</label>
+                    <input id="mobil2" type="tel">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>E-Mail</label>
+                    <input id="email2" type="email">
+                </div>
+                <div>
+                    <label>Bankverbindung</label>
+                    <input id="bank2" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Steuernummer</label>
+                    <input id="steuer2" type="text">
+                </div>
+                <div>
+                    <label>Identifikationsnummer</label>
+                    <input id="ident2" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Geburtsdatum</label>
+                    <input id="geburt2" type="date">
+                </div>
+                <div>
+                    <label>Familienstand</label>
+                    <input id="familienstand2" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Staatsangehörigkeit</label>
+                    <input id="staat2" type="text">
+                </div>
+                <div>
+                    <label>Religionszugehörigkeit</label>
+                    <input id="religion2" type="text">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Geschlecht</label>
+                    <input id="geschlecht2" type="text">
+                </div>
+                <div>
+                    <label>Beruf</label>
+                    <input id="beruf2" type="text">
+                </div>
+            </div>
+            <label>Bundesland</label>
+            <input id="bundesland2" type="text">
+            <label>Personalausweis Ehepartner 2</label>
+            <input id="doc_personalausweis_ep2" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+            <div class="upload-hint">Mehrere Dateien möglich.</div>
         </div>
 
+        <!-- Kinder -->
         <div class="form-section">
-            <div class="topbar" style="margin-bottom: 8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border); margin-bottom:4px;">
                 <div>
-                    <h3 class="section-title" style="margin-bottom: 0;">Kinder</h3>
-                    <p class="small" style="margin: 4px 0 0 0;">Du kannst beliebig viele Kinder hinzufügen.</p>
+                    <h3 class="section-title" style="border:none; padding:0; margin:0;">Kinder</h3>
+                    <p class="small" style="margin:4px 0 0 0;">Beliebig viele Kinder hinzufügbar.</p>
                 </div>
-                <div class="actions">
-                    <button type="button" onclick="addChild()">Kind hinzufügen</button>
-                </div>
+                <button type="button" onclick="addChild()">Kind hinzufügen</button>
             </div>
-
             <div id="childrenContainer"></div>
         </div>
 
@@ -152,8 +252,6 @@
         if (auth && auth.user) {
             document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
         }
-
-        // Optional: mit einem leeren Kind starten
         addChild();
     }
 
@@ -161,41 +259,47 @@
 
     function addChild(prefill = {}) {
         childCounter += 1;
-        const idx = childCounter;
-
+        const idx       = childCounter;
         const container = document.getElementById("childrenContainer");
-        const wrapper = document.createElement("div");
+        const wrapper   = document.createElement("div");
         wrapper.className = "child-card";
-        wrapper.id = `child-card-${idx}`;
+        wrapper.id        = `child-card-${idx}`;
 
         wrapper.innerHTML = `
             <h4>Kind ${idx}</h4>
-
-            <label>Name</label>
-            <input id="kind_name_${idx}" type="text" value="${escapeHtml(prefill.name || "")}">
-
-            <label>Geburtsdatum</label>
-            <input id="kind_geburt_${idx}" type="date" value="${escapeHtml(prefill.geburtsdatum || "")}">
-
-            <label>Wohnort</label>
-            <input id="kind_wohnort_${idx}" type="text" value="${escapeHtml(prefill.wohnort || "")}">
-
-            <label>Leiblicher Vater</label>
-            <input id="kind_vater_${idx}" type="text" value="${escapeHtml(prefill.leiblicher_vater || "")}">
-
-            <label>Leibliche Mutter</label>
-            <input id="kind_mutter_${idx}" type="text" value="${escapeHtml(prefill.leibliche_mutter || "")}">
-
-            <label>Identifikationsnummer</label>
-            <input id="kind_ident_${idx}" type="text" value="${escapeHtml(prefill.identifikationsnummer || "")}">
-
-            <div class="form-section">
-                <h4>Dokumente – Kind ${idx}</h4>
-                <label>Personalausweis / Ausweisdokument Kind ${idx}</label>
-                <input id="doc_kind_personalausweis_${idx}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-                <div class="upload-hint">Mehrere Dateien möglich.</div>
+            <div class="form-row">
+                <div>
+                    <label>Name</label>
+                    <input id="kind_name_${idx}" type="text" value="${escapeHtml(prefill.name || "")}">
+                </div>
+                <div>
+                    <label>Geburtsdatum</label>
+                    <input id="kind_geburt_${idx}" type="date" value="${escapeHtml(prefill.geburtsdatum || "")}">
+                </div>
             </div>
-
+            <div class="form-row">
+                <div>
+                    <label>Wohnort</label>
+                    <input id="kind_wohnort_${idx}" type="text" value="${escapeHtml(prefill.wohnort || "")}">
+                </div>
+                <div>
+                    <label>Identifikationsnummer</label>
+                    <input id="kind_ident_${idx}" type="text" value="${escapeHtml(prefill.identifikationsnummer || "")}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label>Leiblicher Vater</label>
+                    <input id="kind_vater_${idx}" type="text" value="${escapeHtml(prefill.leiblicher_vater || "")}">
+                </div>
+                <div>
+                    <label>Leibliche Mutter</label>
+                    <input id="kind_mutter_${idx}" type="text" value="${escapeHtml(prefill.leibliche_mutter || "")}">
+                </div>
+            </div>
+            <label>Personalausweis / Ausweisdokument Kind ${idx}</label>
+            <input id="doc_kind_personalausweis_${idx}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
+            <div class="upload-hint">Mehrere Dateien möglich.</div>
             <div class="inline-actions">
                 <button type="button" class="btn btn-danger" onclick="removeChildEntry(${idx})">Eintrag entfernen</button>
             </div>
@@ -207,14 +311,10 @@
     function removeChild(idx) {
         const el = document.getElementById(`child-card-${idx}`);
         if (!el) return;
-
-        el.style.transition = "all 0.2s ease";
-        el.style.opacity = "0";
-        el.style.transform = "scale(0.98)";
-
-        setTimeout(() => {
-            el.remove();
-        }, 200);
+        el.style.transition = "opacity 0.2s ease, transform 0.2s ease";
+        el.style.opacity    = "0";
+        el.style.transform  = "scale(0.98)";
+        setTimeout(() => el.remove(), 200);
     }
 
     function escapeHtml(value) {
@@ -226,23 +326,20 @@
     }
 
     function collectChildren() {
-        const children = [];
+        const children  = [];
         const childCards = document.querySelectorAll('[id^="child-card-"]');
-
         childCards.forEach(card => {
             const idx = card.id.replace("child-card-", "");
-
             children.push({
-                name: document.getElementById(`kind_name_${idx}`)?.value || "",
-                geburtsdatum: document.getElementById(`kind_geburt_${idx}`)?.value || "",
-                wohnort: document.getElementById(`kind_wohnort_${idx}`)?.value || "",
-                leiblicher_vater: document.getElementById(`kind_vater_${idx}`)?.value || "",
-                leibliche_mutter: document.getElementById(`kind_mutter_${idx}`)?.value || "",
-                identifikationsnummer: document.getElementById(`kind_ident_${idx}`)?.value || "",
-                upload_field_id: `doc_kind_personalausweis_${idx}`
+                name:                  document.getElementById(`kind_name_${idx}`)?.value   || "",
+                geburtsdatum:          document.getElementById(`kind_geburt_${idx}`)?.value || "",
+                wohnort:               document.getElementById(`kind_wohnort_${idx}`)?.value || "",
+                leiblicher_vater:      document.getElementById(`kind_vater_${idx}`)?.value  || "",
+                leibliche_mutter:      document.getElementById(`kind_mutter_${idx}`)?.value || "",
+                identifikationsnummer: document.getElementById(`kind_ident_${idx}`)?.value  || "",
+                upload_field_id:       `doc_kind_personalausweis_${idx}`
             });
         });
-
         return children;
     }
 
@@ -251,55 +348,55 @@
 
         const fields = {
             ehepartner1: {
-                anrede: document.getElementById("anrede1").value,
-                titel: document.getElementById("titel1").value,
-                vorname: document.getElementById("vorname1").value,
-                nachname: document.getElementById("nachname1").value,
-                strasse_hausnummer: document.getElementById("strasse1").value,
-                plz: document.getElementById("plz1").value,
-                ort: document.getElementById("ort1").value,
-                telefon: document.getElementById("telefon1").value,
-                mobil: document.getElementById("mobil1").value,
-                email: document.getElementById("email1").value,
-                bankverbindung: document.getElementById("bank1").value,
-                steuernummer: document.getElementById("steuer1").value,
-                geburtsdatum: document.getElementById("geburt1").value,
-                familienstand: document.getElementById("familienstand1").value,
-                staatsangehoerigkeit: document.getElementById("staat1").value,
+                anrede:                document.getElementById("anrede1").value,
+                titel:                 document.getElementById("titel1").value,
+                vorname:               document.getElementById("vorname1").value,
+                nachname:              document.getElementById("nachname1").value,
+                strasse_hausnummer:    document.getElementById("strasse1").value,
+                plz:                   document.getElementById("plz1").value,
+                ort:                   document.getElementById("ort1").value,
+                telefon:               document.getElementById("telefon1").value,
+                mobil:                 document.getElementById("mobil1").value,
+                email:                 document.getElementById("email1").value,
+                bankverbindung:        document.getElementById("bank1").value,
+                steuernummer:          document.getElementById("steuer1").value,
+                geburtsdatum:          document.getElementById("geburt1").value,
+                familienstand:         document.getElementById("familienstand1").value,
+                staatsangehoerigkeit:  document.getElementById("staat1").value,
                 religionszugehoerigkeit: document.getElementById("religion1").value,
-                geschlecht: document.getElementById("geschlecht1").value,
-                beruf: document.getElementById("beruf1").value,
-                bundesland: document.getElementById("bundesland1").value,
+                geschlecht:            document.getElementById("geschlecht1").value,
+                beruf:                 document.getElementById("beruf1").value,
+                bundesland:            document.getElementById("bundesland1").value,
                 identifikationsnummer: document.getElementById("ident1").value
             },
             ehepartner2: {
-                anrede: document.getElementById("anrede2").value,
-                titel: document.getElementById("titel2").value,
-                vorname: document.getElementById("vorname2").value,
-                nachname: document.getElementById("nachname2").value,
-                strasse_hausnummer: document.getElementById("strasse2").value,
-                plz: document.getElementById("plz2").value,
-                ort: document.getElementById("ort2").value,
-                telefon: document.getElementById("telefon2").value,
-                mobil: document.getElementById("mobil2").value,
-                email: document.getElementById("email2").value,
-                bankverbindung: document.getElementById("bank2").value,
-                steuernummer: document.getElementById("steuer2").value,
-                geburtsdatum: document.getElementById("geburt2").value,
-                familienstand: document.getElementById("familienstand2").value,
-                staatsangehoerigkeit: document.getElementById("staat2").value,
+                anrede:                document.getElementById("anrede2").value,
+                titel:                 document.getElementById("titel2").value,
+                vorname:               document.getElementById("vorname2").value,
+                nachname:              document.getElementById("nachname2").value,
+                strasse_hausnummer:    document.getElementById("strasse2").value,
+                plz:                   document.getElementById("plz2").value,
+                ort:                   document.getElementById("ort2").value,
+                telefon:               document.getElementById("telefon2").value,
+                mobil:                 document.getElementById("mobil2").value,
+                email:                 document.getElementById("email2").value,
+                bankverbindung:        document.getElementById("bank2").value,
+                steuernummer:          document.getElementById("steuer2").value,
+                geburtsdatum:          document.getElementById("geburt2").value,
+                familienstand:         document.getElementById("familienstand2").value,
+                staatsangehoerigkeit:  document.getElementById("staat2").value,
                 religionszugehoerigkeit: document.getElementById("religion2").value,
-                geschlecht: document.getElementById("geschlecht2").value,
-                beruf: document.getElementById("beruf2").value,
-                bundesland: document.getElementById("bundesland2").value,
+                geschlecht:            document.getElementById("geschlecht2").value,
+                beruf:                 document.getElementById("beruf2").value,
+                bundesland:            document.getElementById("bundesland2").value,
                 identifikationsnummer: document.getElementById("ident2").value
             },
             kinder: children.map(child => ({
-                name: child.name,
-                geburtsdatum: child.geburtsdatum,
-                wohnort: child.wohnort,
-                leiblicher_vater: child.leiblicher_vater,
-                leibliche_mutter: child.leibliche_mutter,
+                name:                  child.name,
+                geburtsdatum:          child.geburtsdatum,
+                wohnort:               child.wohnort,
+                leiblicher_vater:      child.leiblicher_vater,
+                leibliche_mutter:      child.leibliche_mutter,
                 identifikationsnummer: child.identifikationsnummer
             }))
         };
@@ -308,7 +405,7 @@
             { id: "doc_personalausweis_ep1", fieldName: "personalausweis_ehepartner_1" },
             { id: "doc_personalausweis_ep2", fieldName: "personalausweis_ehepartner_2" },
             ...children.map((child, index) => ({
-                id: child.upload_field_id,
+                id:        child.upload_field_id,
                 fieldName: `personalausweis_kind_${index + 1}`
             }))
         ];
