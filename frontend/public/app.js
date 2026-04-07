@@ -62,7 +62,21 @@
       msg.classList.remove('success');
     }
 
+    const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5 MB
+
     try {
+      // Validate file sizes before building FormData
+      for (const entry of fileFields) {
+        const input = document.getElementById(entry.id);
+        if (!input || !input.files) continue;
+        for (const file of input.files) {
+          if (file.size > MAX_FILE_BYTES) {
+            if (msg) msg.textContent = `"${file.name}" ist zu groß (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximale Dateigröße: 5 MB.`;
+            return false;
+          }
+        }
+      }
+
       const formData = new FormData();
       formData.append('form_name', formName);
       formData.append('data', JSON.stringify(fields || {}));
@@ -186,7 +200,7 @@
         </div>
         <label class="child-file-label">Personalausweis / Ausweisdokument Kind</label>
         <input id="doc_kind_personalausweis_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-        <div class="upload-hint">Mehrere Dateien möglich.</div>
+        <div class="upload-hint">Mehrere Dateien möglich · Max. 5 MB pro Datei.</div>
         <div class="inline-actions">
           <button type="button" class="btn btn-danger" onclick="removeChildEntry(${uid})">Eintrag entfernen</button>
         </div>
@@ -328,7 +342,7 @@
         ${extraFields(uid, prefill)}
         <label>Personalausweis</label>
         <input id="doc_personalausweis_${prefix}_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-        <div class="upload-hint">Mehrere Dateien möglich.</div>
+        <div class="upload-hint">Mehrere Dateien möglich · Max. 5 MB pro Datei.</div>
         <div class="inline-actions">
           <button type="button" class="btn btn-danger" onclick="${config.removeFnName}(${uid})">Eintrag entfernen</button>
         </div>
@@ -398,7 +412,7 @@
         <label>Adresse</label><input id="gesellschafter_adresse_${uid}" type="text" value="${escapeHtml(prefill.adresse)}">
         <label>Personalausweis</label>
         <input id="doc_personalausweis_gesellschafter_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-        <div class="upload-hint">Mehrere Dateien möglich.</div>
+        <div class="upload-hint">Mehrere Dateien möglich · Max. 5 MB pro Datei.</div>
         <div class="inline-actions">
           <button type="button" class="btn btn-danger" onclick="removeGesellschafter(${uid})">Eintrag entfernen</button>
         </div>`;
@@ -503,7 +517,7 @@
         <label>Adresse</label><input id="geschaeftsfuehrer_adresse_${uid}" type="text" value="${escapeHtml(prefill.adresse)}">
         <label>Personalausweis</label>
         <input id="doc_personalausweis_geschaeftsfuehrer_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-        <div class="upload-hint">Mehrere Dateien möglich.</div>
+        <div class="upload-hint">Mehrere Dateien möglich · Max. 5 MB pro Datei.</div>
         <div class="inline-actions">
           <button type="button" class="btn btn-danger" onclick="removeGeschaeftsfuehrer(${uid})">Eintrag entfernen</button>
         </div>`;
@@ -533,7 +547,7 @@
         <label>Adresse</label><input id="gesellschafter_adresse_${uid}" type="text" value="${escapeHtml(prefill.adresse)}">
         <label>Personalausweis</label>
         <input id="doc_personalausweis_gesellschafter_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-        <div class="upload-hint">Mehrere Dateien möglich.</div>
+        <div class="upload-hint">Mehrere Dateien möglich · Max. 5 MB pro Datei.</div>
         <div class="inline-actions">
           <button type="button" class="btn btn-danger" onclick="removeGesellschafter(${uid})">Eintrag entfernen</button>
         </div>`;
@@ -616,7 +630,7 @@
         <label>Name</label><input id="kommanditist_name_${uid}" type="text" value="${escapeHtml(prefill.name)}">
         <label>Personalausweis</label>
         <input id="doc_personalausweis_kommanditist_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-        <div class="upload-hint">Mehrere Dateien möglich.</div>
+        <div class="upload-hint">Mehrere Dateien möglich · Max. 5 MB pro Datei.</div>
         <div class="inline-actions">
           <button type="button" class="btn btn-danger" onclick="removeKommanditist(${uid})">Eintrag entfernen</button>
         </div>`;
@@ -690,7 +704,7 @@
         <label>Name</label><input id="vorstand_name_${uid}" type="text" value="${escapeHtml(prefill.name)}">
         <label>Personalausweis</label>
         <input id="doc_personalausweis_vorstand_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-        <div class="upload-hint">Mehrere Dateien möglich.</div>
+        <div class="upload-hint">Mehrere Dateien möglich · Max. 5 MB pro Datei.</div>
         <div class="inline-actions">
           <button type="button" class="btn btn-danger" onclick="removeVorstand(${uid})">Eintrag entfernen</button>
         </div>`;
@@ -762,7 +776,7 @@
         <label>Name</label><input id="stifter_name_${uid}" type="text" value="${escapeHtml(prefill.name)}">
         <label>Personalausweis</label>
         <input id="doc_personalausweis_stifter_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-        <div class="upload-hint">Mehrere Dateien möglich.</div>
+        <div class="upload-hint">Mehrere Dateien möglich · Max. 5 MB pro Datei.</div>
         <div class="inline-actions">
           <button type="button" class="btn btn-danger" onclick="removeStifter(${uid})">Eintrag entfernen</button>
         </div>`;
