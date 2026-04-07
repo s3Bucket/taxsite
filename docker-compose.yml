@@ -10,7 +10,8 @@ services:
       POSTGRES_PASSWORD: portalpass
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+    ports:
+      - '5432:5432'
   backend:
     build: ./backend
     restart: always
