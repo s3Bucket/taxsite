@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | BK Steuerberatung</title>
     <link rel="stylesheet" href="/styles.css">
+    <script src="/supabase.js"></script>
     <script src="/app.js"></script>
 </head>
 <body class="auth-body">
@@ -49,20 +50,14 @@
         }
 
         try {
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
+            const { data, error } = await window._sb.auth.signInWithPassword({ email, password });
 
-            const data = await res.json().catch(() => null);
-
-            if (!res.ok) {
-                msg.textContent = data?.detail || data?.message || 'Login fehlgeschlagen.';
+            if (error) {
+                msg.textContent = error.message || 'Login fehlgeschlagen.';
                 return;
             }
 
+            window._setSessionCookie(data.session.access_token);
             window.location.href = '/portal.html';
         } catch (_) {
             msg.textContent = 'Server nicht erreichbar.';

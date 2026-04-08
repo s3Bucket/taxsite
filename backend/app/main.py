@@ -1,50 +1,21 @@
-from fastapi import FastAPI, Depends, HTTPException, Request, Response, UploadFile, File, Form
+from fastapi import FastAPI, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from itsdangerous import URLSafeSerializer, BadSignature
 import os
 import requests
 import hashlib
+import jwt as pyjwt
 
 from starlette.datastructures import UploadFile as StarletteUploadFile
 from .database import SessionLocal, engine, Base
-from .models import User
-from .schemas import UserCreate, UserLogin
-from .auth import hash_password, verify_password
 
 app = FastAPI()
-
 Base.metadata.create_all(bind=engine)
 
-# ── DB migrations (add columns for existing databases) ────────────────────────
-def _run_migrations() -> None:
-    with engine.begin() as conn:
-        # Existing users keep access; new registrations start unapproved.
-        conn.execute(text(
-            "ALTER TABLE users ADD COLUMN IF NOT EXISTS "
-            "is_approved BOOLEAN NOT NULL DEFAULT TRUE"
-        ))
-        conn.execute(text(
-            "ALTER TABLE users ADD COLUMN IF NOT EXISTS "
-            "is_admin BOOLEAN NOT NULL DEFAULT FALSE"
-        ))
+JWT_SECRET = os.getenv("JWT_SECRET")
+if not JWT_SECRET:
+    raise RuntimeError("JWT_SECRET is not set")
 
-_run_migrations()
-
-ADMIN_EMAILS: set[str] = {
-    e.strip().lower()
-    for e in os.getenv("ADMIN_EMAILS", "").split(",")
-    if e.strip()
-}
-
-SECRET_KEY = os.getenv("SECRET_KEY")
-if not SECRET_KEY:
-    raise RuntimeError("SECRET_KEY is not set")
-
-COOKIE_NAME = "portal_session"
-serializer = URLSafeSerializer(SECRET_KEY, salt="auth-session")
-
-# Darf leer sein; dann funktioniert Auth weiter, nur Submit nicht
 N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "").strip()
 
 
@@ -56,199 +27,77 @@ def get_db():
         db.close()
 
 
-def create_session_cookie(user_id: int) -> str:
-    return serializer.dumps({"user_id": user_id})
-
-
-def read_session_cookie(cookie_value: str):
-    try:
-        return serializer.loads(cookie_value)
-    except BadSignature:
-        return None
-
-
-def get_current_user(request: Request, db: Session) -> User:
-    cookie_value = request.cookies.get(COOKIE_NAME)
-
-    if not cookie_value:
+def verify_jwt(request: Request) -> dict:
+    token = request.cookies.get("portal_session")
+    if not token:
+        auth = request.headers.get("Authorization", "")
+        if auth.startswith("Bearer "):
+            token = auth[7:]
+    if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
-
-    session_data = read_session_cookie(cookie_value)
-    if not session_data:
-        raise HTTPException(status_code=401, detail="Invalid session")
-
-    user_id = session_data.get("user_id")
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid session")
-
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-
-    return user
-
-
-@app.post("/api/register")
-def register(user: UserCreate, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email == user.email).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="User already exists")
-
-    is_admin    = user.email.lower() in ADMIN_EMAILS
-    is_approved = is_admin  # admins are auto-approved
-
-    new_user = User(
-        email=user.email,
-        password_hash=hash_password(user.password),
-        is_approved=is_approved,
-        is_admin=is_admin,
-    )
-
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    return {"status": "registered"}
-
-
-@app.post("/api/login")
-def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == user.email).first()
-
-    if not db_user or not verify_password(user.password, db_user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    if not db_user.is_approved:
-        raise HTTPException(
-            status_code=403,
-            detail="Ihr Konto wurde noch nicht freigegeben. Bitte warten Sie auf die Bestätigung durch einen Administrator."
+    try:
+        payload = pyjwt.decode(
+            token, JWT_SECRET, algorithms=["HS256"],
+            options={"verify_aud": False}
         )
+        if payload.get("role") != "authenticated":
+            raise HTTPException(status_code=401, detail="Invalid token role")
+        return payload
+    except pyjwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except pyjwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
-    session_value = create_session_cookie(db_user.id)
 
-    response.set_cookie(
-        key=COOKIE_NAME,
-        value=session_value,
-        httponly=True,
-        secure=True,
-        samesite="Lax",
-        max_age=60 * 60 * 8,
-        path="/"
-    )
-
+def get_profile(user_id: str, db: Session) -> dict:
+    row = db.execute(
+        text("SELECT email, is_approved, is_admin FROM profiles WHERE id = :uid"),
+        {"uid": user_id}
+    ).fetchone()
+    if not row:
+        raise HTTPException(status_code=401, detail="Profile not found")
     return {
-        "status": "ok",
-        "user": db_user.email
+        "email": row.email,
+        "is_approved": bool(row.is_approved),
+        "is_admin": bool(row.is_admin),
     }
-
-
-@app.post("/api/logout")
-def logout(response: Response):
-    response.delete_cookie(COOKIE_NAME, path="/")
-    return {"status": "logged_out"}
 
 
 @app.get("/api/auth/check")
 def auth_check(request: Request, db: Session = Depends(get_db)):
-    user = get_current_user(request, db)
+    payload = verify_jwt(request)
+    profile = get_profile(payload["sub"], db)
+    if not profile["is_approved"]:
+        raise HTTPException(status_code=403, detail="Account not yet approved")
     return {
         "status": "authenticated",
-        "user": user.email,
-        "is_admin": bool(user.is_admin),
+        "user": profile["email"],
+        "is_admin": profile["is_admin"],
     }
 
 
-# ── Admin helpers ─────────────────────────────────────────────────────────────
-def get_current_admin(request: Request, db: Session) -> User:
-    user = get_current_user(request, db)
-    if not user.is_admin:
-        raise HTTPException(status_code=403, detail="Nicht autorisiert")
-    return user
-
-
-# ── Admin endpoints ───────────────────────────────────────────────────────────
-@app.get("/api/admin/users")
-def admin_list_users(request: Request, db: Session = Depends(get_db)):
-    get_current_admin(request, db)
-    users = db.query(User).order_by(User.id).all()
-    return [
-        {
-            "id": u.id,
-            "email": u.email,
-            "is_approved": bool(u.is_approved),
-            "is_admin": bool(u.is_admin),
-        }
-        for u in users
-    ]
-
-
-@app.post("/api/admin/users/{user_id}/approve")
-def admin_approve_user(user_id: int, request: Request, db: Session = Depends(get_db)):
-    get_current_admin(request, db)
-    target = db.query(User).filter(User.id == user_id).first()
-    if not target:
-        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden")
-    target.is_approved = True
-    db.commit()
-    return {"status": "approved"}
-
-
-@app.post("/api/admin/users/{user_id}/revoke")
-def admin_revoke_user(user_id: int, request: Request, db: Session = Depends(get_db)):
-    admin = get_current_admin(request, db)
-    if admin.id == user_id:
-        raise HTTPException(status_code=400, detail="Sie können sich selbst nicht sperren")
-    target = db.query(User).filter(User.id == user_id).first()
-    if not target:
-        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden")
-    target.is_approved = False
-    db.commit()
-    return {"status": "revoked"}
-
-
-@app.post("/api/admin/users/{user_id}/toggle-admin")
-def admin_toggle_admin(user_id: int, request: Request, db: Session = Depends(get_db)):
-    admin = get_current_admin(request, db)
-    if admin.id == user_id:
-        raise HTTPException(status_code=400, detail="Sie können Ihren eigenen Admin-Status nicht ändern")
-    target = db.query(User).filter(User.id == user_id).first()
-    if not target:
-        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden")
-    target.is_admin = not target.is_admin
-    db.commit()
-    return {"status": "ok", "is_admin": bool(target.is_admin)}
-
-
 @app.post("/api/forms/submit")
-async def submit_form(
-        request: Request,
-        db: Session = Depends(get_db)
-):
-    user = get_current_user(request, db)
+async def submit_form(request: Request, db: Session = Depends(get_db)):
+    payload = verify_jwt(request)
+    profile = get_profile(payload["sub"], db)
+    if not profile["is_approved"]:
+        raise HTTPException(status_code=403, detail="Account not approved")
 
     if not N8N_WEBHOOK_URL:
-        raise HTTPException(
-            status_code=500,
-            detail="N8N_WEBHOOK_URL is not configured"
-        )
+        raise HTTPException(status_code=500, detail="N8N_WEBHOOK_URL is not configured")
 
     form = await request.form()
-
     form_name = form.get("form_name")
     data = form.get("data")
 
     if not form_name or not data:
-        raise HTTPException(
-            status_code=400,
-            detail="form_name or data missing"
-        )
+        raise HTTPException(status_code=400, detail="form_name or data missing")
 
-    # Normale Felder für n8n
     forward_data = {
         "form_name": str(form_name),
         "data": str(data),
-        "submitted_by_user_id": str(user.id),
-        "submitted_by_email": user.email,
+        "submitted_by_user_id": str(payload["sub"]),
+        "submitted_by_email": profile["email"],
     }
 
     forward_files = []
@@ -257,47 +106,29 @@ async def submit_form(
     for key, value in form.multi_items():
         if isinstance(value, StarletteUploadFile):
             content = await value.read()
-
             file_signature = hashlib.sha256(
-                (
-                        f"{key}|{value.filename}|{value.content_type}|".encode("utf-8")
-                        + content
-                )
+                (f"{key}|{value.filename}|{value.content_type}|".encode("utf-8") + content)
             ).hexdigest()
-
             if file_signature in seen_files:
-                print(f"SKIPPING DUPLICATE FILE: field={key}, filename={value.filename}")
                 continue
-
             seen_files.add(file_signature)
-
             forward_files.append(
-                (
-                    key,
-                    (
-                        value.filename,
-                        content,
-                        value.content_type or "application/octet-stream"
-                    )
-                )
+                (key, (value.filename, content, value.content_type or "application/octet-stream"))
             )
 
     try:
-        response = requests.post(
+        resp = requests.post(
             N8N_WEBHOOK_URL,
             data=forward_data,
             files=forward_files,
-            timeout=60
+            timeout=60,
         )
-        response.raise_for_status()
+        resp.raise_for_status()
     except requests.RequestException as exc:
-        raise HTTPException(
-            status_code=502,
-            detail=f"n8n webhook failed: {str(exc)}"
-        )
+        raise HTTPException(status_code=502, detail=f"n8n webhook failed: {str(exc)}")
 
     return {
         "status": "forwarded",
-        "submitted_by": user.email,
-        "file_count": len(forward_files)
+        "submitted_by": profile["email"],
+        "file_count": len(forward_files),
     }

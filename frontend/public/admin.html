@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin | BK Steuerberatung</title>
     <link rel="stylesheet" href="/styles.css">
+    <script src="/supabase.js"></script>
     <script src="/app.js"></script>
     <style>
         .admin-table {
@@ -105,6 +106,15 @@
 </div>
 
 <script>
+    // n8n Admin-Webhook-URLs
+    const N8N_LIST_URL   = 'https://n8n.agentsmithery.de/webhook/admin-list-users';
+    const N8N_ACTION_URL = 'https://n8n.agentsmithery.de/webhook/admin-user-action';
+
+    async function getToken() {
+        const { data: { session } } = await window._sb.auth.getSession();
+        return session ? session.access_token : null;
+    }
+
     async function initAdmin() {
         const auth = await requireAuth({ redirect: false });
 
@@ -127,7 +137,10 @@
         msg.textContent = '';
 
         try {
-            const res  = await fetch('/api/admin/users', { credentials: 'include' });
+            const token = await getToken();
+            const res   = await fetch(N8N_LIST_URL, {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
             const data = await res.json().catch(() => null);
 
             if (!res.ok) {
@@ -173,12 +186,12 @@
             : '';
 
         const approveBtn = user.is_approved
-            ? `<button class="btn btn-revoke btn-sm" onclick="action(${user.id},'revoke')">Sperren</button>`
-            : `<button class="btn btn-approve btn-sm" onclick="action(${user.id},'approve')">Freigeben</button>`;
+            ? `<button class="btn btn-revoke btn-sm" onclick="action('${user.id}','revoke')">Sperren</button>`
+            : `<button class="btn btn-approve btn-sm" onclick="action('${user.id}','approve')">Freigeben</button>`;
 
         const adminBtn = user.is_admin
-            ? `<button class="btn btn-admin-off btn-sm" onclick="action(${user.id},'toggle-admin')">Admin entziehen</button>`
-            : `<button class="btn btn-admin-on btn-sm"  onclick="action(${user.id},'toggle-admin')">Zum Admin machen</button>`;
+            ? `<button class="btn btn-admin-off btn-sm" onclick="action('${user.id}','toggle-admin')">Admin entziehen</button>`
+            : `<button class="btn btn-admin-on btn-sm"  onclick="action('${user.id}','toggle-admin')">Zum Admin machen</button>`;
 
         tr.innerHTML = `
             <td style="font-weight:500">${escapeHtml(user.email)}</td>
@@ -194,14 +207,19 @@
         msg.classList.remove('success');
 
         try {
-            const res  = await fetch(`/api/admin/users/${userId}/${type}`, {
+            const token = await getToken();
+            const res   = await fetch(N8N_ACTION_URL, {
                 method: 'POST',
-                credentials: 'include'
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId, action: type })
             });
             const data = await res.json().catch(() => null);
 
             if (!res.ok) {
-                msg.textContent = data?.detail || 'Aktion fehlgeschlagen.';
+                msg.textContent = data?.detail || data?.message || 'Aktion fehlgeschlagen.';
                 return;
             }
 

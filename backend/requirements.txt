@@ -2,8 +2,6 @@ fastapi
 uvicorn
 sqlalchemy
 psycopg2-binary
-passlib[argon2]
 python-multipart
-pydantic[email]
-itsdangerous
+pyjwt
 requests

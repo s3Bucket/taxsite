@@ -1,4 +1,29 @@
 (function () {
+  // ── Supabase client ─────────────────────────────────────────────────────────
+  // Anon-Key entspricht JWT_SECRET aus .env (Standard-Dev-Wert).
+  // Für Produktion: neues Schlüsselpaar generieren und hier eintragen.
+  const SUPABASE_ANON_KEY =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
+    'eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.' +
+    'CRFA0NiJ-5EoE6eSslBqh2dFiAHDgGKs8eJzpJCzGq0';
+
+  const _sb = window.supabase.createClient(window.location.origin, SUPABASE_ANON_KEY);
+
+  // JWT als Cookie setzen, damit nginx auth_request es weiterleiten kann
+  function _setSessionCookie(token) {
+    const secure = location.protocol === 'https:' ? '; secure' : '';
+    if (token) {
+      document.cookie = `portal_session=${token}; path=/; samesite=lax${secure}`;
+    } else {
+      document.cookie = 'portal_session=; path=/; max-age=0';
+    }
+  }
+
+  // Cookie bei Token-Refresh automatisch aktualisieren
+  _sb.auth.onAuthStateChange((_event, session) => {
+    _setSessionCookie(session ? session.access_token : null);
+  });
+
   async function safeJson(response) {
     try {
       return await response.json();
@@ -11,26 +36,35 @@
     const { redirect = true } = options;
 
     try {
-      const res = await fetch('/api/auth/check', {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      if (!res.ok) {
-        if (redirect) {
-          window.location.href = '/index.html';
-        }
+      const { data: { session } } = await _sb.auth.getSession();
+      if (!session) {
+        if (redirect) window.location.href = '/index.html';
         return null;
       }
 
-      return await safeJson(res);
-    } catch (_) {
-      if (redirect) {
-        window.location.href = '/index.html';
+      _setSessionCookie(session.access_token);
+
+      // Profil laden (is_approved, is_admin)
+      const { data: profile, error } = await _sb
+        .from('profiles')
+        .select('email, is_approved, is_admin')
+        .eq('id', session.user.id)
+        .single();
+
+      if (error || !profile || !profile.is_approved) {
+        await _sb.auth.signOut();
+        _setSessionCookie(null);
+        if (redirect) window.location.href = '/index.html';
+        return null;
       }
+
+      return {
+        status: 'authenticated',
+        user: profile.email,
+        is_admin: profile.is_admin,
+      };
+    } catch (_) {
+      if (redirect) window.location.href = '/index.html';
       return null;
     }
   }
@@ -43,17 +77,14 @@
   }
 
   async function logout() {
-    try {
-      await fetch('/api/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
-    } catch (_) {
-      // ignore
-    }
-
+    await _sb.auth.signOut().catch(() => {});
+    _setSessionCookie(null);
     window.location.href = '/index.html';
   }
+
+  // _sb für Login/Register-Seiten verfügbar machen
+  window._sb = _sb;
+  window._setSessionCookie = _setSessionCookie;
 
   async function submitMultipartForm(formName, fields, fileFields = [], msgId = 'msg') {
     const msg = document.getElementById(msgId);

@@ -1,31 +1,84 @@
 version: "3.9"
 
+# ── Secrets ──────────────────────────────────────────────────────────────────
+# Copy .env.example → .env and fill in real values before running in production.
+# Standard development values are pre-filled and work out of the box.
+
 services:
-  postgres:
-    image: postgres:16
+
+  # ── Database (Supabase Postgres) ────────────────────────────────────────────
+  db:
+    image: supabase/postgres:15.1.0.147
     restart: always
     environment:
-      POSTGRES_DB: portal
-      POSTGRES_USER: portal
-      POSTGRES_PASSWORD: portalpass
+      POSTGRES_HOST: /var/run/postgresql
+      PGPORT: 5432
+      POSTGRES_PORT: 5432
+      PGPASSWORD: ${POSTGRES_PASSWORD:-portalpass}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-portalpass}
+      PGDATABASE: postgres
+      POSTGRES_DB: postgres
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-token-with-at-least-32-characters-long}
+      JWT_EXP: 28800
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
+      - ./supabase/init.sql:/docker-entrypoint-initdb.d/99-custom-init.sql
     ports:
       - '5432:5432'
+
+  # ── Auth (GoTrue) ───────────────────────────────────────────────────────────
+  auth:
+    image: supabase/gotrue:v2.132.3
+    restart: always
+    depends_on:
+      - db
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD:-portalpass}@db:5432/postgres
+      GOTRUE_SITE_URL: ${SITE_URL:-http://localhost}
+      API_EXTERNAL_URL: ${SITE_URL:-http://localhost}
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-token-with-at-least-32-characters-long}
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_EXP: 28800
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+
+  # ── REST API (PostgREST) ────────────────────────────────────────────────────
+  rest:
+    image: postgrest/postgrest:v12.0.2
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD:-portalpass}@db:5432/postgres
+      PGRST_DB_SCHEMA: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-token-with-at-least-32-characters-long}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+
+  # ── Backend (FastAPI – nur forms/submit + auth/check) ───────────────────────
   backend:
     build: ./backend
     restart: always
     depends_on:
-      - postgres
+      - db
+      - auth
     environment:
-      DATABASE_URL: postgresql://portal:portalpass@postgres:5432/portal
-      SECRET_KEY: bitte-ein-lang-zufaelliges-secret-setzen
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-portalpass}@db:5432/postgres
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-token-with-at-least-32-characters-long}
+      N8N_WEBHOOK_URL: ${N8N_WEBHOOK_URL:-}
 
+  # ── Frontend (nginx) ────────────────────────────────────────────────────────
   frontend:
     build: ./frontend
     restart: always
     depends_on:
       - backend
+      - auth
+      - rest
 
 volumes:
-  postgres_data:
+  db_data:
