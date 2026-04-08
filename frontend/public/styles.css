@@ -51,7 +51,7 @@ body {
 }
 
 .auth-logo {
-  height: 52px;
+  height: 200px;
   width: auto;
   filter: brightness(0) invert(1);
   opacity: 0.9;
@@ -88,7 +88,7 @@ body {
 
 /* ── Legacy (unused but kept for safety) ──────────────────────────── */
 .header { position: fixed; top: 20px; right: 30px; z-index: 1000; }
-.logo { height: 90px; width: auto; object-fit: contain; opacity: 0.9; }
+.logo { height: 200px; width: auto; object-fit: contain; opacity: 0.9; }
 .page-center { min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 24px; }
 .card { width: 100%; max-width: 420px; background: var(--card); padding: 36px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
 
@@ -123,7 +123,7 @@ body {
 }
 
 .topbar-logo {
-  height: 120px;
+  height: 240px;
   width: auto;
   object-fit: contain;
   flex-shrink: 0;
