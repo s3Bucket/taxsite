@@ -116,6 +116,19 @@ body {
   flex-wrap: wrap;
 }
 
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.topbar-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .topbar h1 { margin-bottom: 2px; }
 
 /* ── Typography ─────────────────────────────────────────────────────── */
