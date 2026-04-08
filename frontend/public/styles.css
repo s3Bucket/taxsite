@@ -123,7 +123,7 @@ body {
 }
 
 .topbar-logo {
-  height: 40px;
+  height: 120px;
   width: auto;
   object-fit: contain;
   flex-shrink: 0;
