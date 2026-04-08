@@ -815,4 +815,45 @@
     const c = document.getElementById("stifterContainer");
     if (c && c.children.length === 0) window.addStifter();
   };
+
+  // ── EU / Freier Beruf ────────────────────────────────────────────────
+  window.portalPageInits = window.portalPageInits || {};
+
+  window.portalPageInits["/eu.html"] = async function () {
+    const auth = await requireAuth({ redirect: false });
+    if (auth && auth.user) {
+      const el = document.getElementById("userInfo");
+      if (el) el.innerText = "Eingeloggt als: " + auth.user;
+    }
+
+    window.submitPage = async function () {
+      const fields = {
+        anrede: document.getElementById("anrede")?.value || "",
+        unternehmensname: document.getElementById("unternehmensname")?.value || "",
+        unternehmensform: document.getElementById("unternehmensform")?.value || "",
+        strasse_hausnummer: document.getElementById("strasse")?.value || "",
+        plz: document.getElementById("plz")?.value || "",
+        ort: document.getElementById("ort")?.value || "",
+        telefon: document.getElementById("telefon")?.value || "",
+        mobil: document.getElementById("mobil")?.value || "",
+        email: document.getElementById("email")?.value || "",
+        bankverbindung: document.getElementById("bankverbindung")?.value || "",
+        steuernummer: document.getElementById("steuernummer")?.value || "",
+        unternehmensgegenstand: document.getElementById("gegenstand")?.value || "",
+        gruendungsdatum: document.getElementById("gruendungsdatum")?.value || "",
+        ust_idnr: document.getElementById("ustid")?.value || "",
+        bundesland: document.getElementById("bundesland")?.value || "",
+        ist_soll_versteuerung: document.getElementById("versteuerung")?.value || "",
+        voranmeldungszeitraum: document.getElementById("voranmeldung")?.value || "",
+        bilanz_oder_gewinnermittler: document.getElementById("bilanz")?.value || ""
+      };
+
+      const fileFields = [
+        { id: "doc_personalausweis_inhaber", fieldName: "personalausweis_inhaber" },
+        { id: "doc_gewerbeanmeldung",        fieldName: "gewerbeanmeldung" }
+      ];
+
+      await submitMultipartForm("eu", fields, fileFields);
+    };
+  };
 })();
