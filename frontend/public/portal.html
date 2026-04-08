@@ -44,9 +44,9 @@
             gap: 14px;
         }
 
-        .portal-brand img {
-            height: 36px;
-            width: auto;
+        .portal-logo-img {
+            width: 145px;
+            height: auto;
             object-fit: contain;
             filter: brightness(0) invert(1);
             opacity: 0.9;
@@ -340,17 +340,39 @@
             font-weight: 600;
         }
 
-        /* ── Responsive ──────────────────────────────────────────────── */
+        /* ── Hamburger button (mobile only) ─────────────────────────── */
+        .mobile-menu-btn {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 8px;
+            color: rgba(255,255,255,0.75);
+            padding: 7px;
+            cursor: pointer;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .mobile-menu-btn:hover { background: rgba(255,255,255,0.08); }
+
+        /* Overlay backdrop */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 150;
+        }
+        .mobile-overlay.visible { display: block; }
+
+        /* ── Tablet: horizontal nav bar (900px) ──────────────────────── */
         @media (max-width: 900px) {
             .portal-shell {
                 grid-template-columns: 1fr;
                 grid-template-rows: 64px auto 1fr;
             }
-
-            .portal-topbar {
-                grid-column: 1;
-            }
-
+            .portal-topbar { grid-column: 1; }
             .portal-sidebar {
                 position: static;
                 height: auto;
@@ -361,16 +383,64 @@
                 gap: 4px;
                 padding: 12px;
             }
-
             .sidebar-section-label,
             .sidebar-spacer,
-            .sidebar-footer {
-                display: none;
+            .sidebar-footer { display: none; }
+            .sidebar-nav-item { margin-bottom: 0; }
+        }
+
+        /* ── Mobile: hamburger + slide-in drawer (<= 700px) ─────────── */
+        @media (max-width: 700px) {
+            .portal-shell {
+                grid-template-columns: 1fr;
+                grid-template-rows: 56px 1fr;
+            }
+            .portal-topbar {
+                height: 56px;
+                padding: 0 14px;
+                gap: 10px;
+            }
+            .mobile-menu-btn { display: flex; }
+
+            /* Compact brand: hide text, keep logo */
+            .portal-brand-divider,
+            .portal-brand-label { display: none; }
+            .portal-logo-img { width: 100px !important; }
+
+            /* Compact user badge: avatar only */
+            #userInfoName { display: none; }
+            .portal-user-badge { padding: 5px 8px; }
+
+            /* Sidebar becomes fixed drawer */
+            .portal-sidebar {
+                position: fixed;
+                left: -268px;
+                top: 56px;
+                width: 260px;
+                height: calc(100vh - 56px);
+                z-index: 200;
+                transition: left 0.25s ease;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                padding: 20px 14px;
+                border-bottom: none;
+                border-right: 1px solid rgba(255,255,255,0.07);
+                overflow-y: auto;
+            }
+            .portal-sidebar.open {
+                left: 0;
+                box-shadow: 8px 0 32px rgba(0,0,0,0.35);
             }
 
-            .sidebar-nav-item {
-                margin-bottom: 0;
-            }
+            /* Restore sidebar internals */
+            .sidebar-section-label { display: block; }
+            .sidebar-spacer { display: flex; flex: 1; }
+            .sidebar-footer { display: block; }
+            .sidebar-nav-item { margin-bottom: 2px; }
+
+            .portal-main { grid-column: 1; }
+            #portalContent { padding: 16px; min-height: calc(100vh - 56px); }
+            .quicklinks-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
         }
     </style>
 </head>
@@ -380,8 +450,13 @@
 
     <!-- Top bar -->
     <header class="portal-topbar">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menü öffnen">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
         <div class="portal-brand">
-            <img style="width: 145px; height: auto" src="/logo.png" alt="BK Steuerberatung Logo">
+            <img class="portal-logo-img" src="/logo.png" alt="BK Steuerberatung Logo">
             <div class="portal-brand-divider"></div>
             <span class="portal-brand-label">Stammdaten Portal</span>
         </div>
@@ -494,6 +569,8 @@
     </main>
 
 </div>
+
+<div class="mobile-overlay" id="mobileOverlay"></div>
 
 <script>
     const NAV_PAGES = [
@@ -621,6 +698,31 @@
     }
 
     initPortal();
+
+    // ── Mobile hamburger menu ────────────────────────────────────────────
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+    const sidebar       = document.querySelector('.portal-sidebar');
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        mobileOverlay.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        mobileOverlay.classList.remove('visible');
+        document.body.style.overflow = '';
+    }
+
+    mobileMenuBtn.addEventListener('click', () =>
+        sidebar.classList.contains('open') ? closeSidebar() : openSidebar()
+    );
+    mobileOverlay.addEventListener('click', closeSidebar);
+
+    document.querySelectorAll('.sidebar-nav-item').forEach(item =>
+        item.addEventListener('click', () => { if (window.innerWidth <= 700) closeSidebar(); })
+    );
 </script>
 <script src="/app.js?v=<?php echo time(); ?>"></script>
 </body>

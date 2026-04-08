@@ -366,7 +366,21 @@ button:hover, .btn:hover {
   .form-row > div > label:first-child { margin-top: 14px; }
 }
 
-@media (max-width: 600px) {
-  .auth-card { padding: 28px 22px 22px; }
-  .panel { padding: 20px; }
+@media (max-width: 640px) {
+  /* Auth pages */
+  .auth-logo { height: 120px; }
+  .auth-wrap { gap: 20px; }
+  .auth-card { padding: 24px 18px 20px; }
+
+  /* Form page standalone topbar */
+  .topbar-logo { height: 56px; }
+  .topbar-brand { gap: 10px; }
+  .topbar { margin-bottom: 16px; flex-wrap: wrap; }
+  .actions { gap: 6px; }
+  .actions a, .actions button { font-size: 12.5px; padding: 8px 14px; }
+
+  /* Layout */
+  .container { margin: 16px auto; padding: 0 12px; }
+  .panel { padding: 16px; border-radius: 12px; }
+  .form-section { padding: 14px 14px 10px; }
 }
