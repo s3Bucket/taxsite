@@ -543,6 +543,15 @@
 
         <div class="sidebar-spacer"></div>
 
+        <a class="sidebar-nav-item" id="adminNavItem" href="/admin.html" style="display:none">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><circle cx="19" cy="11" r="2.5"/><path d="M21.7 13A4 4 0 0 1 24 16.5"/>
+                </svg>
+            </span>
+            Benutzerverwaltung
+        </a>
+
         <div class="sidebar-footer">
             <div class="sidebar-footer-text">BK Steuerberatung<br>Stammdaten-Verwaltung</div>
         </div>
@@ -590,6 +599,11 @@
             const avatarEl = document.getElementById("userAvatar");
             if (nameEl)   nameEl.textContent  = auth.user;
             if (avatarEl) avatarEl.textContent = auth.user.charAt(0).toUpperCase();
+
+            if (auth.is_admin) {
+                const adminLink = document.getElementById("adminNavItem");
+                if (adminLink) adminLink.style.display = "";
+            }
         }
 
         buildQuicklinks();

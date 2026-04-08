@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, Request, Response, UploadFile, File, Form
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from itsdangerous import URLSafeSerializer, BadSignature
 import os
 import requests
@@ -14,6 +15,27 @@ from .auth import hash_password, verify_password
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
+
+# ── DB migrations (add columns for existing databases) ────────────────────────
+def _run_migrations() -> None:
+    with engine.begin() as conn:
+        # Existing users keep access; new registrations start unapproved.
+        conn.execute(text(
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS "
+            "is_approved BOOLEAN NOT NULL DEFAULT TRUE"
+        ))
+        conn.execute(text(
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS "
+            "is_admin BOOLEAN NOT NULL DEFAULT FALSE"
+        ))
+
+_run_migrations()
+
+ADMIN_EMAILS: set[str] = {
+    e.strip().lower()
+    for e in os.getenv("ADMIN_EMAILS", "").split(",")
+    if e.strip()
+}
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
@@ -72,9 +94,14 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="User already exists")
 
+    is_admin    = user.email.lower() in ADMIN_EMAILS
+    is_approved = is_admin  # admins are auto-approved
+
     new_user = User(
         email=user.email,
-        password_hash=hash_password(user.password)
+        password_hash=hash_password(user.password),
+        is_approved=is_approved,
+        is_admin=is_admin,
     )
 
     db.add(new_user)
@@ -90,6 +117,12 @@ def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
 
     if not db_user or not verify_password(user.password, db_user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    if not db_user.is_approved:
+        raise HTTPException(
+            status_code=403,
+            detail="Ihr Konto wurde noch nicht freigegeben. Bitte warten Sie auf die Bestätigung durch einen Administrator."
+        )
 
     session_value = create_session_cookie(db_user.id)
 
@@ -120,8 +153,70 @@ def auth_check(request: Request, db: Session = Depends(get_db)):
     user = get_current_user(request, db)
     return {
         "status": "authenticated",
-        "user": user.email
+        "user": user.email,
+        "is_admin": bool(user.is_admin),
     }
+
+
+# ── Admin helpers ─────────────────────────────────────────────────────────────
+def get_current_admin(request: Request, db: Session) -> User:
+    user = get_current_user(request, db)
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Nicht autorisiert")
+    return user
+
+
+# ── Admin endpoints ───────────────────────────────────────────────────────────
+@app.get("/api/admin/users")
+def admin_list_users(request: Request, db: Session = Depends(get_db)):
+    get_current_admin(request, db)
+    users = db.query(User).order_by(User.id).all()
+    return [
+        {
+            "id": u.id,
+            "email": u.email,
+            "is_approved": bool(u.is_approved),
+            "is_admin": bool(u.is_admin),
+        }
+        for u in users
+    ]
+
+
+@app.post("/api/admin/users/{user_id}/approve")
+def admin_approve_user(user_id: int, request: Request, db: Session = Depends(get_db)):
+    get_current_admin(request, db)
+    target = db.query(User).filter(User.id == user_id).first()
+    if not target:
+        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden")
+    target.is_approved = True
+    db.commit()
+    return {"status": "approved"}
+
+
+@app.post("/api/admin/users/{user_id}/revoke")
+def admin_revoke_user(user_id: int, request: Request, db: Session = Depends(get_db)):
+    admin = get_current_admin(request, db)
+    if admin.id == user_id:
+        raise HTTPException(status_code=400, detail="Sie können sich selbst nicht sperren")
+    target = db.query(User).filter(User.id == user_id).first()
+    if not target:
+        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden")
+    target.is_approved = False
+    db.commit()
+    return {"status": "revoked"}
+
+
+@app.post("/api/admin/users/{user_id}/toggle-admin")
+def admin_toggle_admin(user_id: int, request: Request, db: Session = Depends(get_db)):
+    admin = get_current_admin(request, db)
+    if admin.id == user_id:
+        raise HTTPException(status_code=400, detail="Sie können Ihren eigenen Admin-Status nicht ändern")
+    target = db.query(User).filter(User.id == user_id).first()
+    if not target:
+        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden")
+    target.is_admin = not target.is_admin
+    db.commit()
+    return {"status": "ok", "is_admin": bool(target.is_admin)}
 
 
 @app.post("/api/forms/submit")

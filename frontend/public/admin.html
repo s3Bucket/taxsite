@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | BK Steuerberatung</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js"></script>
+    <style>
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+        .admin-table th {
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--muted);
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+        .admin-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        .admin-table tr:last-child td { border-bottom: none; }
+        .admin-table tr:hover td { background: #f8fafc; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-approved  { background: #dcfce7; color: #15803d; }
+        .badge-pending   { background: #fef9c3; color: #a16207; }
+        .badge-admin     { background: #dbeafe; color: #1d4ed8; }
+
+        .row-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .btn-sm {
+            padding: 6px 13px;
+            font-size: 12.5px;
+            border-radius: 7px;
+        }
+        .btn-approve  { background: #15803d; }
+        .btn-approve:hover { background: #166534; }
+        .btn-revoke   { background: #b91c1c; }
+        .btn-revoke:hover  { background: #991b1b; }
+        .btn-admin-on  { background: #1d4ed8; }
+        .btn-admin-on:hover { background: #1e40af; }
+        .btn-admin-off { background: #6b7280; }
+        .btn-admin-off:hover { background: #4b5563; }
+
+        .admin-empty {
+            text-align: center;
+            padding: 48px 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 640px) {
+            .admin-table th:nth-child(3),
+            .admin-table td:nth-child(3) { display: none; }
+            .admin-table td { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="panel">
+        <div class="topbar">
+            <div class="topbar-brand">
+                <img src="/logo.png" alt="BK Steuerberatung" class="topbar-logo">
+                <div>
+                    <h1>Benutzerverwaltung</h1>
+                    <p id="userInfo">Administratorbereich</p>
+                </div>
+            </div>
+            <div class="actions">
+                <a class="btn btn-secondary" href="/portal.html">Zurück zum Portal</a>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">Registrierte Benutzer</h3>
+            <div id="tableWrap">
+                <p style="color:var(--muted);margin-top:12px;">Lade …</p>
+            </div>
+        </div>
+
+        <div id="msg" class="msg"></div>
+    </div>
+</div>
+
+<script>
+    async function initAdmin() {
+        const auth = await requireAuth({ redirect: false });
+
+        if (!auth) {
+            window.location.href = '/index.html';
+            return;
+        }
+        if (!auth.is_admin) {
+            window.location.href = '/portal.html';
+            return;
+        }
+
+        document.getElementById('userInfo').textContent = 'Eingeloggt als: ' + auth.user;
+        await loadUsers();
+    }
+
+    async function loadUsers() {
+        const wrap = document.getElementById('tableWrap');
+        const msg  = document.getElementById('msg');
+        msg.textContent = '';
+
+        try {
+            const res  = await fetch('/api/admin/users', { credentials: 'include' });
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                wrap.innerHTML = '<p class="admin-empty">Fehler beim Laden der Benutzer.</p>';
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                wrap.innerHTML = '<p class="admin-empty">Keine Benutzer vorhanden.</p>';
+                return;
+            }
+
+            wrap.innerHTML = `
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>E-Mail</th>
+                            <th>Status</th>
+                            <th>Rolle</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody"></tbody>
+                </table>`;
+
+            const tbody = document.getElementById('userTableBody');
+            data.forEach(user => tbody.appendChild(buildRow(user)));
+        } catch (_) {
+            wrap.innerHTML = '<p class="admin-empty">Server nicht erreichbar.</p>';
+        }
+    }
+
+    function buildRow(user) {
+        const tr = document.createElement('tr');
+        tr.id = `row-${user.id}`;
+
+        const statusBadge = user.is_approved
+            ? '<span class="badge badge-approved">✓ Freigegeben</span>'
+            : '<span class="badge badge-pending">⏳ Ausstehend</span>';
+
+        const adminBadge = user.is_admin
+            ? '<span class="badge badge-admin">Admin</span>'
+            : '';
+
+        const approveBtn = user.is_approved
+            ? `<button class="btn btn-revoke btn-sm" onclick="action(${user.id},'revoke')">Sperren</button>`
+            : `<button class="btn btn-approve btn-sm" onclick="action(${user.id},'approve')">Freigeben</button>`;
+
+        const adminBtn = user.is_admin
+            ? `<button class="btn btn-admin-off btn-sm" onclick="action(${user.id},'toggle-admin')">Admin entziehen</button>`
+            : `<button class="btn btn-admin-on btn-sm"  onclick="action(${user.id},'toggle-admin')">Zum Admin machen</button>`;
+
+        tr.innerHTML = `
+            <td style="font-weight:500">${escapeHtml(user.email)}</td>
+            <td>${statusBadge}</td>
+            <td>${adminBadge}</td>
+            <td><div class="row-actions">${approveBtn}${adminBtn}</div></td>`;
+        return tr;
+    }
+
+    async function action(userId, type) {
+        const msg = document.getElementById('msg');
+        msg.textContent = '';
+        msg.classList.remove('success');
+
+        try {
+            const res  = await fetch(`/api/admin/users/${userId}/${type}`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                msg.textContent = data?.detail || 'Aktion fehlgeschlagen.';
+                return;
+            }
+
+            msg.textContent = 'Gespeichert.';
+            msg.classList.add('success');
+            await loadUsers();
+        } catch (_) {
+            msg.textContent = 'Server nicht erreichbar.';
+        }
+    }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    initAdmin();
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean
 from .database import Base
 
 
@@ -9,6 +9,8 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     email = Column(String, unique=True)
     password_hash = Column(String)
+    is_approved = Column(Boolean, nullable=False, default=False)
+    is_admin    = Column(Boolean, nullable=False, default=False)
 
 
 class SocialPost(Base):
