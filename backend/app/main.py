@@ -1,98 +1,27 @@
-from fastapi import FastAPI, Depends, HTTPException, Request
-from sqlalchemy.orm import Session
-from sqlalchemy import text
+from fastapi import FastAPI, HTTPException, Request
 import os
-import time
 import requests
 import hashlib
 import jwt as pyjwt
 
 from starlette.datastructures import UploadFile as StarletteUploadFile
-from .database import SessionLocal, engine, Base
 
 app = FastAPI()
 
+SUPABASE_URL     = os.getenv("SUPABASE_URL", "").rstrip("/")
+SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY", "")
+JWT_SECRET       = os.getenv("JWT_SECRET")
+N8N_WEBHOOK_URL  = os.getenv("N8N_WEBHOOK_URL", "").strip()
 
-@app.on_event("startup")
-def setup_db():
-    Base.metadata.create_all(bind=engine)
-
-    with engine.begin() as conn:
-        conn.execute(text("""
-            CREATE TABLE IF NOT EXISTS public.profiles (
-                id          UUID PRIMARY KEY,
-                email       TEXT,
-                is_approved BOOLEAN NOT NULL DEFAULT FALSE,
-                is_admin    BOOLEAN NOT NULL DEFAULT FALSE,
-                created_at  TIMESTAMPTZ DEFAULT NOW()
-            )
-        """))
-        conn.execute(text(
-            "ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY"
-        ))
-        conn.execute(text("""
-            DO $$ BEGIN
-                IF NOT EXISTS (
-                    SELECT FROM pg_policies
-                    WHERE tablename = 'profiles' AND policyname = 'users_read_own_profile'
-                ) THEN
-                    CREATE POLICY "users_read_own_profile"
-                        ON public.profiles FOR SELECT
-                        USING (auth.uid() = id);
-                END IF;
-                IF NOT EXISTS (
-                    SELECT FROM pg_policies
-                    WHERE tablename = 'profiles' AND policyname = 'service_role_full_access'
-                ) THEN
-                    CREATE POLICY "service_role_full_access"
-                        ON public.profiles FOR ALL
-                        TO service_role
-                        USING (true) WITH CHECK (true);
-                END IF;
-            END $$
-        """))
-
-    for attempt in range(15):
-        try:
-            with engine.begin() as conn:
-                conn.execute(text("""
-                    CREATE OR REPLACE FUNCTION public.handle_new_user()
-                    RETURNS TRIGGER LANGUAGE plpgsql
-                    SECURITY DEFINER SET search_path = public AS $func$
-                    BEGIN
-                        INSERT INTO public.profiles (id, email)
-                        VALUES (NEW.id, NEW.email)
-                        ON CONFLICT (id) DO NOTHING;
-                        RETURN NEW;
-                    END;
-                    $func$
-                """))
-                conn.execute(text(
-                    "DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users"
-                ))
-                conn.execute(text("""
-                    CREATE TRIGGER on_auth_user_created
-                        AFTER INSERT ON auth.users
-                        FOR EACH ROW EXECUTE FUNCTION public.handle_new_user()
-                """))
-            break
-        except Exception:
-            if attempt < 14:
-                time.sleep(2)
-
-JWT_SECRET = os.getenv("JWT_SECRET")
 if not JWT_SECRET:
     raise RuntimeError("JWT_SECRET is not set")
 
-N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "").strip()
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+def _supabase_headers():
+    return {
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+        "apikey": SUPABASE_SERVICE_KEY,
+    }
 
 
 def verify_jwt(request: Request) -> dict:
@@ -117,24 +46,29 @@ def verify_jwt(request: Request) -> dict:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
-def get_profile(user_id: str, db: Session) -> dict:
-    row = db.execute(
-        text("SELECT email, is_approved, is_admin FROM profiles WHERE id = :uid"),
-        {"uid": user_id}
-    ).fetchone()
-    if not row:
+def get_profile(user_id: str) -> dict:
+    resp = requests.get(
+        f"{SUPABASE_URL}/rest/v1/profiles",
+        params={"id": f"eq.{user_id}", "select": "email,is_approved,is_admin"},
+        headers=_supabase_headers(),
+        timeout=10,
+    )
+    resp.raise_for_status()
+    rows = resp.json()
+    if not rows:
         raise HTTPException(status_code=401, detail="Profile not found")
+    row = rows[0]
     return {
-        "email": row.email,
-        "is_approved": bool(row.is_approved),
-        "is_admin": bool(row.is_admin),
+        "email": row["email"],
+        "is_approved": bool(row["is_approved"]),
+        "is_admin": bool(row["is_admin"]),
     }
 
 
 @app.get("/api/auth/check")
-def auth_check(request: Request, db: Session = Depends(get_db)):
+def auth_check(request: Request):
     payload = verify_jwt(request)
-    profile = get_profile(payload["sub"], db)
+    profile = get_profile(payload["sub"])
     if not profile["is_approved"]:
         raise HTTPException(status_code=403, detail="Account not yet approved")
     return {
@@ -145,9 +79,9 @@ def auth_check(request: Request, db: Session = Depends(get_db)):
 
 
 @app.post("/api/forms/submit")
-async def submit_form(request: Request, db: Session = Depends(get_db)):
+async def submit_form(request: Request):
     payload = verify_jwt(request)
-    profile = get_profile(payload["sub"], db)
+    profile = get_profile(payload["sub"])
     if not profile["is_approved"]:
         raise HTTPException(status_code=403, detail="Account not approved")
 
@@ -174,12 +108,12 @@ async def submit_form(request: Request, db: Session = Depends(get_db)):
     for key, value in form.multi_items():
         if isinstance(value, StarletteUploadFile):
             content = await value.read()
-            file_signature = hashlib.sha256(
-                (f"{key}|{value.filename}|{value.content_type}|".encode("utf-8") + content)
+            sig = hashlib.sha256(
+                (f"{key}|{value.filename}|{value.content_type}|".encode() + content)
             ).hexdigest()
-            if file_signature in seen_files:
+            if sig in seen_files:
                 continue
-            seen_files.add(file_signature)
+            seen_files.add(sig)
             forward_files.append(
                 (key, (value.filename, content, value.content_type or "application/octet-stream"))
             )
