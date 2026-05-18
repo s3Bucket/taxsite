@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 import os
+import time
 import requests
 import hashlib
 import jwt as pyjwt
@@ -10,7 +11,74 @@ from starlette.datastructures import UploadFile as StarletteUploadFile
 from .database import SessionLocal, engine, Base
 
 app = FastAPI()
-Base.metadata.create_all(bind=engine)
+
+
+@app.on_event("startup")
+def setup_db():
+    Base.metadata.create_all(bind=engine)
+
+    with engine.begin() as conn:
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS public.profiles (
+                id          UUID PRIMARY KEY,
+                email       TEXT,
+                is_approved BOOLEAN NOT NULL DEFAULT FALSE,
+                is_admin    BOOLEAN NOT NULL DEFAULT FALSE,
+                created_at  TIMESTAMPTZ DEFAULT NOW()
+            )
+        """))
+        conn.execute(text(
+            "ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY"
+        ))
+        conn.execute(text("""
+            DO $$ BEGIN
+                IF NOT EXISTS (
+                    SELECT FROM pg_policies
+                    WHERE tablename = 'profiles' AND policyname = 'users_read_own_profile'
+                ) THEN
+                    CREATE POLICY "users_read_own_profile"
+                        ON public.profiles FOR SELECT
+                        USING (auth.uid() = id);
+                END IF;
+                IF NOT EXISTS (
+                    SELECT FROM pg_policies
+                    WHERE tablename = 'profiles' AND policyname = 'service_role_full_access'
+                ) THEN
+                    CREATE POLICY "service_role_full_access"
+                        ON public.profiles FOR ALL
+                        TO service_role
+                        USING (true) WITH CHECK (true);
+                END IF;
+            END $$
+        """))
+
+    for attempt in range(15):
+        try:
+            with engine.begin() as conn:
+                conn.execute(text("""
+                    CREATE OR REPLACE FUNCTION public.handle_new_user()
+                    RETURNS TRIGGER LANGUAGE plpgsql
+                    SECURITY DEFINER SET search_path = public AS $func$
+                    BEGIN
+                        INSERT INTO public.profiles (id, email)
+                        VALUES (NEW.id, NEW.email)
+                        ON CONFLICT (id) DO NOTHING;
+                        RETURN NEW;
+                    END;
+                    $func$
+                """))
+                conn.execute(text(
+                    "DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users"
+                ))
+                conn.execute(text("""
+                    CREATE TRIGGER on_auth_user_created
+                        AFTER INSERT ON auth.users
+                        FOR EACH ROW EXECUTE FUNCTION public.handle_new_user()
+                """))
+            break
+        except Exception:
+            if attempt < 14:
+                time.sleep(2)
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 if not JWT_SECRET:
