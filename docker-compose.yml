@@ -69,7 +69,7 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-portalpass}@db:5432/postgres
       JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-token-with-at-least-32-characters-long}
-      N8N_WEBHOOK_URL: ${N8N_WEBHOOK_URL:-}
+      N8N_WEBHOOK_URL: ${N8N_WEBHOOK_URL:-https://n8n.agentsmithery.de/webhook/dokument-eingang}
 
   # ── Frontend (nginx) ────────────────────────────────────────────────────────
   frontend:
