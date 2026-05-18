@@ -1,9 +1,8 @@
 (function () {
   // ── Supabase client ─────────────────────────────────────────────────────────
   const SUPABASE_ANON_KEY =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
-    'eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiZXhwIjoxOTgzODEyOTk2fQ.' +
-    'F9B4-zSx2p5lWeenS_O3L6AqUimL6oYNe2HOefawF4w';
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1ODczNDc2MCwiZXhwIjo0OTE0NDA4' +
+      'MzYwLCJyb2xlIjoiYW5vbiJ9.D5U5-2zAxTj9cVsgh1PGu4kmZFz6aHcKa72f5LjvSq4';
 
   const _sb = window.supabase.createClient(window.location.origin, SUPABASE_ANON_KEY);
 
