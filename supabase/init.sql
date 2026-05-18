@@ -12,12 +12,10 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 -- ── Row Level Security ────────────────────────────────────────────────────────
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
--- Jeder eingeloggte User darf sein eigenes Profil lesen
 CREATE POLICY "users_read_own_profile"
   ON public.profiles FOR SELECT
   USING (auth.uid() = id);
 
--- service_role darf alles (für n8n Admin-Operationen)
 CREATE POLICY "service_role_full_access"
   ON public.profiles FOR ALL
   TO service_role
@@ -34,12 +32,19 @@ BEGIN
 END;
 $$;
 
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT FROM information_schema.tables
+    WHERE table_schema = 'auth' AND table_name = 'users'
+  ) THEN
+    DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+    CREATE TRIGGER on_auth_user_created
+      AFTER INSERT ON auth.users
+      FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+  END IF;
+END $$;
 
--- ── Social Posts (bestehende Tabelle) ────────────────────────────────────────
+-- ── Social Posts ──────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.social_posts (
   id             SERIAL PRIMARY KEY,
   topic          TEXT,

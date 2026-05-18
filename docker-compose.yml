@@ -8,7 +8,7 @@ services:
 
   # ── Database (Supabase Postgres) ────────────────────────────────────────────
   db:
-    image: supabase/postgres:15.1.0.147
+    build: ./supabase
     restart: always
     environment:
       POSTGRES_HOST: /var/run/postgresql
@@ -22,7 +22,6 @@ services:
       JWT_EXP: 28800
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./supabase/init.sql:/docker-entrypoint-initdb.d/99-custom-init.sql
     ports:
       - '5432:5432'
 
