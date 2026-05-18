@@ -1,11 +1,9 @@
 (function () {
   // ── Supabase client ─────────────────────────────────────────────────────────
-  // Anon-Key entspricht JWT_SECRET aus .env (Standard-Dev-Wert).
-  // Für Produktion: neues Schlüsselpaar generieren und hier eintragen.
   const SUPABASE_ANON_KEY =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
-    'eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.' +
-    'CRFA0NiJ-5EoE6eSslBqh2dFiAHDgGKs8eJzpJCzGq0';
+    'eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiZXhwIjoxOTgzODEyOTk2fQ.' +
+    'F9B4-zSx2p5lWeenS_O3L6AqUimL6oYNe2HOefawF4w';
 
   const _sb = window.supabase.createClient(window.location.origin, SUPABASE_ANON_KEY);
 
