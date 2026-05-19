@@ -68,6 +68,24 @@ def require_mandant(email: str) -> str:
     return rows[0]["email"]
 
 
+def _get_is_admin(user_id: str) -> bool:
+    if not user_id:
+        return False
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/profiles",
+            params={"id": f"eq.{user_id}", "select": "is_admin", "limit": "1"},
+            headers=_service_headers(),
+            timeout=5,
+        )
+        if r.ok:
+            rows = r.json()
+            return bool(rows[0].get("is_admin")) if rows else False
+    except Exception:
+        pass
+    return False
+
+
 # ── Auth ─────────────────────────────────────────────────────────────────────
 
 @app.post("/api/auth/login")
@@ -175,10 +193,11 @@ def set_password(body: dict, response: Response):
 def auth_check(request: Request):
     payload = verify_jwt(request)
     email   = payload.get("email", "")
+    user_id = payload.get("sub", "")
     if not email:
         raise HTTPException(status_code=401, detail="E-Mail nicht im Token")
     require_mandant(email)
-    return {"status": "authenticated", "user": email}
+    return {"status": "authenticated", "user": email, "is_admin": _get_is_admin(user_id)}
 
 
 @app.post("/api/forms/submit")
