@@ -55,7 +55,7 @@
       sessionStorage.clear();
     }
     _setSessionCookie(null);
-    window.location.href = '/index.html';
+    window.location.href = '/index.html?loggedout=1';
   }
 
   window._sb = _sb;

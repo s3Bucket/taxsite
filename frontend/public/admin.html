@@ -96,6 +96,22 @@
         </div>
 
         <div class="form-section">
+            <h3 class="section-title">Benutzer anlegen</h3>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-top:12px;">
+                <div style="flex:1;min-width:200px;">
+                    <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">E-Mail-Adresse</label>
+                    <input id="newEmail" type="email" placeholder="mandant@beispiel.de" style="width:100%;box-sizing:border-box;">
+                </div>
+                <div style="flex:1;min-width:200px;">
+                    <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">Passwort</label>
+                    <input id="newPassword" type="password" placeholder="Temporäres Passwort" style="width:100%;box-sizing:border-box;">
+                </div>
+                <button class="btn btn-approve btn-sm" onclick="createUser()" style="white-space:nowrap;">Benutzer anlegen</button>
+            </div>
+            <div id="createMsg" class="msg" style="margin-top:10px;"></div>
+        </div>
+
+        <div class="form-section">
             <h3 class="section-title">Registrierte Benutzer</h3>
             <div id="tableWrap">
                 <p style="color:var(--muted);margin-top:12px;">Lade …</p>
@@ -110,6 +126,7 @@
     // n8n Admin-Webhook-URLs
     const N8N_LIST_URL   = 'https://n8n.agentsmithery.de/webhook/admin-list-users';
     const N8N_ACTION_URL = 'https://n8n.agentsmithery.de/webhook/admin-user-action';
+    const N8N_CREATE_URL = 'https://n8n.agentsmithery.de/webhook/admin-create-user';
 
     async function getToken() {
         const { data: { session } } = await window._sb.auth.getSession();
@@ -226,6 +243,45 @@
 
             msg.textContent = 'Gespeichert.';
             msg.classList.add('success');
+            await loadUsers();
+        } catch (_) {
+            msg.textContent = 'Server nicht erreichbar.';
+        }
+    }
+
+    async function createUser() {
+        const email    = document.getElementById('newEmail').value.trim();
+        const password = document.getElementById('newPassword').value;
+        const msg      = document.getElementById('createMsg');
+        msg.textContent = '';
+        msg.classList.remove('success');
+
+        if (!email || !password) {
+            msg.textContent = 'Bitte E-Mail und Passwort eingeben.';
+            return;
+        }
+
+        try {
+            const token = await getToken();
+            const res   = await fetch(N8N_CREATE_URL, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                msg.textContent = data?.message || data?.detail || 'Benutzer konnte nicht angelegt werden.';
+                return;
+            }
+
+            msg.textContent = 'Benutzer erfolgreich angelegt.';
+            msg.classList.add('success');
+            document.getElementById('newEmail').value = '';
+            document.getElementById('newPassword').value = '';
             await loadUsers();
         } catch (_) {
             msg.textContent = 'Server nicht erreichbar.';
