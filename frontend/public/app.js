@@ -41,31 +41,17 @@
 
       _setSessionCookie(session.access_token);
 
-      // Profil laden (is_approved, is_admin)
-      const { data: profile, error } = await _sb
-        .from('profiles')
-        .select('email, is_approved, is_admin')
-        .eq('id', session.user.id)
-        .single();
-
-      if (error || !profile) {
+      // Authorisierung über Backend prüfen (verifiziert Mandanten-Tabelle)
+      const resp = await fetch('/api/auth/check', { credentials: 'include' });
+      if (!resp.ok) {
         await _sb.auth.signOut();
         _setSessionCookie(null);
         if (redirect) window.location.href = '/index.html?reason=error';
         return null;
       }
-      if (!profile.is_approved) {
-        await _sb.auth.signOut();
-        _setSessionCookie(null);
-        if (redirect) window.location.href = '/index.html?reason=pending';
-        return null;
-      }
 
-      return {
-        status: 'authenticated',
-        user: profile.email,
-        is_admin: profile.is_admin,
-      };
+      const data = await resp.json();
+      return { status: 'authenticated', user: data.user };
     } catch (_) {
       if (redirect) window.location.href = '/index.html';
       return null;

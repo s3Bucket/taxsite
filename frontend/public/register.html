@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrierung | BK Steuerberatung</title>
+    <title>Zugang einrichten | BK Steuerberatung</title>
     <link rel="stylesheet" href="/styles.css">
     <script src="/supabase.js"></script>
     <script src="/app.js"></script>
@@ -13,45 +13,85 @@
 <div class="auth-wrap">
     <img src="/logo.png" alt="BK Steuerberatung" class="auth-logo">
 
-    <div class="auth-card">
-        <p class="auth-card-title">Zugang anlegen</p>
-        <p class="auth-card-sub">Erstellen Sie hier Ihren Zugang für das Stammdaten-Portal.</p>
+    <!-- Ansicht A: Passwort-Reset-Link anfordern -->
+    <div class="auth-card" id="viewRequest">
+        <p class="auth-card-title">Zugang einrichten</p>
+        <p class="auth-card-sub">Geben Sie Ihre E-Mail-Adresse ein. Sie erhalten einen Link zum Einrichten Ihres Passworts.</p>
 
         <label for="email">E-Mail-Adresse</label>
         <input id="email" type="email" placeholder="name@beispiel.de" autocomplete="email">
 
-        <label for="password">Passwort</label>
-        <input id="password" type="password" placeholder="Mindestens 8 Zeichen" autocomplete="new-password">
-
-        <label for="passwordConfirm">Passwort wiederholen</label>
-        <input id="passwordConfirm" type="password" placeholder="••••••••" autocomplete="new-password">
-
         <div class="auth-actions" style="margin-top:24px;">
-            <button class="btn-full" onclick="registerUser()">Registrieren</button>
+            <button class="btn-full" onclick="requestReset()">Link anfordern</button>
             <a class="btn btn-secondary btn-full" href="/index.html">Zurück zum Login</a>
         </div>
 
-        <div id="msg" class="msg"></div>
+        <div id="msgRequest" class="msg"></div>
+    </div>
+
+    <!-- Ansicht B: Neues Passwort setzen (nach Klick auf E-Mail-Link) -->
+    <div class="auth-card" id="viewSetPassword" style="display:none">
+        <p class="auth-card-title">Passwort festlegen</p>
+        <p class="auth-card-sub">Legen Sie Ihr persönliches Passwort fest.</p>
+
+        <label for="newPassword">Neues Passwort</label>
+        <input id="newPassword" type="password" placeholder="Mindestens 8 Zeichen" autocomplete="new-password">
+
+        <label for="newPasswordConfirm">Passwort wiederholen</label>
+        <input id="newPasswordConfirm" type="password" placeholder="••••••••" autocomplete="new-password">
+
+        <div class="auth-actions" style="margin-top:24px;">
+            <button class="btn-full" onclick="setNewPassword()">Passwort speichern</button>
+        </div>
+
+        <div id="msgSet" class="msg"></div>
     </div>
 
     <p class="auth-footer">© BK Steuerberatung &nbsp;·&nbsp; Stammdaten-Portal</p>
 </div>
 
 <script>
-    redirectIfAuthenticated();
+    // Prüfen ob wir vom Passwort-Reset-Link kommen (#type=recovery im Hash)
+    (function () {
+        const hash = new URLSearchParams(window.location.hash.slice(1));
+        if (hash.get('type') === 'recovery') {
+            document.getElementById('viewRequest').style.display = 'none';
+            document.getElementById('viewSetPassword').style.display = '';
+        }
+    })();
 
-    async function registerUser() {
-        const email           = document.getElementById('email').value.trim();
-        const password        = document.getElementById('password').value;
-        const passwordConfirm = document.getElementById('passwordConfirm').value;
-        const msg             = document.getElementById('msg');
+    async function requestReset() {
+        const email = document.getElementById('email').value.trim();
+        const msg   = document.getElementById('msgRequest');
         msg.textContent = '';
         msg.classList.remove('success');
 
-        if (!email || !password || !passwordConfirm) {
-            msg.textContent = 'Bitte alle Felder ausfüllen.';
+        if (!email) {
+            msg.textContent = 'Bitte E-Mail eingeben.';
             return;
         }
+
+        try {
+            const redirectTo = window.location.origin + '/register.html';
+            const { error } = await window._sb.auth.resetPasswordForEmail(email, { redirectTo });
+            if (error) {
+                msg.textContent = error.message || 'Fehler beim Anfordern.';
+                return;
+            }
+            msg.textContent = 'E-Mail gesendet. Bitte prüfen Sie Ihr Postfach.';
+            msg.classList.add('success');
+        } catch (_) {
+            msg.textContent = 'Server nicht erreichbar.';
+        }
+    }
+
+    async function setNewPassword() {
+        const password        = document.getElementById('newPassword').value;
+        const passwordConfirm = document.getElementById('newPasswordConfirm').value;
+        const msg             = document.getElementById('msgSet');
+        msg.textContent = '';
+        msg.classList.remove('success');
+
         if (password.length < 8) {
             msg.textContent = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
             return;
@@ -62,28 +102,27 @@
         }
 
         try {
-            const res = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (res.status === 409) {
-                msg.textContent = 'Diese E-Mail-Adresse ist bereits registriert.';
+            const { error } = await window._sb.auth.updateUser({ password });
+            if (error) {
+                msg.textContent = error.message || 'Fehler beim Setzen des Passworts.';
                 return;
             }
-            if (!res.ok) {
-                const data = await res.json().catch(() => ({}));
-                msg.textContent = data.detail || 'Registrierung fehlgeschlagen.';
-                return;
-            }
-
-            msg.textContent = 'Registrierung erfolgreich. Ihr Konto wird vom Administrator geprüft und freigegeben.';
+            msg.textContent = 'Passwort gespeichert. Sie werden weitergeleitet…';
             msg.classList.add('success');
+            setTimeout(() => { window.location.href = '/portal.html'; }, 1500);
         } catch (_) {
             msg.textContent = 'Server nicht erreichbar.';
         }
     }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        if (document.getElementById('viewSetPassword').style.display !== 'none') {
+            setNewPassword();
+        } else {
+            requestReset();
+        }
+    });
 </script>
 </body>
 </html>
