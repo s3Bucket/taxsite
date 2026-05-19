@@ -626,6 +626,7 @@
     const msg      = document.getElementById('createMsg');
     if (msg) { msg.textContent = ''; msg.classList.remove('success'); }
     if (!email || !password) { if (msg) msg.textContent = 'Bitte E-Mail und Passwort eingeben.'; return; }
+    if (password.length < 8) { if (msg) msg.textContent = 'Passwort muss mindestens 8 Zeichen haben.'; return; }
     try {
       const token = await _adminGetToken();
       const res   = await fetch(_N8N_CREATE_URL, {
