@@ -48,10 +48,16 @@
         .eq('id', session.user.id)
         .single();
 
-      if (error || !profile || !profile.is_approved) {
+      if (error || !profile) {
         await _sb.auth.signOut();
         _setSessionCookie(null);
-        if (redirect) window.location.href = '/index.html';
+        if (redirect) window.location.href = '/index.html?reason=error';
+        return null;
+      }
+      if (!profile.is_approved) {
+        await _sb.auth.signOut();
+        _setSessionCookie(null);
+        if (redirect) window.location.href = '/index.html?reason=pending';
         return null;
       }
 

@@ -96,6 +96,17 @@ async def register_user(request: Request):
         raise HTTPException(status_code=409, detail="Email already registered")
     if not resp.ok:
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
+
+    user_id = resp.json().get("id")
+    if user_id:
+        # Profil anlegen falls kein DB-Trigger existiert (upsert — kein Fehler wenn schon vorhanden)
+        requests.post(
+            f"{SUPABASE_URL}/rest/v1/profiles",
+            json={"id": user_id, "email": email, "is_approved": False, "is_admin": False},
+            headers={**_supabase_headers(), "Prefer": "resolution=ignore-duplicates"},
+            timeout=10,
+        )
+
     return {"status": "registered"}
 
 

@@ -37,6 +37,15 @@
 <script>
     redirectIfAuthenticated();
 
+    const _reason = new URLSearchParams(location.search).get('reason');
+    if (_reason === 'pending') {
+        const m = document.getElementById('msg');
+        m.textContent = 'Ihr Konto wurde noch nicht freigegeben. Bitte warten Sie auf die Bestätigung durch den Administrator.';
+    } else if (_reason === 'error') {
+        const m = document.getElementById('msg');
+        m.textContent = 'Anmeldung fehlgeschlagen. Bitte wenden Sie sich an den Administrator.';
+    }
+
     async function loginUser() {
         const email    = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
