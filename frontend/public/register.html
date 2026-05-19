@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zugang einrichten | BK Steuerberatung</title>
     <link rel="stylesheet" href="/styles.css">
-    <script src="/supabase.js"></script>
     <script src="/app.js"></script>
 </head>
 <body class="auth-body">
@@ -13,7 +12,7 @@
 <div class="auth-wrap">
     <img src="/logo.png" alt="BK Steuerberatung" class="auth-logo">
 
-    <!-- Ansicht A: Passwort-Reset-Link anfordern -->
+    <!-- Ansicht A: Reset-Link anfordern -->
     <div class="auth-card" id="viewRequest">
         <p class="auth-card-title">Zugang einrichten</p>
         <p class="auth-card-sub">Geben Sie Ihre E-Mail-Adresse ein. Sie erhalten einen Link zum Einrichten Ihres Passworts.</p>
@@ -51,12 +50,16 @@
 </div>
 
 <script>
-    // Prüfen ob wir vom Passwort-Reset-Link kommen (#type=recovery im Hash)
+    // Recovery-Token aus URL-Hash extrahieren (kommt vom Supabase-Reset-Link)
+    let _recoveryToken = null;
     (function () {
         const hash = new URLSearchParams(window.location.hash.slice(1));
         if (hash.get('type') === 'recovery') {
+            _recoveryToken = hash.get('access_token');
             document.getElementById('viewRequest').style.display = 'none';
             document.getElementById('viewSetPassword').style.display = '';
+            // Hash aus URL entfernen
+            history.replaceState(null, '', window.location.pathname);
         }
     })();
 
@@ -66,19 +69,17 @@
         msg.textContent = '';
         msg.classList.remove('success');
 
-        if (!email) {
-            msg.textContent = 'Bitte E-Mail eingeben.';
-            return;
-        }
+        if (!email) { msg.textContent = 'Bitte E-Mail eingeben.'; return; }
 
         try {
             const redirectTo = window.location.origin + '/register.html';
-            const { error } = await window._sb.auth.resetPasswordForEmail(email, { redirectTo });
-            if (error) {
-                msg.textContent = error.message || 'Fehler beim Anfordern.';
-                return;
-            }
-            msg.textContent = 'E-Mail gesendet. Bitte prüfen Sie Ihr Postfach.';
+            await fetch('/api/auth/reset-request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, redirect_to: redirectTo }),
+            });
+            // Immer Erfolgsmeldung zeigen (verhindert E-Mail-Enumeration)
+            msg.textContent = 'Falls diese E-Mail registriert ist, erhalten Sie einen Link.';
             msg.classList.add('success');
         } catch (_) {
             msg.textContent = 'Server nicht erreichbar.';
@@ -92,21 +93,24 @@
         msg.textContent = '';
         msg.classList.remove('success');
 
-        if (password.length < 8) {
-            msg.textContent = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
-            return;
-        }
-        if (password !== passwordConfirm) {
-            msg.textContent = 'Die Passwörter stimmen nicht überein.';
-            return;
-        }
+        if (password.length < 8) { msg.textContent = 'Mindestens 8 Zeichen.'; return; }
+        if (password !== passwordConfirm) { msg.textContent = 'Passwörter stimmen nicht überein.'; return; }
+        if (!_recoveryToken) { msg.textContent = 'Ungültiger oder abgelaufener Link.'; return; }
 
         try {
-            const { error } = await window._sb.auth.updateUser({ password });
-            if (error) {
-                msg.textContent = error.message || 'Fehler beim Setzen des Passworts.';
+            const resp = await fetch('/api/auth/set-password', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: _recoveryToken, password }),
+            });
+
+            if (!resp.ok) {
+                const data = await resp.json().catch(() => ({}));
+                msg.textContent = data.detail || 'Fehler beim Setzen des Passworts.';
                 return;
             }
+
             msg.textContent = 'Passwort gespeichert. Sie werden weitergeleitet…';
             msg.classList.add('success');
             setTimeout(() => { window.location.href = '/portal.html'; }, 1500);
@@ -117,11 +121,8 @@
 
     document.addEventListener('keydown', function (e) {
         if (e.key !== 'Enter') return;
-        if (document.getElementById('viewSetPassword').style.display !== 'none') {
-            setNewPassword();
-        } else {
-            requestReset();
-        }
+        if (document.getElementById('viewSetPassword').style.display !== 'none') setNewPassword();
+        else requestReset();
     });
 </script>
 </body>

@@ -1,25 +1,4 @@
 (function () {
-  // ── Supabase client ─────────────────────────────────────────────────────────
-  const SUPABASE_ANON_KEY =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1ODczNDc2MCwiZXhwIjo0OTE0NDA4' +
-      'MzYwLCJyb2xlIjoiYW5vbiJ9.D5U5-2zAxTj9cVsgh1PGu4kmZFz6aHcKa72f5LjvSq4';
-
-  const _sb = window.supabase.createClient(window.location.origin, SUPABASE_ANON_KEY);
-
-  // JWT als Cookie setzen, damit nginx auth_request es weiterleiten kann
-  function _setSessionCookie(token) {
-    const secure = location.protocol === 'https:' ? '; secure' : '';
-    if (token) {
-      document.cookie = `portal_session=${token}; path=/; samesite=lax${secure}`;
-    } else {
-      document.cookie = `portal_session=; path=/; max-age=0${secure}`;
-    }
-  }
-
-  // Cookie bei Token-Refresh automatisch aktualisieren
-  _sb.auth.onAuthStateChange((_event, session) => {
-    _setSessionCookie(session ? session.access_token : null);
-  });
 
   async function safeJson(response) {
     try {
@@ -31,25 +10,12 @@
 
   async function requireAuth(options = {}) {
     const { redirect = true } = options;
-
     try {
-      const { data: { session } } = await _sb.auth.getSession();
-      if (!session) {
-        if (redirect) window.location.href = '/index.html';
-        return null;
-      }
-
-      _setSessionCookie(session.access_token);
-
-      // Authorisierung über Backend prüfen (verifiziert Mandanten-Tabelle)
       const resp = await fetch('/api/auth/check', { credentials: 'include' });
       if (!resp.ok) {
-        await _sb.auth.signOut();
-        _setSessionCookie(null);
         if (redirect) window.location.href = '/index.html?reason=error';
         return null;
       }
-
       const data = await resp.json();
       return { status: 'authenticated', user: data.user };
     } catch (_) {
@@ -60,24 +26,13 @@
 
   async function redirectIfAuthenticated(target = '/portal.html') {
     const auth = await requireAuth({ redirect: false });
-    if (auth) {
-      window.location.href = target;
-    }
+    if (auth) window.location.href = target;
   }
 
   async function logout() {
-    await _sb.auth.signOut({ scope: 'global' }).catch(() => {});
-    for (const key of Object.keys(localStorage)) {
-      if (key.startsWith('sb-') || key.startsWith('supabase.')) localStorage.removeItem(key);
-    }
-    sessionStorage.clear();
-    _setSessionCookie(null);
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
     window.location.href = '/index.html';
   }
-
-  // _sb für Login/Register-Seiten verfügbar machen
-  window._sb = _sb;
-  window._setSessionCookie = _setSessionCookie;
 
   async function submitMultipartForm(formName, fields, fileFields = [], msgId = 'msg') {
     const msg = document.getElementById(msgId);

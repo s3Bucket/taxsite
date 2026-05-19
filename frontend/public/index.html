@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | BK Steuerberatung</title>
     <link rel="stylesheet" href="/styles.css">
-    <script src="/supabase.js"></script>
     <script src="/app.js"></script>
 </head>
 <body class="auth-body">
@@ -38,12 +37,8 @@
     redirectIfAuthenticated();
 
     const _reason = new URLSearchParams(location.search).get('reason');
-    if (_reason === 'pending') {
-        const m = document.getElementById('msg');
-        m.textContent = 'Ihr Konto wurde noch nicht freigegeben. Bitte warten Sie auf die Bestätigung durch den Administrator.';
-    } else if (_reason === 'error') {
-        const m = document.getElementById('msg');
-        m.textContent = 'Anmeldung fehlgeschlagen. Bitte wenden Sie sich an den Administrator.';
+    if (_reason === 'error') {
+        document.getElementById('msg').textContent = 'Anmeldung fehlgeschlagen. Bitte wenden Sie sich an den Administrator.';
     }
 
     async function loginUser() {
@@ -59,14 +54,19 @@
         }
 
         try {
-            const { data, error } = await window._sb.auth.signInWithPassword({ email, password });
+            const resp = await fetch('/api/auth/login', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
 
-            if (error) {
-                msg.textContent = error.message || 'Login fehlgeschlagen.';
+            if (!resp.ok) {
+                const data = await resp.json().catch(() => ({}));
+                msg.textContent = data.detail || 'Login fehlgeschlagen.';
                 return;
             }
 
-            window._setSessionCookie(data.session.access_token);
             window.location.href = '/portal.html';
         } catch (_) {
             msg.textContent = 'Server nicht erreichbar.';
