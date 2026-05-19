@@ -62,14 +62,22 @@
         }
 
         try {
-            const { error } = await window._sb.auth.signUp({ email, password });
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
 
-            if (error) {
-                msg.textContent = error.message || 'Registrierung fehlgeschlagen.';
+            if (res.status === 409) {
+                msg.textContent = 'Diese E-Mail-Adresse ist bereits registriert.';
+                return;
+            }
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                msg.textContent = data.detail || 'Registrierung fehlgeschlagen.';
                 return;
             }
 
-            // Konto wurde angelegt, wartet auf Admin-Freigabe
             msg.textContent = 'Registrierung erfolgreich. Ihr Konto wird vom Administrator geprüft und freigegeben.';
             msg.classList.add('success');
         } catch (_) {

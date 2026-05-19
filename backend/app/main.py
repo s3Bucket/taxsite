@@ -78,6 +78,27 @@ def auth_check(request: Request):
     }
 
 
+@app.post("/api/register")
+async def register_user(request: Request):
+    body = await request.json()
+    email = body.get("email", "").strip()
+    password = body.get("password", "")
+    if not email or not password:
+        raise HTTPException(status_code=400, detail="email and password required")
+
+    resp = requests.post(
+        f"{SUPABASE_URL}/auth/v1/admin/users",
+        json={"email": email, "password": password, "email_confirm": True},
+        headers=_supabase_headers(),
+        timeout=10,
+    )
+    if resp.status_code == 422:
+        raise HTTPException(status_code=409, detail="Email already registered")
+    if not resp.ok:
+        raise HTTPException(status_code=resp.status_code, detail=resp.text)
+    return {"status": "registered"}
+
+
 @app.post("/api/forms/submit")
 async def submit_form(request: Request):
     payload = verify_jwt(request)
