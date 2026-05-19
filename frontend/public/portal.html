@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="/app.js"></script>
 
     <style>
@@ -544,7 +545,7 @@
 
         <div class="sidebar-spacer"></div>
 
-        <a class="sidebar-nav-item" id="adminNavItem" href="/admin.html" style="display:none">
+        <a class="sidebar-nav-item" id="adminNavItem" href="#" data-page="/admin.html" style="display:none">
             <span class="nav-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><circle cx="19" cy="11" r="2.5"/><path d="M21.7 13A4 4 0 0 1 24 16.5"/>
@@ -596,7 +597,7 @@
     async function initPortal() {
         const auth = await requireAuth();
         if (auth && auth.user) {
-            const nameEl  = document.getElementById("userInfoName");
+            const nameEl   = document.getElementById("userInfoName");
             const avatarEl = document.getElementById("userAvatar");
             if (nameEl)   nameEl.textContent  = auth.user;
             if (avatarEl) avatarEl.textContent = auth.user.charAt(0).toUpperCase();
@@ -612,7 +613,11 @@
 
         const params    = new URLSearchParams(window.location.search);
         const startPage = params.get("page");
-        if (startPage) await loadPortalPage(startPage);
+        if (startPage) {
+            await loadPortalPage(startPage);
+        } else if (auth && auth.is_admin) {
+            await loadPortalPage("/admin.html");
+        }
     }
 
     function buildQuicklinks() {

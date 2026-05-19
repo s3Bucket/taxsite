@@ -548,4 +548,104 @@
     };
     initFileDropZones();
   };
+  // ── Admin: Benutzerverwaltung ─────────────────────────────────────────────
+
+  const _N8N_LIST_URL   = 'https://n8n.agentsmithery.de/webhook/admin-list-users';
+  const _N8N_ACTION_URL = 'https://n8n.agentsmithery.de/webhook/admin-user-action';
+  const _N8N_CREATE_URL = 'https://n8n.agentsmithery.de/webhook/admin-create-user';
+
+  async function _adminGetToken() {
+    if (!window._sb) return null;
+    const { data: { session } } = await window._sb.auth.getSession();
+    return session ? session.access_token : null;
+  }
+
+  async function _adminLoadUsers() {
+    const wrap = document.getElementById('tableWrap');
+    const msg  = document.getElementById('msg');
+    if (!wrap) return;
+    if (msg) { msg.textContent = ''; msg.classList.remove('success'); }
+    try {
+      const token = await _adminGetToken();
+      const res   = await fetch(_N8N_LIST_URL, { headers: { 'Authorization': 'Bearer ' + token } });
+      const data  = await res.json().catch(() => null);
+      if (!res.ok || !data || data.length === 0) {
+        wrap.innerHTML = '<p class="admin-empty">' + (!res.ok ? 'Fehler beim Laden.' : 'Keine Benutzer vorhanden.') + '</p>';
+        return;
+      }
+      wrap.innerHTML = `<table class="admin-table"><thead><tr>
+        <th>E-Mail</th><th>Status</th><th>Rolle</th><th>Aktionen</th>
+      </tr></thead><tbody id="userTableBody"></tbody></table>`;
+      const tbody = document.getElementById('userTableBody');
+      data.forEach(u => tbody.appendChild(_adminBuildRow(u)));
+    } catch (_) {
+      if (wrap) wrap.innerHTML = '<p class="admin-empty">Server nicht erreichbar.</p>';
+    }
+  }
+
+  function _adminBuildRow(user) {
+    const tr = document.createElement('tr');
+    tr.id = 'row-' + user.id;
+    const statusBadge = user.is_approved
+      ? '<span class="badge badge-approved">✓ Freigegeben</span>'
+      : '<span class="badge badge-pending">⏳ Ausstehend</span>';
+    const adminBadge = user.is_admin ? '<span class="badge badge-admin">Admin</span>' : '';
+    const approveBtn = user.is_approved
+      ? `<button class="btn btn-revoke btn-sm" onclick="window._adminAction('${user.id}','revoke')">Sperren</button>`
+      : `<button class="btn btn-approve btn-sm" onclick="window._adminAction('${user.id}','approve')">Freigeben</button>`;
+    const adminBtn = user.is_admin
+      ? `<button class="btn btn-admin-off btn-sm" onclick="window._adminAction('${user.id}','toggle-admin')">Admin entziehen</button>`
+      : `<button class="btn btn-admin-on btn-sm"  onclick="window._adminAction('${user.id}','toggle-admin')">Zum Admin machen</button>`;
+    tr.innerHTML = `
+      <td style="font-weight:500">${escapeHtml(user.email)}</td>
+      <td>${statusBadge}</td><td>${adminBadge}</td>
+      <td><div class="row-actions">${approveBtn}${adminBtn}</div></td>`;
+    return tr;
+  }
+
+  window._adminAction = async function (userId, type) {
+    const msg = document.getElementById('msg');
+    if (msg) { msg.textContent = ''; msg.classList.remove('success'); }
+    try {
+      const token = await _adminGetToken();
+      const res   = await fetch(_N8N_ACTION_URL, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, action: type })
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) { if (msg) msg.textContent = data?.detail || data?.message || 'Aktion fehlgeschlagen.'; return; }
+      if (msg) { msg.textContent = 'Gespeichert.'; msg.classList.add('success'); }
+      await _adminLoadUsers();
+    } catch (_) { if (msg) msg.textContent = 'Server nicht erreichbar.'; }
+  };
+
+  window._adminCreateUser = async function () {
+    const email    = document.getElementById('newEmail')?.value.trim();
+    const password = document.getElementById('newPassword')?.value;
+    const msg      = document.getElementById('createMsg');
+    if (msg) { msg.textContent = ''; msg.classList.remove('success'); }
+    if (!email || !password) { if (msg) msg.textContent = 'Bitte E-Mail und Passwort eingeben.'; return; }
+    try {
+      const token = await _adminGetToken();
+      const res   = await fetch(_N8N_CREATE_URL, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) { if (msg) msg.textContent = data?.message || data?.detail || 'Fehler beim Anlegen.'; return; }
+      if (msg) { msg.textContent = 'Benutzer erfolgreich angelegt.'; msg.classList.add('success'); }
+      const emailEl = document.getElementById('newEmail');
+      const pwdEl   = document.getElementById('newPassword');
+      if (emailEl) emailEl.value = '';
+      if (pwdEl)   pwdEl.value   = '';
+      await _adminLoadUsers();
+    } catch (_) { if (msg) msg.textContent = 'Server nicht erreichbar.'; }
+  };
+
+  window.portalPageInits['/admin.html'] = async function () {
+    await _adminLoadUsers();
+  };
+
 })();
