@@ -12,7 +12,7 @@
     if (token) {
       document.cookie = `portal_session=${token}; path=/; samesite=lax${secure}`;
     } else {
-      document.cookie = 'portal_session=; path=/; max-age=0';
+      document.cookie = `portal_session=; path=/; max-age=0${secure}`;
     }
   }
 
@@ -74,7 +74,11 @@
   }
 
   async function logout() {
-    await _sb.auth.signOut().catch(() => {});
+    await _sb.auth.signOut({ scope: 'global' }).catch(() => {});
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith('sb-') || key.startsWith('supabase.')) localStorage.removeItem(key);
+    }
+    sessionStorage.clear();
     _setSessionCookie(null);
     window.location.href = '/index.html';
   }
