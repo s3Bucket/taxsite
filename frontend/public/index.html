@@ -54,19 +54,17 @@
         }
 
         try {
-            const resp = await fetch('/api/auth/login', {
-                method: 'POST',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!resp.ok) {
-                const data = await resp.json().catch(() => ({}));
-                msg.textContent = data.detail || 'Login fehlgeschlagen.';
+            if (!window._sb) { msg.textContent = 'Supabase nicht verfügbar.'; return; }
+            const { data, error } = await window._sb.auth.signInWithPassword({ email, password });
+            if (error) {
+                msg.textContent = error.message === 'Invalid login credentials'
+                    ? 'Ungültige E-Mail oder Passwort.'
+                    : error.message;
                 return;
             }
-
+            if (data?.session?.access_token) {
+                window._setSessionCookie(data.session.access_token);
+            }
             window.location.href = '/portal.html';
         } catch (_) {
             msg.textContent = 'Server nicht erreichbar.';
