@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GbR</title>
     <link rel="stylesheet" href="/styles.css">
-
     <script src="/app.js?v=2"></script>
 </head>
 <body>
@@ -21,16 +20,24 @@
             </div>
             <div class="actions">
                 <a class="btn btn-secondary" href="/portal.html">Zurück zum Portal</a>
-                <button onclick="logout()">Logout</button>
+                <button type="button" onclick="logout()">Logout</button>
             </div>
         </div>
 
+        <div class="form-page-header">
+            <div class="form-page-title">Gesellschaft bürgerlichen Rechts (GbR)</div>
+            <div class="form-page-desc">Bitte füllen Sie alle relevanten Felder aus und fügen Sie alle Gesellschafter hinzu.</div>
+        </div>
+
         <div class="form-section">
-            <h3 class="section-title">Angaben</h3>
+            <h3 class="section-title"><span class="section-num">1</span> Angaben</h3>
             <div class="form-row">
                 <div>
                     <label>Anrede</label>
-                    <input id="anrede" type="text">
+                    <select id="anrede">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Herr</option><option>Frau</option><option>Divers</option><option>Keine Angabe</option>
+                    </select>
                 </div>
                 <div>
                     <label>Unternehmensform</label>
@@ -88,7 +95,15 @@
                 </div>
                 <div>
                     <label>Bundesland</label>
-                    <input id="bundesland" type="text">
+                    <select id="bundesland">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Baden-Württemberg</option><option>Bayern</option><option>Berlin</option>
+                        <option>Brandenburg</option><option>Bremen</option><option>Hamburg</option>
+                        <option>Hessen</option><option>Mecklenburg-Vorpommern</option><option>Niedersachsen</option>
+                        <option>Nordrhein-Westfalen</option><option>Rheinland-Pfalz</option><option>Saarland</option>
+                        <option>Sachsen</option><option>Sachsen-Anhalt</option><option>Schleswig-Holstein</option>
+                        <option>Thüringen</option><option>Ausland / Kein Bundesland</option>
+                    </select>
                 </div>
             </div>
             <label>Unternehmensgegenstand</label>
@@ -96,38 +111,46 @@
         </div>
 
         <div class="form-section">
-            <h3 class="section-title">Gesellschafter</h3>
-            <div id="gesellschafterContainer"></div>
-            <div class="inline-actions">
-                <button type="button" onclick="addGesellschafter()">Gesellschafter hinzufügen</button>
+            <div class="section-header-row">
+                <h3 class="section-title"><span class="section-num">2</span> Gesellschafter</h3>
+                <button type="button" class="btn btn-sm btn-outline" onclick="addGesellschafter()">+ Gesellschafter</button>
             </div>
+            <div id="gesellschafterContainer"></div>
         </div>
 
         <div class="form-section">
-            <h3 class="section-title">Buchhaltung</h3>
+            <h3 class="section-title"><span class="section-num">3</span> Buchhaltung</h3>
             <div class="form-row">
                 <div>
                     <label>Ist- / Sollversteuerung</label>
-                    <input id="versteuerung" type="text">
+                    <select id="versteuerung">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Ist-Versteuerung</option><option>Soll-Versteuerung</option>
+                    </select>
                 </div>
                 <div>
                     <label>Voranmeldungszeitraum</label>
-                    <input id="voranmeldung" type="text">
+                    <select id="voranmeldung">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Monatlich</option><option>Vierteljährlich</option><option>Jährlich</option>
+                    </select>
                 </div>
             </div>
             <label>Bilanz oder Gewinnermittler</label>
-            <input id="bilanz" type="text">
+            <select id="bilanz">
+                <option value="">– Bitte wählen –</option>
+                <option>Bilanz</option><option>Einnahmen-Überschuss-Rechnung (EÜR)</option>
+            </select>
         </div>
 
         <div class="form-section">
-            <h3 class="section-title">Dokumente</h3>
+            <h3 class="section-title"><span class="section-num">4</span> Dokumente</h3>
             <label>Gewerbeanmeldung</label>
-            <input id="doc_gewerbeanmeldung" type="file">
-            <div class="upload-hint">Max. 5 MB.</div>
+            <input id="doc_gewerbeanmeldung" type="file" accept=".pdf,.jpg,.jpeg,.png">
         </div>
 
-        <div class="actions">
-            <button onclick="submitPage()">Absenden</button>
+        <div class="submit-area">
+            <button id="submitBtn" type="button" onclick="submitPage()">Absenden</button>
         </div>
         <div id="msg" class="msg"></div>
     </div>
@@ -140,6 +163,8 @@
 
         if (window.portalPageInits && typeof window.portalPageInits["/gbr.html"] === "function") {
             await window.portalPageInits["/gbr.html"]();
+        } else {
+            initFileDropZones();
         }
     }
     initPage();

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Natürliche Person</title>
     <link rel="stylesheet" href="/styles.css">
-
     <script src="/app.js"></script>
 </head>
 <body>
@@ -21,17 +20,25 @@
             </div>
             <div class="actions">
                 <a class="btn btn-secondary" href="/portal.html">Zurück zum Portal</a>
-                <button onclick="logout()">Logout</button>
+                <button type="button" onclick="logout()">Logout</button>
             </div>
+        </div>
+
+        <div class="form-page-header">
+            <div class="form-page-title">Natürliche Person / Einkommensteuer</div>
+            <div class="form-page-desc">Bitte füllen Sie die Angaben für beide Ehepartner aus und fügen Sie ggf. Kinder hinzu.</div>
         </div>
 
         <!-- Ehepartner 1 -->
         <div class="form-section">
-            <h3 class="section-title">Angaben – Ehepartner 1</h3>
+            <h3 class="section-title"><span class="section-num">1</span> Angaben – Ehepartner 1</h3>
             <div class="form-row">
                 <div>
                     <label>Anrede</label>
-                    <input id="anrede1" type="text">
+                    <select id="anrede1">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Herr</option><option>Frau</option><option>Divers</option><option>Keine Angabe</option>
+                    </select>
                 </div>
                 <div>
                     <label>Titel / akad. Grad</label>
@@ -97,7 +104,11 @@
                 </div>
                 <div>
                     <label>Familienstand</label>
-                    <input id="familienstand1" type="text">
+                    <select id="familienstand1">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Ledig</option><option>Verheiratet</option><option>Geschieden</option>
+                        <option>Verwitwet</option><option>Eingetragene Lebenspartnerschaft</option>
+                    </select>
                 </div>
             </div>
             <div class="form-row">
@@ -107,13 +118,20 @@
                 </div>
                 <div>
                     <label>Religionszugehörigkeit</label>
-                    <input id="religion1" type="text">
+                    <select id="religion1">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Evangelisch</option><option>Katholisch</option><option>Jüdisch</option>
+                        <option>Konfessionslos</option><option>Andere</option>
+                    </select>
                 </div>
             </div>
             <div class="form-row">
                 <div>
                     <label>Geschlecht</label>
-                    <input id="geschlecht1" type="text">
+                    <select id="geschlecht1">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Männlich</option><option>Weiblich</option><option>Divers</option><option>Keine Angabe</option>
+                    </select>
                 </div>
                 <div>
                     <label>Beruf</label>
@@ -121,19 +139,29 @@
                 </div>
             </div>
             <label>Bundesland</label>
-            <input id="bundesland1" type="text">
+            <select id="bundesland1">
+                <option value="">– Bitte wählen –</option>
+                <option>Baden-Württemberg</option><option>Bayern</option><option>Berlin</option>
+                <option>Brandenburg</option><option>Bremen</option><option>Hamburg</option>
+                <option>Hessen</option><option>Mecklenburg-Vorpommern</option><option>Niedersachsen</option>
+                <option>Nordrhein-Westfalen</option><option>Rheinland-Pfalz</option><option>Saarland</option>
+                <option>Sachsen</option><option>Sachsen-Anhalt</option><option>Schleswig-Holstein</option>
+                <option>Thüringen</option><option>Ausland / Kein Bundesland</option>
+            </select>
             <label>Personalausweis Ehepartner 1</label>
             <input id="doc_personalausweis_ep1" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-            <div class="upload-hint">Max. 5 MB pro Datei.</div>
         </div>
 
         <!-- Ehepartner 2 -->
         <div class="form-section">
-            <h3 class="section-title">Angaben – Ehepartner 2</h3>
+            <h3 class="section-title"><span class="section-num">2</span> Angaben – Ehepartner 2</h3>
             <div class="form-row">
                 <div>
                     <label>Anrede</label>
-                    <input id="anrede2" type="text">
+                    <select id="anrede2">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Herr</option><option>Frau</option><option>Divers</option><option>Keine Angabe</option>
+                    </select>
                 </div>
                 <div>
                     <label>Titel / akad. Grad</label>
@@ -199,7 +227,11 @@
                 </div>
                 <div>
                     <label>Familienstand</label>
-                    <input id="familienstand2" type="text">
+                    <select id="familienstand2">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Ledig</option><option>Verheiratet</option><option>Geschieden</option>
+                        <option>Verwitwet</option><option>Eingetragene Lebenspartnerschaft</option>
+                    </select>
                 </div>
             </div>
             <div class="form-row">
@@ -209,13 +241,20 @@
                 </div>
                 <div>
                     <label>Religionszugehörigkeit</label>
-                    <input id="religion2" type="text">
+                    <select id="religion2">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Evangelisch</option><option>Katholisch</option><option>Jüdisch</option>
+                        <option>Konfessionslos</option><option>Andere</option>
+                    </select>
                 </div>
             </div>
             <div class="form-row">
                 <div>
                     <label>Geschlecht</label>
-                    <input id="geschlecht2" type="text">
+                    <select id="geschlecht2">
+                        <option value="">– Bitte wählen –</option>
+                        <option>Männlich</option><option>Weiblich</option><option>Divers</option><option>Keine Angabe</option>
+                    </select>
                 </div>
                 <div>
                     <label>Beruf</label>
@@ -223,215 +262,49 @@
                 </div>
             </div>
             <label>Bundesland</label>
-            <input id="bundesland2" type="text">
+            <select id="bundesland2">
+                <option value="">– Bitte wählen –</option>
+                <option>Baden-Württemberg</option><option>Bayern</option><option>Berlin</option>
+                <option>Brandenburg</option><option>Bremen</option><option>Hamburg</option>
+                <option>Hessen</option><option>Mecklenburg-Vorpommern</option><option>Niedersachsen</option>
+                <option>Nordrhein-Westfalen</option><option>Rheinland-Pfalz</option><option>Saarland</option>
+                <option>Sachsen</option><option>Sachsen-Anhalt</option><option>Schleswig-Holstein</option>
+                <option>Thüringen</option><option>Ausland / Kein Bundesland</option>
+            </select>
             <label>Personalausweis Ehepartner 2</label>
             <input id="doc_personalausweis_ep2" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-            <div class="upload-hint">Max. 5 MB pro Datei.</div>
         </div>
 
         <!-- Kinder -->
         <div class="form-section">
-            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border); margin-bottom:4px;">
-                <div>
-                    <h3 class="section-title" style="border:none; padding:0; margin:0;">Kinder</h3>
-                    <p class="small" style="margin:4px 0 0 0;">Beliebig viele Kinder hinzufügbar.</p>
-                </div>
-                <button type="button" onclick="addChild()">Kind hinzufügen</button>
+            <div class="section-header-row">
+                <h3 class="section-title"><span class="section-num">3</span> Kinder</h3>
+                <button type="button" class="btn btn-sm btn-outline" onclick="addChild()">+ Kind</button>
             </div>
             <div id="childrenContainer"></div>
         </div>
 
-        <div class="actions">
-            <button onclick="submitPage()">Absenden</button>
+        <div class="submit-area">
+            <button id="submitBtn" type="button" onclick="submitPage()">Absenden</button>
         </div>
         <div id="msg" class="msg"></div>
     </div>
 </div>
 
 <script>
-    // childUidCounter gives each card a stable unique DOM id (never reused).
-    // Visual numbers (Kind 1, Kind 2 …) are derived from DOM position after
-    // every add/remove so they always stay gapless.
-    let childUidCounter = 0;
-
     async function initPage() {
         const auth = await requireAuth();
         if (auth && auth.user) {
             document.getElementById("userInfo").innerText = "Eingeloggt als: " + auth.user;
         }
-        addChild();
-    }
 
+        if (window.portalPageInits && typeof window.portalPageInits["/naturliche-person.html"] === "function") {
+            await window.portalPageInits["/naturliche-person.html"]();
+        } else {
+            initFileDropZones();
+        }
+    }
     initPage();
-
-    function addChild(prefill = {}) {
-        childUidCounter += 1;
-        const uid       = childUidCounter;
-        const container = document.getElementById("childrenContainer");
-        const wrapper   = document.createElement("div");
-        wrapper.className = "child-card";
-        wrapper.id        = `child-card-${uid}`;
-
-        wrapper.innerHTML = `
-            <h4 class="child-heading">Kind</h4>
-            <div class="form-row">
-                <div>
-                    <label>Name</label>
-                    <input id="kind_name_${uid}" type="text" value="${escapeHtml(prefill.name || "")}">
-                </div>
-                <div>
-                    <label>Geburtsdatum</label>
-                    <input id="kind_geburt_${uid}" type="date" value="${escapeHtml(prefill.geburtsdatum || "")}">
-                </div>
-            </div>
-            <div class="form-row">
-                <div>
-                    <label>Wohnort</label>
-                    <input id="kind_wohnort_${uid}" type="text" value="${escapeHtml(prefill.wohnort || "")}">
-                </div>
-                <div>
-                    <label>Identifikationsnummer</label>
-                    <input id="kind_ident_${uid}" type="text" value="${escapeHtml(prefill.identifikationsnummer || "")}">
-                </div>
-            </div>
-            <div class="form-row">
-                <div>
-                    <label>Leiblicher Vater</label>
-                    <input id="kind_vater_${uid}" type="text" value="${escapeHtml(prefill.leiblicher_vater || "")}">
-                </div>
-                <div>
-                    <label>Leibliche Mutter</label>
-                    <input id="kind_mutter_${uid}" type="text" value="${escapeHtml(prefill.leibliche_mutter || "")}">
-                </div>
-            </div>
-            <label class="child-file-label">Personalausweis / Ausweisdokument</label>
-            <input id="doc_kind_personalausweis_${uid}" type="file" accept=".pdf,.jpg,.jpeg,.png" multiple>
-            <div class="upload-hint">Max. 5 MB pro Datei.</div>
-            <div class="inline-actions">
-                <button type="button" class="btn btn-danger" onclick="removeChild(${uid})">Eintrag entfernen</button>
-            </div>
-        `;
-
-        container.appendChild(wrapper);
-        renumberChildren();
-    }
-
-    function removeChild(uid) {
-        const el = document.getElementById(`child-card-${uid}`);
-        if (!el) return;
-        el.style.transition = "opacity 0.2s ease, transform 0.2s ease";
-        el.style.opacity    = "0";
-        el.style.transform  = "scale(0.98)";
-        setTimeout(() => { el.remove(); renumberChildren(); }, 200);
-    }
-
-    // Re-labels all cards based on their current DOM position (1-based).
-    function renumberChildren() {
-        document.querySelectorAll("#childrenContainer .child-card").forEach((card, i) => {
-            const n = i + 1;
-            const heading = card.querySelector(".child-heading");
-            if (heading) heading.textContent = `Kind ${n}`;
-            const fileLabel = card.querySelector(".child-file-label");
-            if (fileLabel) fileLabel.textContent = `Personalausweis / Ausweisdokument Kind ${n}`;
-        });
-    }
-
-    function escapeHtml(value) {
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/"/g, "&quot;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-    }
-
-    function collectChildren() {
-        const children = [];
-        document.querySelectorAll("#childrenContainer .child-card").forEach((card, index) => {
-            const uid = card.id.replace("child-card-", "");
-            children.push({
-                name:                  document.getElementById(`kind_name_${uid}`)?.value    || "",
-                geburtsdatum:          document.getElementById(`kind_geburt_${uid}`)?.value  || "",
-                wohnort:               document.getElementById(`kind_wohnort_${uid}`)?.value || "",
-                leiblicher_vater:      document.getElementById(`kind_vater_${uid}`)?.value   || "",
-                leibliche_mutter:      document.getElementById(`kind_mutter_${uid}`)?.value  || "",
-                identifikationsnummer: document.getElementById(`kind_ident_${uid}`)?.value   || "",
-                upload_field_id:       `doc_kind_personalausweis_${uid}`,
-                // Position-based field name for the backend (1, 2, 3 … always gapless)
-                field_index:           index + 1
-            });
-        });
-        return children;
-    }
-
-    async function submitPage() {
-        const children = collectChildren();
-
-        const fields = {
-            ehepartner1: {
-                anrede:                document.getElementById("anrede1").value,
-                titel:                 document.getElementById("titel1").value,
-                vorname:               document.getElementById("vorname1").value,
-                nachname:              document.getElementById("nachname1").value,
-                strasse_hausnummer:    document.getElementById("strasse1").value,
-                plz:                   document.getElementById("plz1").value,
-                ort:                   document.getElementById("ort1").value,
-                telefon:               document.getElementById("telefon1").value,
-                mobil:                 document.getElementById("mobil1").value,
-                email:                 document.getElementById("email1").value,
-                bankverbindung:        document.getElementById("bank1").value,
-                steuernummer:          document.getElementById("steuer1").value,
-                geburtsdatum:          document.getElementById("geburt1").value,
-                familienstand:         document.getElementById("familienstand1").value,
-                staatsangehoerigkeit:  document.getElementById("staat1").value,
-                religionszugehoerigkeit: document.getElementById("religion1").value,
-                geschlecht:            document.getElementById("geschlecht1").value,
-                beruf:                 document.getElementById("beruf1").value,
-                bundesland:            document.getElementById("bundesland1").value,
-                identifikationsnummer: document.getElementById("ident1").value
-            },
-            ehepartner2: {
-                anrede:                document.getElementById("anrede2").value,
-                titel:                 document.getElementById("titel2").value,
-                vorname:               document.getElementById("vorname2").value,
-                nachname:              document.getElementById("nachname2").value,
-                strasse_hausnummer:    document.getElementById("strasse2").value,
-                plz:                   document.getElementById("plz2").value,
-                ort:                   document.getElementById("ort2").value,
-                telefon:               document.getElementById("telefon2").value,
-                mobil:                 document.getElementById("mobil2").value,
-                email:                 document.getElementById("email2").value,
-                bankverbindung:        document.getElementById("bank2").value,
-                steuernummer:          document.getElementById("steuer2").value,
-                geburtsdatum:          document.getElementById("geburt2").value,
-                familienstand:         document.getElementById("familienstand2").value,
-                staatsangehoerigkeit:  document.getElementById("staat2").value,
-                religionszugehoerigkeit: document.getElementById("religion2").value,
-                geschlecht:            document.getElementById("geschlecht2").value,
-                beruf:                 document.getElementById("beruf2").value,
-                bundesland:            document.getElementById("bundesland2").value,
-                identifikationsnummer: document.getElementById("ident2").value
-            },
-            kinder: children.map(child => ({
-                name:                  child.name,
-                geburtsdatum:          child.geburtsdatum,
-                wohnort:               child.wohnort,
-                leiblicher_vater:      child.leiblicher_vater,
-                leibliche_mutter:      child.leibliche_mutter,
-                identifikationsnummer: child.identifikationsnummer
-            }))
-        };
-
-        const fileFields = [
-            { id: "doc_personalausweis_ep1", fieldName: "personalausweis_ehepartner_1" },
-            { id: "doc_personalausweis_ep2", fieldName: "personalausweis_ehepartner_2" },
-            ...children.map(child => ({
-                id:        child.upload_field_id,
-                fieldName: `personalausweis_kind_${child.field_index}`
-            }))
-        ];
-
-        await submitMultipartForm("naturliche_person", fields, fileFields);
-    }
 </script>
 </body>
 </html>
