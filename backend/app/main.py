@@ -54,18 +54,23 @@ def verify_jwt(request: Request) -> dict:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
-def require_mandant(email: str) -> str:
-    resp = requests.get(
-        f"{SUPABASE_URL}/rest/v1/mandanten",
-        params={"email": f"eq.{email}", "select": "email", "limit": "1"},
-        headers=_service_headers(),
-        timeout=10,
-    )
-    resp.raise_for_status()
-    rows = resp.json()
-    if not rows:
-        raise HTTPException(status_code=403, detail="Kein Mandant für diese E-Mail")
-    return rows[0]["email"]
+def require_approved(user_id: str) -> None:
+    if not user_id:
+        raise HTTPException(status_code=403, detail="Kein Zugang")
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/profiles",
+            params={"id": f"eq.{user_id}", "select": "is_approved", "limit": "1"},
+            headers=_service_headers(),
+            timeout=5,
+        )
+        if r.ok:
+            rows = r.json()
+            if rows and rows[0].get("is_approved"):
+                return
+    except Exception:
+        pass
+    raise HTTPException(status_code=403, detail="Kein Zugang")
 
 
 def _get_is_admin(user_id: str) -> bool:
@@ -111,9 +116,9 @@ def login(body: dict, response: Response):
     if not access_token:
         raise HTTPException(status_code=500, detail="Kein Token erhalten")
 
-    # E-Mail gegen mandanten prüfen
+    user_id    = (data.get("user") or {}).get("id", "")
     user_email = (data.get("user") or {}).get("email", "")
-    require_mandant(user_email)
+    require_approved(user_id)
 
     secure = True  # in Produktion immer HTTPS
     response.set_cookie(
@@ -196,7 +201,7 @@ def auth_check(request: Request):
     user_id = payload.get("sub", "")
     if not email:
         raise HTTPException(status_code=401, detail="E-Mail nicht im Token")
-    require_mandant(email)
+    require_approved(user_id)
     return {"status": "authenticated", "user": email, "is_admin": _get_is_admin(user_id)}
 
 
@@ -204,9 +209,10 @@ def auth_check(request: Request):
 async def submit_form(request: Request):
     payload = verify_jwt(request)
     email   = payload.get("email", "")
+    user_id = payload.get("sub", "")
     if not email:
         raise HTTPException(status_code=401, detail="E-Mail nicht im Token")
-    require_mandant(email)
+    require_approved(user_id)
 
     if not N8N_WEBHOOK_URL:
         raise HTTPException(status_code=500, detail="N8N_WEBHOOK_URL is not configured")
