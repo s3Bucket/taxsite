@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zugang einrichten | BK Steuerberatung</title>
+    <title>Passwort vergessen | BK Steuerberatung</title>
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js"></script>
 </head>
@@ -12,23 +12,17 @@
 <div class="auth-wrap">
     <img src="/logo.png" alt="BK Steuerberatung" class="auth-logo">
 
-    <!-- Ansicht A: Reset-Link anfordern -->
-    <div class="auth-card" id="viewRequest">
+    <!-- Ansicht A: Standardanzeige -->
+    <div class="auth-card" id="viewInfo">
         <p class="auth-card-title">Passwort vergessen?</p>
-        <p class="auth-card-sub">Bitte wenden Sie sich an Ihren Steuerberater. Er kann Ihnen ein neues Passwort mitteilen.</p>
-
-        <label for="email">E-Mail-Adresse</label>
-        <input id="email" type="email" placeholder="name@beispiel.de" autocomplete="email">
+        <p class="auth-card-sub">Bitte wenden Sie sich an Ihren Steuerberater. Er wird Ihnen neue Zugangsdaten mitteilen.</p>
 
         <div class="auth-actions" style="margin-top:24px;">
-            <button class="btn-full" onclick="requestReset()">Link anfordern</button>
             <a class="btn btn-secondary btn-full" href="/index.html">Zurück zum Login</a>
         </div>
-
-        <div id="msgRequest" class="msg"></div>
     </div>
 
-    <!-- Ansicht B: Neues Passwort setzen (nach Klick auf E-Mail-Link) -->
+    <!-- Ansicht B: Neues Passwort setzen (nach Admin-generiertem Reset-Link) -->
     <div class="auth-card" id="viewSetPassword" style="display:none">
         <p class="auth-card-title">Passwort festlegen</p>
         <p class="auth-card-sub">Legen Sie Ihr persönliches Passwort fest.</p>
@@ -50,41 +44,16 @@
 </div>
 
 <script>
-    // Recovery-Token aus URL-Hash extrahieren (kommt vom Supabase-Reset-Link)
     let _recoveryToken = null;
     (function () {
         const hash = new URLSearchParams(window.location.hash.slice(1));
         if (hash.get('type') === 'recovery') {
             _recoveryToken = hash.get('access_token');
-            document.getElementById('viewRequest').style.display = 'none';
+            document.getElementById('viewInfo').style.display = 'none';
             document.getElementById('viewSetPassword').style.display = '';
-            // Hash aus URL entfernen
             history.replaceState(null, '', window.location.pathname);
         }
     })();
-
-    async function requestReset() {
-        const email = document.getElementById('email').value.trim();
-        const msg   = document.getElementById('msgRequest');
-        msg.textContent = '';
-        msg.classList.remove('success');
-
-        if (!email) { msg.textContent = 'Bitte E-Mail eingeben.'; return; }
-
-        try {
-            const redirectTo = window.location.origin + '/register.html';
-            await fetch('/api/auth/reset-request', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, redirect_to: redirectTo }),
-            });
-            // Immer Erfolgsmeldung zeigen (verhindert E-Mail-Enumeration)
-            msg.textContent = 'Falls diese E-Mail registriert ist, erhalten Sie einen Link.';
-            msg.classList.add('success');
-        } catch (_) {
-            msg.textContent = 'Server nicht erreichbar.';
-        }
-    }
 
     async function setNewPassword() {
         const password        = document.getElementById('newPassword').value;
@@ -104,13 +73,11 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token: _recoveryToken, password }),
             });
-
             if (!resp.ok) {
                 const data = await resp.json().catch(() => ({}));
                 msg.textContent = data.detail || 'Fehler beim Setzen des Passworts.';
                 return;
             }
-
             msg.textContent = 'Passwort gespeichert. Sie werden weitergeleitet…';
             msg.classList.add('success');
             setTimeout(() => { window.location.href = '/portal.html'; }, 1500);
@@ -119,10 +86,8 @@
         }
     }
 
-    document.addEventListener('keydown', function (e) {
-        if (e.key !== 'Enter') return;
-        if (document.getElementById('viewSetPassword').style.display !== 'none') setNewPassword();
-        else requestReset();
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && document.getElementById('viewSetPassword').style.display !== 'none') setNewPassword();
     });
 </script>
 </body>
